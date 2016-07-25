@@ -1,0 +1,14 @@
+Input	Initial	Has	Number	AvgTime	AvgTime
+Size	Order	Dups	of runs	forusel	forsort
+5000	random	no	N	T1sec	T2sec
+5000	sorted	no	N	T1sec	T2sec
+5000	reverse	no	N	T1sec	T2sec
+5000	random	yes	N	T1sec	T2sec
+5000	sorted	yes	N	T1sec	T2sec
+5000	reverse	yes	N	T1sec	T2sec
+10000	random	no	N	T1sec	T2sec
+10000	sorted	no	N	T1sec	T2sec
+10000	reverse	no	N	T1sec	T2sec
+10000	random	yes	N	T1sec	T2sec
+10000	sorted	yes	N	T1sec	T2sec
+10000	reverse	yes	N	T1sec	T2sec
