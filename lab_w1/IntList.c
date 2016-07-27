@@ -92,8 +92,14 @@ void IntListInsert(IntList L, int v)
 // insert an integer into correct place in a sorted list
 void IntListInsertInOrder(IntList L, int v)
 {
+	// Check if list is sorted and not empty
+	if (L != NULL) {
+		while (IntListNode->next != NULL) {
+			IntListNode = IntListNode->next;
+		}
+	}
 	// This is INCORRECT
-	IntListInsert(L, v);
+	//IntListInsert(L, v);
 }
 
 // delete first occurrence of v from a list
