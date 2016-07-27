@@ -92,9 +92,9 @@ void IntListInsert(IntList L, int v)
 // insert an integer into correct place in a sorted list
 void IntListInsertInOrder(IntList L, int v)
 {
-	struct IntListNode *curr = L->first;
-	struct IntListNode *after = NULL;
-	struct IntListNode *n = NULL;
+	struct IntListNode *curr = L->first;  // First node
+	struct IntListNode *after = NULL;	  // Node after
+	struct IntListNode *n = NULL;		  // Node with int v
 
 	// Check if list is sorted and not empty
 	if (L != NULL && (IntListIsSorted(L) == 1)) {
