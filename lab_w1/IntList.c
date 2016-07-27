@@ -110,6 +110,9 @@ void IntListInsertInOrder(IntList L, int v)
 				curr->next = n;		// detach and point curr->next to vNode
 			}
 		}
+	} else {
+		n = newIntListNode(v);
+		L->first = n;
 	}
 }
 
