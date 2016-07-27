@@ -97,7 +97,7 @@ void IntListInsertInOrder(IntList L, int v)
 	struct IntListNode *n = NULL;		  // Node with int v
 
 	// Check if list is sorted and not empty
-	if (L != NULL && (IntListIsSorted(L) == 1)) {
+	if (L->first != NULL && (IntListIsSorted(L) == 1)) {
 		n = newIntListNode(v);
 		while (curr->next != NULL) {
 			// Case 1: V is larger than curr data
