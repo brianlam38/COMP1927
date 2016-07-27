@@ -92,14 +92,25 @@ void IntListInsert(IntList L, int v)
 // insert an integer into correct place in a sorted list
 void IntListInsertInOrder(IntList L, int v)
 {
+	struct IntListNode *curr = L->first;
+	struct IntListNode *after = NULL;
+	struct IntListNode *n = NULL;
+
 	// Check if list is sorted and not empty
-	if (L != NULL) {
-		while (IntListNode->next != NULL) {
-			IntListNode = IntListNode->next;
+	if (L != NULL && (IntListIsSorted(L) == 1)) {
+		n = newIntListNode(v);
+		while (curr->next != NULL) {
+			// Case 1: V is larger than curr data
+			if (curr->data < v) {
+				curr = curr->next;
+			// Case 2: V is smaller than curr data	
+			} else {
+				after = curr->next;	// point after to curr->next
+				n->next = after;    // point vNode to after
+				curr->next = n;		// detach and point curr->next to vNode
+			}
 		}
 	}
-	// This is INCORRECT
-	//IntListInsert(L, v);
 }
 
 // delete first occurrence of v from a list
