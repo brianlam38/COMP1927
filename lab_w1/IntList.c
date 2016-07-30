@@ -92,28 +92,39 @@ void IntListInsert(IntList L, int v)
 // insert an integer into correct place in a sorted list
 void IntListInsertInOrder(IntList L, int v)
 {
-	struct IntListNode *curr = L->first;  // First node
-	struct IntListNode *after = NULL;	  // Node after
-	struct IntListNode *n = NULL;		  // Node with int v
+	assert (IntListIsSorted(L) == 1);
 
-	// Check if list is sorted and not empty
-	if (L->first != NULL && (IntListIsSorted(L) == 1)) {
-		n = newIntListNode(v);
+	struct IntListNode *n;
+	n = newIntListNode(v);
+
+	struct IntListNode *curr = L->first;
+	struct IntListNode *prev = NULL;
+
+	// null list case
+	if (L->first == NULL) {
+		L->first = n;
+	// one node case
+	} else if (L->size == 1) {
+		if (curr->data > n->data) {
+			n->next = curr;
+			L->first = n;
+		} else {
+			curr->next = n;
+		}
+	// all other cases
+	} else {
 		while (curr->next != NULL) {
-			// Case 1: V is larger than curr data
-			if (curr->data < v) {
+			if (curr->data < n->data) {
+				prev = curr;
 				curr = curr->next;
-			// Case 2: V is smaller than curr data	
 			} else {
-				after = curr->next;	// point after to curr->next
-				n->next = after;    // point vNode to after
-				curr->next = n;		// detach and point curr->next to vNode
+				n->next = curr;
+				prev->next = n;
 			}
 		}
-	} else {
-		n = newIntListNode(v);
-		L->first = n;
 	}
+	//L->size++;
+	//IntListInsert(L, v);
 }
 
 // delete first occurrence of v from a list
