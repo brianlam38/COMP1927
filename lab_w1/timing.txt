@@ -1,14 +1,21 @@
 Input	Initial	Has	Number	AvgTime	AvgTime
 Size	Order	Dups	of runs	forusel	forsort
-5000	random	no	N	T1sec	T2sec
-5000	sorted	no	N	T1sec	T2sec
-5000	reverse	no	N	T1sec	T2sec
-5000	random	yes	N	T1sec	T2sec
-5000	sorted	yes	N	T1sec	T2sec
-5000	reverse	yes	N	T1sec	T2sec
-10000	random	no	N	T1sec	T2sec
-10000	sorted	no	N	T1sec	T2sec
-10000	reverse	no	N	T1sec	T2sec
-10000	random	yes	N	T1sec	T2sec
-10000	sorted	yes	N	T1sec	T2sec
-10000	reverse	yes	N	T1sec	T2sec
+
+10000	random	yes	5	0.171	0.0086
+10000	sorted	yes	5	0.001	0.010
+
+20000	random	yes	5	0.815	0.018
+20000	sorted	yes	5	0.001	0.024
+
+50000	random	yes	5	8.125	0.043
+50000	sorted	yes	5	0.001	0.054
+
+With the test data, I can see that the larger the input size, the longer it takes
+for both USEL and SORT programs to execute.
+
+Also, it seems like the average time to execute the USEL program increases exponentially as the Input Size gets larger. For example, the 10000 size random test takes 0.171 seconds on average, compared to a x5 larger input size taking 8+ seconds, which does not equate linearly with the x5 larger size. Interestingly, the sort program seems like its execution time increases linearly. I can hypothesise that in the case of RANDOM ORDER, the USEL program probably doesn’t scale as well as the SORT program / not as efficiently when the Input Size gets larger.
+
+Also, the USEL program seems to execute significantly faster for sorting an already-sorted list, compared to the sort program. Regardless of the Input Size, it has produced a time of 0.001 seconds for a list with SORTED ORDER.
+
+
+
