@@ -96,31 +96,36 @@ void IntListInsertInOrder(IntList L, int v)
 	n = newIntListNode(v);
 
 	// zero nodes
-	if (L->first == NULL) {
-		L->first = n;
-		L->last = n;
-	} else if (L->first->next == NULL) {
-		// one node
-		if (L->first->data > n->data) {
+	if (L->size == 0) {
+		IntListInsert(L,v);
+	// one node
+	} else if (L->size == 1) {
+		if (L->first->data >= v) {
 			n->next = L->first;
 			L->first = n;
-		// all nodes
+			L->size++;
 		} else {
-			struct IntListNode *prev = NULL;
-			struct IntListNode *curr = L->first;			
-			while (curr != NULL) {
-				if (curr->data < n->data) {
-					prev = curr;
-					curr = curr->next;
-				} else {
-					n->next = curr;
-					prev->next = n;
-				}
+			IntListInsert(L,v);
+		}
+	// all other nodes
+	} else {
+		struct IntListNode *curr = L->first;
+		if (curr->data > v) {
+			n->next = curr;
+			L->first = n;
+			L->size++;
+		} else {
+			while (curr->next != NULL && (curr->next->data < v)) {
+				curr = curr->next;
 			}
+			if (curr->next == NULL) {
+				L->last = n;
+			}
+			n->next = curr->next;
+			curr->next = n;
+			L->size++;
 		}
 	}
-	// This is INCORRECT
-	// IntListInsert(L, v);
 }
 
 // delete first occurrence of v from a list
