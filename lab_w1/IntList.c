@@ -90,6 +90,7 @@ void IntListInsert(IntList L, int v)
 }
 
 // insert an integer into correct place in a sorted list
+// CODE HAS DATA LEAKS. FIX CODE UP.
 void IntListInsertInOrder(IntList L, int v)
 {
 	struct IntListNode *n;
@@ -107,7 +108,7 @@ void IntListInsertInOrder(IntList L, int v)
 		} else {
 			IntListInsert(L,v);
 		}
-	// all other nodes
+	// more than one node
 	} else {
 		struct IntListNode *curr = L->first;
 		if (curr->data > v) {
