@@ -98,7 +98,8 @@ void IntListInsertInOrder(IntList L, int v)
 
 	// zero nodes
 	if (L->size == 0) {
-		IntListInsert(L,v);
+		L->first = n;
+		//IntListInsert(L,v);		--> remove data leak
 	// one node
 	} else if (L->size == 1) {
 		if (L->first->data >= v) {
@@ -106,7 +107,8 @@ void IntListInsertInOrder(IntList L, int v)
 			L->first = n;
 			L->size++;
 		} else {
-			IntListInsert(L,v);
+			L->last->next = n;	  //--> this is correct
+			//IntListInsert(L,v);	--> remove data leak
 		}
 	// more than one node
 	} else {
