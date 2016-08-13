@@ -19,3 +19,5 @@ void binarySearch(void) {
 			return 0;
 	}
 }
+
+
