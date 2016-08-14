@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s: too few values\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-	if (max > 1000000) {
+	if (max > 1000000000) {
 		fprintf(stderr, "%s: too many values\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
