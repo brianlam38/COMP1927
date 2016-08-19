@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case $# in
+1) sort="$1" ; N=1000 ;;
+2) sort="$1" ; N="$2" ;;
+*) echo "Usage: $0 b|s|i|q|m [N]" ; exit 1 ;;
+esac
+
+for i in `seq 1 20`
+do
+	./sorter $sort $N R
+done | \
+#awk '{cmp += $3; swp += $5; mov += $7} END {printf "Avg #compares: %0.0f, Avg #swaps: %0.0f, Avg #moves: %0.0f\n",cmp/NR,swp/NR,mov/NR}'

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+case $# in
+1) N="$1" ; Ord="R" ;;
+2) N="$1" ; Ord="$2" ;;
+3) N="$1" ; Ord="$2" ;;
+*) echo "Usage: $0 N [Ord]" ; exit 1 ;;
+esac
+
+for sort in s b i h q m
+do
+	case "$sort" in
+	i) name="Ins" ;;
+	h) name="Shl" ;;
+	s) name="Sel" ;;
+	b) name="Bub" ;;
+	q) name="Qik" ;;
+	m) name="Mrg" ;;
+	esac
+	echo $name $N $Ord $(./sorter $sort $N $Ord)
+done

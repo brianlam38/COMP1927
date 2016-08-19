@@ -1,0 +1,21 @@
+#!/bin/sh
+
+case $# in
+1) sort="$1" ; Ord="R" ;;
+2) sort="$1" ; Ord="$2" ;;
+*) echo "Usage: $0 sort [Ord]" ; exit 1 ;;
+esac
+
+
+for N in 1000 2000 4000 8000 16000 32000
+do
+	case "$sort" in
+	i) name="Insertion" ;;
+	h) name="ShellSort" ;;
+	s) name="Selection" ;;
+	b) name="BubblSort" ;;
+	q) name="QuickSort" ;;
+	m) name="MergeSort" ;;
+	esac
+	echo $N $(./sorter $sort $N $Ord)
+done
