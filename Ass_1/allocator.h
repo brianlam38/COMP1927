@@ -7,7 +7,7 @@
 //  Copyright (c) 2012-2016 UNSW. All rights reserved.
 //
 
-#ifndef ALLOCATOR_H
+#ifndef ALLOCATOR_H // What is ifndef???
 #define ALLOCATOR_H
 
 #include <stdlib.h>
