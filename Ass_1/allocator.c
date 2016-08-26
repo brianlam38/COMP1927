@@ -57,7 +57,7 @@ static u_int32_t strategy;    // allocation strategy (by default BEST_FIT)
 // Private functions
 
 // Determine if size is power 2
-static int is_power_2(size) {
+static int is_power_2(u_int32_t size) {
    assert(size >= MIN_SIZE);                    // size should at least be = 1024
    int val = size; 
    while ((val != POWER) && (val%POWER == 0)) { // divide until power or mod is reached
@@ -71,8 +71,9 @@ static int is_power_2(size) {
 }
 
 // Convert to next smallest power of 2
-static u_int32_t conv_power(size) {
+static u_int32_t conv_power(u_int32_t size) {
    assert(size >= MIN_SIZE);               // size should at least be = 1024
+   //printf("Before conversion, size is: %d bytes\n", size);
    while (is_power_2(size) == FALSE) {     // keep adding until power 2 is reached
       size = size + POWER;
    }
