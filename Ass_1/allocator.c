@@ -17,24 +17,30 @@
 #define MAGIC_FREE     0xDEADBEEF
 #define MAGIC_ALLOC    0xBEEFDEAD
 
-// ALLOCATION STRATEGY
+// Allocation Strategy
 #define BEST_FIT       1
 #define WORST_FIT      2
 #define RANDOM_FIT     3
 
-// BRIAN'S MACROS
-#define MIN_SIZE       1024
-#define POWER          2      // possibly remove this, as value is intuitive enough???
+// Extra Macros
+#define MIN_SIZE       1024   // Minimum malloc size
+#define MIN_ALLOC      8      // Minimum allocation size
 #define TRUE           0
 #define FALSE          1
+#define POWER          2      // Malloc size must be power of 2
+#define MULTIPLE       4      // Alloc size must be multiple of 4
 
-// DATA TYPES
+
+// #################
+// Data Types
+// #################
+
 typedef unsigned char byte;
 typedef u_int32_t vsize_t;
 typedef u_int32_t vlink_t;
 typedef u_int32_t vaddr_t;
 
-// HEADER STRUCT FOR FREE BLOCK
+// Header struct: Free blocks
 typedef struct free_list_header {
    u_int32_t magic;  // ought to contain MAGIC_FREE
    vsize_t size;     // # bytes in this block (including header)
@@ -42,25 +48,27 @@ typedef struct free_list_header {
    vlink_t prev;     // memory[] index of previous free block
 } free_header_t;
 
-// HEADER STRUCT FOR ALLOCATED BLOCKS
+// Header struct: Allocated blocks
 typedef struct alloc_block_header {
    u_int32_t magic;  // ought to contain MAGIC_ALLOC
    vsize_t size;     // # bytes in this block (including header)
 } alloc_header_t;
 
-// GLOBAL DATA - TO REFERENCE THE BLOCK OF MEMORY YOU WANT TO USE FOR THE ALLOCATOR
+// Global Data: To reference block of memory you want to use for the allocator
 static byte *memory = NULL;   // pointer to start of allocator memory
 static vaddr_t free_list_ptr; // index in memory[] of first block in free list
 static vsize_t memory_size;   // number of bytes malloc'd in memory[]
 static u_int32_t strategy;    // allocation strategy (by default BEST_FIT)
 
-// Private functions
+// #################
+// Private Functions
+// #################
 
 // Determine if size is power 2
 static int is_power_2(u_int32_t size) {
-   assert(size >= MIN_SIZE);                    // size should at least be = 1024
+   assert(size >= MIN_SIZE);                
    int val = size; 
-   while ((val != POWER) && (val%POWER == 0)) { // divide until power or mod is reached
+   while ((val != POWER) && (val%POWER == 0)) {
       val = (val/POWER);
    }
    if (val == POWER) {
@@ -70,19 +78,32 @@ static int is_power_2(u_int32_t size) {
    }
 }
 
-// Convert to next smallest power of 2
+// Convert size to next smallest power of 2
 static u_int32_t conv_power(u_int32_t size) {
-   assert(size >= MIN_SIZE);               // size should at least be = 1024
+   assert(size >= MIN_SIZE);
    //printf("Before conversion, size is: %d bytes\n", size);
-   while (is_power_2(size) == FALSE) {     // keep adding until power 2 is reached
+   while (is_power_2(size) == FALSE) {
       size = size + POWER;
    }
    //printf("After conversion, size is: %d bytes\n", size);
    return size;
 }
 
+// Convert allocation bytes to multiple of 4
+static u_int32_t conv_mult_4(u_int32_t n) {
+   while (n%MULTIPLE != 0) {
+      n++;
+   }
+   printf("n bytes is now size: %d\n", n);
+   assert(n%MULTIPLE == 0);
+   return n;
+}
+
 static void vlad_merge();
 
+// ###################
+// Interface Functions
+// ###################
 
 // Input: size - number of bytes to make available to the allocator
 // Output: none              
@@ -91,9 +112,6 @@ static void vlad_merge();
 // 
 // (If the allocator is already initialised, this function does nothing,
 //  even if it was initialised with different size)
-
-   // 1. Allocate overall memory block using malloc()
-   // 2. Set up initial region header
 
 void vlad_init(u_int32_t size)
 {
@@ -117,8 +135,8 @@ void vlad_init(u_int32_t size)
    }
    memory_size = size;
    strategy = BEST_FIT;
-   free_list_ptr = (vaddr_t) 0;
-   free_header_t *init_header = (free_header_t *) memory;
+   free_list_ptr = (vaddr_t) 0;                           // typecasting memory add
+   free_header_t *init_header = (free_header_t *) memory; // typecasting ptr --> memory
    init_header->magic = MAGIC_FREE;
    init_header->size = size;
    init_header->next = free_list_ptr;
@@ -138,7 +156,27 @@ void vlad_init(u_int32_t size)
 void *vlad_malloc(u_int32_t n)
 {
    // TODO for Milestone 2
-   return NULL; // temporarily
+
+   // 1. Takes in request to allocate n bytes
+   // 2. If n != multiple of 4, round up to next smallest multiple of 4 --> Insert conversion function
+   printf("Size of n bytes before all else is: %d", n);
+   if (n < MIN_ALLOC) {
+      n = MIN_ALLOC;
+      printf("After conversion, size of n bytes is: %d", n);
+   }
+   if (n%MULTIPLE != 0) {
+      conv_mult_4(n);
+      printf("After conversion, size of n bytes is: %d", n);
+   }
+   // 3. If n == multiple of 4, then it can be used for allocation
+
+   // 4. Start Traverse, from the region pointed to by FREE_LIST_PTR (the first free region available in the free list)
+   // 5. Continue Traversal, until a region is found that is > required n allocation
+   // 6. If region >= THRESHOLD, then split into two regions;
+         // (1) Allocated Region (multiple of 4)
+         // (2) Free Region (at least 2 * FREE_LIST_HEADER size), placed in the correct pos in free list
+   // 7. If region < THRESHOLD, then allocate the entire region
+   return NULL;
 }
 
 
