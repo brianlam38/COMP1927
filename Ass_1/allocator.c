@@ -14,8 +14,8 @@
 
 #define FREE_HEADER_SIZE  sizeof(struct free_list_header)  
 #define ALLOC_HEADER_SIZE sizeof(struct alloc_block_header)  
-#define MAGIC_FREE     0xDEADBEEF
-#define MAGIC_ALLOC    0xBEEFDEAD
+#define MAGIC_FREE     0xDEADBEEF   // Freed memory
+#define MAGIC_ALLOC    0xBEEFDEAD   // Allocated memory
 
 // Allocation Strategy
 #define BEST_FIT       1
@@ -23,8 +23,8 @@
 #define RANDOM_FIT     3
 
 // Extra Macros
-#define MIN_SIZE       1024   // Minimum malloc size
-#define MIN_ALLOC      8      // Minimum allocation size
+#define MIN_MALLOC     1024   // Minimum malloc size
+#define MIN_ALLOCATE   8      // Minimum allocation size
 #define TRUE           0
 #define FALSE          1
 #define POWER          2      // Malloc size must be power of 2
@@ -35,10 +35,10 @@
 // Data Types
 // #################
 
-typedef unsigned char byte;
-typedef u_int32_t vsize_t;
-typedef u_int32_t vlink_t;
-typedef u_int32_t vaddr_t;
+typedef unsigned char byte;   // memory addresses
+typedef u_int32_t vsize_t;    // size of allocated / free blocks
+typedef u_int32_t vlink_t;    // index of links in memory array
+typedef u_int32_t vaddr_t;    // index of addresses in memory array
 
 // Header struct: Free blocks
 typedef struct free_list_header {
@@ -66,7 +66,7 @@ static u_int32_t strategy;    // allocation strategy (by default BEST_FIT)
 
 // Determine if size is power 2
 static int is_power_2(u_int32_t size) {
-   assert(size >= MIN_SIZE);                
+   assert(size >= MIN_MALLOC);                
    int val = size; 
    while ((val != POWER) && (val%POWER == 0)) {
       val = (val/POWER);
@@ -80,7 +80,7 @@ static int is_power_2(u_int32_t size) {
 
 // Convert size to next smallest power of 2
 static u_int32_t conv_power(u_int32_t size) {
-   assert(size >= MIN_SIZE);
+   assert(size >= MIN_MALLOC);
    //printf("Before conversion, size is: %d bytes\n", size);
    while (is_power_2(size) == FALSE) {
       size = size + POWER;
@@ -117,9 +117,9 @@ void vlad_init(u_int32_t size)
 {
    //printf("Begin mem alloc\n");
    if (memory == NULL) {            // test for < MIN and if power of 2
-      if (size < MIN_SIZE) {     
+      if (size < MIN_MALLOC) {     
          //printf("Conv to MIN\n");         
-         size = MIN_SIZE;           // convert size to MIN
+         size = MIN_MALLOC;           // convert size to MIN
          memory = malloc(size);
       } else {
          //printf("Conv to POW\n");
@@ -156,12 +156,12 @@ void vlad_init(u_int32_t size)
 void *vlad_malloc(u_int32_t n)
 {
    // TODO for Milestone 2
-
+   free_header_t *curr = (free_header_t*) (free_list_ptr); // converting index to pointer
    // 1. Takes in request to allocate n bytes
    // 2. If n != multiple of 4, round up to next smallest multiple of 4 --> Insert conversion function
    printf("Size of n bytes before all else is: %d", n);
-   if (n < MIN_ALLOC) {
-      n = MIN_ALLOC;
+   if (n < MIN_ALLOCATE) {
+      n = MIN_ALLOCATE;
       printf("After conversion, size of n bytes is: %d", n);
    }
    if (n%MULTIPLE != 0) {
