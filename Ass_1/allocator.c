@@ -17,7 +17,6 @@
 #define MAGIC_FREE     0xDEADBEEF   // Freed memory
 #define MAGIC_ALLOC    0xBEEFDEAD   // Allocated memory
 
-// Allocation Strategy
 #define BEST_FIT       1
 #define WORST_FIT      2
 #define RANDOM_FIT     3
@@ -29,18 +28,15 @@
 #define FALSE          1
 #define POWER          2      // Malloc size must be power of 2
 #define MULTIPLE       4      // Alloc size must be multiple of 4
+#define THRESHOLD      (ALLOC_HEADER_SIZE + n + 2*FREE_HEADER_SIZE)
 
-
-// #################
-// Data Types
-// #################
-
-typedef unsigned char byte;   // memory addresses
+// Reference typedefs
+typedef unsigned char byte;   // memory addresses in HEX
 typedef u_int32_t vsize_t;    // size of allocated / free blocks
-typedef u_int32_t vlink_t;    // index of links in memory array
-typedef u_int32_t vaddr_t;    // index of addresses in memory array
+typedef u_int32_t vlink_t;    // reference to FREE REGION HEADERS
+typedef u_int32_t vaddr_t;    // reference to MEMORY ADDRESS INDICES
 
-// Header struct: Free blocks
+// Free block struct
 typedef struct free_list_header {
    u_int32_t magic;  // ought to contain MAGIC_FREE
    vsize_t size;     // # bytes in this block (including header)
@@ -48,13 +44,13 @@ typedef struct free_list_header {
    vlink_t prev;     // memory[] index of previous free block
 } free_header_t;
 
-// Header struct: Allocated blocks
+// Allocated block struct
 typedef struct alloc_block_header {
    u_int32_t magic;  // ought to contain MAGIC_ALLOC
    vsize_t size;     // # bytes in this block (including header)
 } alloc_header_t;
 
-// Global Data: To reference block of memory you want to use for the allocator
+// Global Data - For allocation use
 static byte *memory = NULL;   // pointer to start of allocator memory
 static vaddr_t free_list_ptr; // index in memory[] of first block in free list
 static vsize_t memory_size;   // number of bytes malloc'd in memory[]
@@ -99,6 +95,20 @@ static u_int32_t conv_mult_4(u_int32_t n) {
    return n;
 }
 
+// Convert index to ptr
+static void *conv_to_ptr(vlink_t index) {        // TYPECASTING TO (VOID *) -> Add vaddr_t to &memory[0]
+   void *ptr;
+   ptr = memory + index;   // memory address in hex + free_region_header address = ptr to first byte after header (for alloc block)
+   return ptr;
+}
+
+// Convert ptr to index
+/*static u_int32_t conv_to_ind(void *ptr) {
+   vlink_t index = 0;
+   index = (byte *) ptr - memory;   // ptr address in hex - memory address in hex
+   return index;   // returning index
+}*/
+
 static void vlad_merge();
 
 // ###################
@@ -116,27 +126,27 @@ static void vlad_merge();
 void vlad_init(u_int32_t size)
 {
    //printf("Begin mem alloc\n");
-   if (memory == NULL) {            // test for < MIN and if power of 2
+   if (memory == NULL) {               // test for < MIN and if power of 2
       if (size < MIN_MALLOC) {     
          //printf("Conv to MIN\n");         
-         size = MIN_MALLOC;           // convert size to MIN
+         size = MIN_MALLOC;            // convert size to MIN
          memory = malloc(size);
       } else {
          //printf("Conv to POW\n");
-         size = conv_power(size);   // convert size to next power of 2
+         size = conv_power(size);      // convert size to next power of 2
          assert(is_power_2(size) == TRUE);
          memory = malloc(size);
       }
    }
-   //printf("Fin mem alloc\n");
-   if (memory == NULL){             // if malloc fails
+   //printf("Finish mem allocation\n");
+   if (memory == NULL){
       fprintf(stderr, "vlad_init: insufficient memory\n");
       exit(EXIT_FAILURE);
    }
-   memory_size = size;
    strategy = BEST_FIT;
-   free_list_ptr = (vaddr_t) 0;                           // typecasting memory add
-   free_header_t *init_header = (free_header_t *) memory; // typecasting ptr --> memory
+   memory_size = size;
+   free_list_ptr = (vaddr_t) 0; // memory index default = 0 (first position in array)
+   free_header_t *init_header = (free_header_t *) memory;
    init_header->magic = MAGIC_FREE;
    init_header->size = size;
    init_header->next = free_list_ptr;
@@ -155,27 +165,45 @@ void vlad_init(u_int32_t size)
 
 void *vlad_malloc(u_int32_t n)
 {
-   // TODO for Milestone 2
-   free_header_t *curr = (free_header_t*) (free_list_ptr); // converting index to pointer
-   // 1. Takes in request to allocate n bytes
-   // 2. If n != multiple of 4, round up to next smallest multiple of 4 --> Insert conversion function
-   printf("Size of n bytes before all else is: %d", n);
+   printf("Size of n bytes before all else is: %d", n);               // Check and convert n bytes
    if (n < MIN_ALLOCATE) {
       n = MIN_ALLOCATE;
       printf("After conversion, size of n bytes is: %d", n);
-   }
-   if (n%MULTIPLE != 0) {
+   } else if (n%MULTIPLE != 0) {
       conv_mult_4(n);
       printf("After conversion, size of n bytes is: %d", n);
    }
-   // 3. If n == multiple of 4, then it can be used for allocation
 
-   // 4. Start Traverse, from the region pointed to by FREE_LIST_PTR (the first free region available in the free list)
-   // 5. Continue Traversal, until a region is found that is > required n allocation
-   // 6. If region >= THRESHOLD, then split into two regions;
+   free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr); // Init ptr to first free block
+   if (curr->magic != MAGIC_FREE) {                                   // Check for memory corruption
+      fprintf(stderr, "vlad_alloc: Memory corruption\n");
+      exit(EXIT_FAILURE);
+   }
+
+   while (curr->size < (ALLOC_HEADER_SIZE + n)) {                     // Search for a region
+      curr = (free_header_t *) conv_to_ptr(curr->next);
+   }
+
+   alloc_header_t *newAlloc;
+   if (curr->size > THRESHOLD) {                                      // Split or allocate region
+      newAlloc = (alloc_header_t *) conv_to_ptr(curr->prev); 
+   } else {
+      newAlloc = (alloc_header_t *) conv_to_ptr(curr->prev);
+      newAlloc->magic = MAGIC_ALLOC;
+      newAlloc->size = ALLOC_HEADER_SIZE + n;      // # bytes + header in this block
+   }
+
+   //   continue traversing the list until the current free block is larger than N + HEADER
+   //   convert the curr free block into allocated block
+   //   re-attach things
+   //   re-point new free_list_ptr (if the first free block was allocated)
+
+
+
+   // 4. If region >= THRESHOLD, then split into two regions;
          // (1) Allocated Region (multiple of 4)
          // (2) Free Region (at least 2 * FREE_LIST_HEADER size), placed in the correct pos in free list
-   // 7. If region < THRESHOLD, then allocate the entire region
+   // 5. If region < THRESHOLD, then allocate the entire region
    return NULL;
 }
 
@@ -213,7 +241,6 @@ void vlad_end(void)
 {
    // TODO for Milestone 1
    free(memory);
-   assert(memory == NULL);
    printf("Vlad the impaler is dead!\n");
 }
 
