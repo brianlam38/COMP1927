@@ -24,7 +24,7 @@
 
 // BRIAN'S MACROS
 #define MIN_SIZE       1024
-#define POWER          2
+#define POWER          2      // possibly remove this, as value is intuitive enough???
 #define TRUE           0
 #define FALSE          1
 
@@ -123,6 +123,7 @@ void vlad_init(u_int32_t size)
    init_header->size = size;
    init_header->next = free_list_ptr;
    init_header->prev = free_list_ptr;
+   //printf("Initialisation successful\n");
 }
 
 
