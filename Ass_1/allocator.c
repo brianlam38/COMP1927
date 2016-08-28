@@ -85,7 +85,7 @@ static u_int32_t conv_power(u_int32_t size) {
    return size;
 }
 
-// Convert allocation bytes to multiple of 4
+// Convert allocation n bytes to multiple of 4
 static u_int32_t conv_mult_4(u_int32_t n) {
    while (n%MULTIPLE != 0) {
       n++;
@@ -163,29 +163,38 @@ void vlad_init(u_int32_t size)
 //                      for a newly-allocated region of some size >= 
 //                      n + header size.
 
+// free_list_ptr = address in memory[] (index, not real ptr)
+// free_header_t* = ptr to free block struct
+
 void *vlad_malloc(u_int32_t n)
-{
-   printf("Size of n bytes before all else is: %d", n);               // Check and convert n bytes
-   if (n < MIN_ALLOCATE) {
+{ 
+   // Convert n bytes
+   if (n < MIN_ALLOCATE) {                               
       n = MIN_ALLOCATE;
-      printf("After conversion, size of n bytes is: %d", n);
    } else if (n%MULTIPLE != 0) {
       conv_mult_4(n);
-      printf("After conversion, size of n bytes is: %d", n);
    }
-
-   free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr); // Init ptr to first free block
-   if (curr->magic != MAGIC_FREE) {                                   // Check for memory corruption
+   // Initialise ptr to first free block
+   free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
+   if (curr->magic != MAGIC_FREE) {
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
-
-   while (curr->size < (ALLOC_HEADER_SIZE + n)) {                     // Search for a region
-      curr = (free_header_t *) conv_to_ptr(curr->next);
+   // Search for a region
+   free_header_t *useful = NULL;
+   while (curr->next != free_list_ptr) {
+      if (curr->size > (ALLOC_HEADER_SIZE + n)) {          // Region found
+         useful = curr;    
+      }
    }
-
-   alloc_header_t *newAlloc;
-   if (curr->size > THRESHOLD) {                                      // Split or allocate region
+   if (curr->next == free_list_ptr) {                      // No regions to allocate
+      return NULL;
+   }
+   // Split or allocate region
+         // (1) Allocated Region (multiple of 4)
+         // (2) Free Region (at least 2 * FREE_LIST_HEADER size), placed in the correct pos in free list
+   alloc_header_t *newAlloc = NULL;
+   if (curr->size > THRESHOLD) {
       newAlloc = (alloc_header_t *) conv_to_ptr(curr->prev); 
    } else {
       newAlloc = (alloc_header_t *) conv_to_ptr(curr->prev);
@@ -193,16 +202,11 @@ void *vlad_malloc(u_int32_t n)
       newAlloc->size = ALLOC_HEADER_SIZE + n;      // # bytes + header in this block
    }
 
-   //   continue traversing the list until the current free block is larger than N + HEADER
-   //   convert the curr free block into allocated block
-   //   re-attach things
    //   re-point new free_list_ptr (if the first free block was allocated)
 
 
 
-   // 4. If region >= THRESHOLD, then split into two regions;
-         // (1) Allocated Region (multiple of 4)
-         // (2) Free Region (at least 2 * FREE_LIST_HEADER size), placed in the correct pos in free list
+
    // 5. If region < THRESHOLD, then allocate the entire region
    return NULL;
 }
