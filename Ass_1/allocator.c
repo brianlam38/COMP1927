@@ -117,17 +117,17 @@ static void vlad_merge();
 void vlad_init(u_int32_t size)
 {
    // Convert size and initialise memory
-   if (memory == NULL) {               
-      if (size < MIN_MALLOC) {    
-         //printf("Conv to MIN\n");         
-         size = MIN_MALLOC;                  // convert size to MIN
+   if (memory == NULL) {
+      printf("Begin converting size\n");               
+      if (size < MIN_MALLOC) {             // convert size to MIN
+         size = MIN_MALLOC;
          assert(size == MIN_MALLOC);
          memory = malloc(size);
-      } else {
-         //printf("Conv to POW\n");
-         size = init_memory_size(size);            // convert size to next power of 2
+      } else {                             // convert size to next power of 2
+         size = init_memory_size(size);    
          memory = malloc(size);
       }
+      printf("Begin assigning all other variables\n");      
       strategy = BEST_FIT;
       memory_size = size;
       free_list_ptr = (vaddr_t) 0;
@@ -137,13 +137,11 @@ void vlad_init(u_int32_t size)
       init_header->next = free_list_ptr;
       init_header->prev = free_list_ptr;
    }
-   //printf("Finish mem allocation\n");
    if (memory == NULL){
       fprintf(stderr, "vlad_init: insufficient memory\n");
       exit(EXIT_FAILURE);
    }
-
-   //printf("Initialisation successful\n");
+   printf("Initialisation successful\n");
 }
 
 // Input: n - number of bytes requested
@@ -158,90 +156,78 @@ void vlad_init(u_int32_t size)
 // free_header_t* = ptr to free block struct 
 
 void *vlad_malloc(u_int32_t n)
-{ 
-   // Convert n bytes
-   printf("(1) Begin conversion\n");
+{
+   // Convert n bytes to suitable size
    n = conv_n_bytes(n);
    printf("...Conversion is successful!\n");
-   // Set current ptr to 1st free block
+   // Initialise current ptr to first block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
    if (curr->magic != MAGIC_FREE) {
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
    // Search for suitable region
-   printf("(2) Begin search for suitable region\n");
    int found = FALSE;
    free_header_t *chosen = NULL;
    do {
       assert(curr->magic == MAGIC_FREE);
       if (curr->size >= (ALLOC_HEADER_SIZE + n)) {          // Suitable region found
+         printf("selected region size = %u\n", curr->size);
          chosen = curr;
-         chosen->size = curr->size; 
-         found = TRUE;
-      } else {                                             // Continue free block traverse
-         curr = (free_header_t *) conv_to_ptr(curr->next);
+         found = TRUE;  
+      } else {                                              // Continue free block traverse
+         curr = (free_header_t*) conv_to_ptr(curr->next);
       }
    } while (curr != conv_to_ptr(free_list_ptr) && found == FALSE);
    printf("...Region is found!\n");
-
    printf("...Size of chosen is: %d\n", chosen->size);
-
    // Check if chosen is last free region available
-   printf("(3) Begin last free region check\n");   
    if (chosen->next == conv_to_ind(chosen) && chosen->size < THRESHOLD) {
       return NULL;
    }
    printf("...Passed last free region check\n"); 
 
-   // Determine split and or allocate
+   // Allocation PART 1: Declare pointers
    alloc_header_t *allocPart = NULL;
    free_header_t *freePart = NULL;
-   free_header_t *temp1 = NULL;
-   free_header_t *temp2 = NULL;
-   byte *nextFree;                                                 // Declare nextFree memory address
-
-   // Allocation
-   printf("(4) Begin allocation process\n");
+   free_header_t *chosenPrev = NULL;
+   free_header_t *chosenNext = NULL;
+   // Allocation PART 2: Initialise allocated region
+   int originalSize = chosen->size;                      // Save size of chosen
    allocPart = (alloc_header_t *) chosen;
+   vsize_t allocSize = ALLOC_HEADER_SIZE + n;            // Save size of allocated region
    allocPart->magic = MAGIC_ALLOC;
-   allocPart->size = ALLOC_HEADER_SIZE + n;
+   allocPart->size = allocSize;
    printf("...Size of allocPart is: %d\n", allocPart->size);
-
-   // Relinking free regions
-   printf("(5) Begin relinking process\n");
-   if (chosen->size >= THRESHOLD) {
-      // Connect remaining free block onto free list
-      printf("Start relinking remaining block onto free list\n");
-      nextFree = (byte *) chosen + (allocPart->size);
+   
+   // Relinking free regions                                       
+   if (originalSize >= THRESHOLD) {
+      // Connect remaining free block onto free list     
+      byte *nextFree;
+      nextFree = (byte *) chosen + allocSize;
       freePart = (free_header_t *) nextFree;
-      freePart->next = chosen->next;
-      freePart->prev = chosen->prev;
-      printf("Size of chosen is: %d\n", chosen->size);
-      printf("Size of freePart is: %d\n", freePart->size);
-      printf("Size of allocPart is: %d\n", allocPart->size);
-
-      temp1 = conv_to_ptr(chosen->prev);
-      temp2 = conv_to_ptr(chosen->next);
-      temp1->next = conv_to_ind(freePart);
-      temp2->prev = conv_to_ind(freePart);
-
-      freePart->size = (chosen->size) - (allocPart->size);
       freePart->magic = MAGIC_FREE;
-      chosen->magic = MAGIC_ALLOC;
+      freePart->size = originalSize - allocSize;
+      printf("...Size of freePart is: %d\n", freePart->size);
+      
+      chosenPrev = conv_to_ptr(chosen->prev);
+      chosenPrev->next = conv_to_ind(freePart);
+      freePart->prev = chosen->prev;
+      chosenNext = conv_to_ptr(chosen->next);
+      chosenNext->prev = conv_to_ind(freePart);
+      freePart->next = chosen->next;
    } else {
       // Re-link prev free region to next region
-      printf("Start relinking prev region to next region\n");
-      temp1 = conv_to_ptr(chosen->prev);
-      temp2 = conv_to_ptr(chosen->next);
-      temp1->next = conv_to_ind(temp2);
-      temp2->prev = conv_to_ind(temp1);
-      chosen->magic = MAGIC_ALLOC;
+      chosenPrev = conv_to_ptr(chosen->prev);
+      chosenPrev->next = chosen->next;
+      chosenNext = conv_to_ptr(chosen->next);
+      chosenNext->prev = chosen->prev;
    }
-
-   //   re-point new free_list_ptr (if the first free block was allocated)
+   // Re-point free_list_ptr to the correct region
    curr = (free_header_t *) conv_to_ptr(free_list_ptr);
-   if (curr->magic == MAGIC_ALLOC) free_list_ptr = curr->next;
+   if (curr->magic == MAGIC_ALLOC) {
+      free_list_ptr = curr->next;
+   }
 
    byte *chosen_ptr = (byte *) allocPart;
    return ((void*) chosen_ptr + ALLOC_HEADER_SIZE);            // Return 1st byte immediately after header of allocated region
