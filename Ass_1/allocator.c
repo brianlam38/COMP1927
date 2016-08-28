@@ -184,7 +184,7 @@ void *vlad_malloc(u_int32_t n)
    int found = FALSE;
    free_header_t *chosen = NULL;
    while (found == FALSE) {
-      if (curr->size < (ALLOC_HEADER_SIZE + n)) {          // Suitable region found
+      if (curr->size > (ALLOC_HEADER_SIZE + n)) {          // Suitable region found
          chosen = curr;
          chosen->size = curr->size; 
          found = TRUE;  
@@ -196,15 +196,20 @@ void *vlad_malloc(u_int32_t n)
       }
    }
 
-   // Split or allocate
+   // Check if chosen is the last free region available
+   if (chosen->next == conv_to_ind(chosen)) {
+      return NULL;
+   }
+
+   // Determine split and or allocate
    alloc_header_t *allocPart = NULL;
    free_header_t *freePart = NULL;
-   byte *freeAddr = (byte *) chosen + (chosen->size);  // Set remaining free addr =
-   if (chosen->size >= THRESHOLD) {                                // Region is split, then allocated
+   byte *freeAddr = (byte *) chosen + (chosen->size);
+   if (chosen->size >= THRESHOLD) {                                // Allocation with split
       // Connect remaining free block onto free list
       freePart = (free_header_t *) freeAddr;
-      freePart->next = chosen->next;                               // Point next freePart = chosen->next
-      freePart->prev = conv_to_ind(chosen);                        // Point prev freePart
+      freePart->next = chosen->next;
+      freePart->prev = conv_to_ind(chosen);
       freePart->size = (chosen->size) - (ALLOC_HEADER_SIZE + n);
       freePart->magic = MAGIC_FREE;  
       // Set allocPart = same index as chosen (start of the address)
@@ -214,14 +219,11 @@ void *vlad_malloc(u_int32_t n)
       // Re-attach chosen
       chosen->size = (chosen->size) - (ALLOC_HEADER_SIZE + n);
       chosen->next = conv_to_ind(freePart);
-
-
-   } else {                                                       // Region is simply allocated
-      allocPart = (alloc_header_t *) conv_to_ptr(chosen->prev);
+   } else {                                                         // Allocation without split      
+      allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
       allocPart->magic = MAGIC_ALLOC;
       allocPart->size = ALLOC_HEADER_SIZE + n;
    }
-
 
    //   re-point new free_list_ptr (if the first free block was allocated)
 
