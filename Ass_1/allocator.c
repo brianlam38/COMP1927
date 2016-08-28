@@ -61,28 +61,16 @@ static u_int32_t strategy;    // allocation strategy (by default BEST_FIT)
 // #################
 
 // Determine if size is power 2
-static int is_power_2(u_int32_t size) {
-   assert(size >= MIN_MALLOC);                
-   int val = size; 
-   while ((val != POWER) && (val%POWER == 0)) {
-      val = (val/POWER);
-   }
-   if (val == POWER) {
-      return TRUE;
-   } else {
-      return FALSE;
-   }
-}
-
-// Convert size to next smallest power of 2
-static u_int32_t conv_power(u_int32_t size) {
+static u_int32_t init_memory_size(u_int32_t size) {
    assert(size >= MIN_MALLOC);
-   //printf("Before conversion, size is: %d bytes\n", size);
-   while (is_power_2(size) == FALSE) {
-      size = size + POWER;
+   printf("Before conversion, size is: %d bytes\n", size);
+   
+   int convertedSize = MIN_MALLOC;
+   while (size > convertedSize) {
+      convertedSize *= 2;
    }
-   //printf("After conversion, size is: %d bytes\n", size);
-   return size;
+   printf("After conversion, size is: %d bytes\n", convertedSize);
+   return convertedSize;
 }
 
 // Convert n bytes into appropriate size for allocation
@@ -137,24 +125,24 @@ void vlad_init(u_int32_t size)
          memory = malloc(size);
       } else {
          //printf("Conv to POW\n");
-         size = conv_power(size);            // convert size to next power of 2
-         assert(is_power_2(size) == TRUE);
+         size = init_memory_size(size);            // convert size to next power of 2
          memory = malloc(size);
       }
+      strategy = BEST_FIT;
+      memory_size = size;
+      free_list_ptr = (vaddr_t) 0;
+      free_header_t *init_header = (free_header_t *) memory;
+      init_header->magic = MAGIC_FREE;
+      init_header->size = size;
+      init_header->next = free_list_ptr;
+      init_header->prev = free_list_ptr;
    }
    //printf("Finish mem allocation\n");
    if (memory == NULL){
       fprintf(stderr, "vlad_init: insufficient memory\n");
       exit(EXIT_FAILURE);
    }
-   strategy = BEST_FIT;
-   memory_size = size;
-   free_list_ptr = (vaddr_t) 0;
-   free_header_t *init_header = (free_header_t *) memory;
-   init_header->magic = MAGIC_FREE;
-   init_header->size = size;
-   init_header->next = free_list_ptr;
-   init_header->prev = free_list_ptr;
+
    //printf("Initialisation successful\n");
 }
 
@@ -173,13 +161,14 @@ void *vlad_malloc(u_int32_t n)
 { 
    // Convert n bytes
    n = conv_n_bytes(n);
-
+   printf("Conversion is successful!\n");
    // Set current ptr to 1st free block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
    if (curr->magic != MAGIC_FREE) {
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
+   printf("Starting search for suitable region...\n");
    // Search for suitable region
    int found = FALSE;
    free_header_t *chosen = NULL;
@@ -195,6 +184,7 @@ void *vlad_malloc(u_int32_t n)
          return NULL;
       }
    }
+   printf("Region is found!\n");
 
    // Check if chosen is last free region available
    if (chosen->next == conv_to_ind(chosen)) {
@@ -300,6 +290,7 @@ static void vlad_merge()
 
 void vlad_end(void)
 {
+   memory = NULL;
    free(memory);
    printf("Vlad the impaler is dead!\n");
 }
