@@ -125,11 +125,12 @@ static void vlad_merge();
 
 void vlad_init(u_int32_t size)
 {
-   //printf("Begin mem alloc\n");
-   if (memory == NULL) {               // test for < MIN and if power of 2
-      if (size < MIN_MALLOC) {     
+   // Convert size and initialise memory
+   if (memory == NULL) {               
+      if (size < MIN_MALLOC) {    
          //printf("Conv to MIN\n");         
          size = MIN_MALLOC;            // convert size to MIN
+         assert(size == MIN_MALLOC);
          memory = malloc(size);
       } else {
          //printf("Conv to POW\n");
