@@ -172,7 +172,7 @@ void *vlad_malloc(u_int32_t n)
    if (n < MIN_ALLOCATE) {                               
       n = MIN_ALLOCATE;
    } else if (n%MULTIPLE != 0) {
-      conv_mult_4(n);
+      n = conv_mult_4(n);
    }
    // Initialise curr ptr to first free block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
