@@ -249,12 +249,12 @@ void vlad_free(void *object)
    printf("...Initialisation successful\n");
 
    byte *regionStart = (byte *) alloc_block - ALLOC_HEADER_SIZE;
-   //Check if ptr lies within malloc'd memory
-   /*
-      if (regionStart >= ) {
+   
+   //Check if ptr lies within allocated region
+   if (regionStart >= NULL) {
       fprintf(stderr, "vlad_free: Attempt to free via invalid pointer\n");
       exit(EXIT_FAILURE);
-   }*/
+   }
 
    // Check if region is allocated
    if (alloc_block->magic != MAGIC_ALLOC){
@@ -263,22 +263,11 @@ void vlad_free(void *object)
    }
    printf("...Region is currently allocated\n");
 
-   /*
-   vaddr_t index = conv_to_ind(alloc_block);
-   free_header_t *curr = (free_header_t *) conv_to_ptr(free_list_ptr);
-
-   if ((index < curr->next) || (index < conv_to_ind(curr))){ // if index is not in front of whole list
-      while (index > curr->next){ // loop till index is sandwiched
-         curr = conv_to_ptr(curr->next); // otherwise index is in front, so already in right place
-      }
-   }
-   */
-
    // Re-arrange free_list_ptr to correct region
    if (index < free_list_ptr){
       free_list_ptr = index;
    }
-   vlad_merge();
+   vlad_merge(index);
 }
 
 // Input: current state of the memory[]
@@ -296,31 +285,13 @@ static void vlad_merge(vaddr_t index)
    while (curr->next != conv_to_ptr(free_list_ptr)) {
       if (index + curr->size == curr->next){
          temp->magic = 0;
-         curr->size = curr->size*2;
          curr->next = temp->next;
          temp = conv_to_ptr(temp->next);
          temp->prev = index;
-         merge(index);
+         vlad_merge(index);
       }
       temp = curr;
       curr = conv_to_ptr(curr->next);
-   }
-
-
-   // check prev region
-   temp = (free_header_t *) itop(curr->prev);
-   if ((curr->size == temp->size) && (index - curr->size == curr->prev)){ // check size and adjacency
-      // check tesselation
-      index = index - curr->size;
-      if (index % (curr->size*2) == 0){
-         // tesselates, so can merge
-         curr->magic = 0;
-         temp->size = curr->size*2;
-         temp->next = curr->next;
-         curr = itop(curr->next);
-         curr->prev = index;
-         merge(index);        
-      }
    }
 }
 
