@@ -87,6 +87,9 @@ static u_int32_t conv_power(u_int32_t size) {
 
 // Convert allocation n bytes to multiple of 4
 static u_int32_t conv_mult_4(u_int32_t n) {
+   if (n < MIN_ALLOCATE) {
+      n = MIN_ALLOCATE;
+   }
    while (n%MULTIPLE != 0) {
       n++;
    }
@@ -169,11 +172,8 @@ void vlad_init(u_int32_t size)
 void *vlad_malloc(u_int32_t n)
 { 
    // Convert n bytes
-   if (n < MIN_ALLOCATE) {                               
-      n = MIN_ALLOCATE;
-   } else if (n%MULTIPLE != 0) {
-      n = conv_mult_4(n);
-   }
+   n = conv_mult_4(n);
+
    // Initialise curr ptr to first free block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
    if (curr->magic != MAGIC_FREE) {
