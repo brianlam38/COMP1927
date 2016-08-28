@@ -256,7 +256,30 @@ void *vlad_malloc(u_int32_t n)
 
 void vlad_free(void *object)
 {
-   // TODO for Milestone 3
+   byte *alloc_addr;
+   alloc_header_t *alloc_block;
+
+   alloc_addr = (void *) object;
+   alloc_block = (alloc_header_t *) alloc_addr;
+
+   vaddr_t index = conv_to_ind(alloc_block); // index of allocated block
+
+
+   // Check if ptr lies within malloc'd memory
+   if (alloc_block->magic != MAGIC_ALLOC){
+      fprintf(stderr, "vlad_free: Attempt to free via invalid pointer\n");
+      exit(EXIT_FAILURE);
+   }
+   // Check if region is allocated
+   if (alloc_block->magic != MAGIC_ALLOC){
+      fprintf(stderr, "vlad_free: Attempt to free via non-allocated memory\n");
+      exit(EXIT_FAILURE);
+   }
+
+   if (index < free_list_ptr){ // change free_list_ptr to be lowest index
+      free_list_ptr = index;
+      // printf("%x\n",(int) free_list_ptr);
+   }
    vlad_merge();
 }
 
