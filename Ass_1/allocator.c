@@ -160,6 +160,7 @@ void vlad_init(u_int32_t size)
 void *vlad_malloc(u_int32_t n)
 { 
    // Convert n bytes
+   printf("(1) Begin conversion\n");
    n = conv_n_bytes(n);
    printf("Conversion is successful!\n");
    // Set current ptr to 1st free block
@@ -168,30 +169,31 @@ void *vlad_malloc(u_int32_t n)
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
-   printf("Starting search for suitable\n");
    // Search for suitable region
+   printf("(2) Begin search for suitable region\n");
    int found = FALSE;
    free_header_t *chosen = NULL;
-   while (found == FALSE) {
+   do {
+      assert(curr->magic == MAGIC_FREE);
       if (curr->size >= (ALLOC_HEADER_SIZE + n)) {          // Suitable region found
          chosen = curr;
          chosen->size = curr->size; 
-         found = TRUE;  
+         found = TRUE;
       } else {                                             // Continue free block traverse
-         curr = (free_header_t*) conv_to_ptr(curr->next);
+         curr = (free_header_t *) conv_to_ptr(curr->next);
       }
-      if (curr->next == free_list_ptr) {                   // No suitable region found
-         return NULL;
-      }
-   }
+   } while (curr != conv_to_ptr(free_list_ptr) && found == FALSE);
    printf("Region is found!\n");
 
    // Check if chosen is last free region available
-   if (chosen->next == conv_to_ind(chosen)) {
+   printf("(3) Begin last free region check\n");   
+   if (chosen->next == conv_to_ind(chosen) && chosen->size < THRESHOLD) {
       return NULL;
    }
+   printf("Passed last free region check\n"); 
 
    // Determine split and or allocate
+   printf("(4) Begin allocation and or split\n");
    alloc_header_t *allocPart = NULL;
    free_header_t *freePart = NULL;
    free_header_t *temp1 = NULL;
