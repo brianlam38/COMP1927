@@ -168,7 +168,7 @@ void *vlad_malloc(u_int32_t n)
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
-   printf("Starting search for suitable region...\n");
+   printf("Starting search for suitable\n");
    // Search for suitable region
    int found = FALSE;
    free_header_t *chosen = NULL;
