@@ -204,21 +204,20 @@ void *vlad_malloc(u_int32_t n)
    // Determine split and or allocate
    alloc_header_t *allocPart = NULL;
    free_header_t *freePart = NULL;
-   byte *freeAddr = (byte *) chosen + (chosen->size);
+   byte *nextFree;                                                 // Declare nextFree memory address
    if (chosen->size >= THRESHOLD) {                                // Allocation with split
+      // Set allocPart = same index as chosen (start of the address)
+      allocPart = (alloc_header_t *) chosen;
+      allocPart->magic = MAGIC_ALLOC;
+      allocPart->size = ALLOC_HEADER_SIZE + n;
+      // Set nextFree memory address = region after allocated block
+      nextFree = (byte *) chosen + (ALLOC_HEADER_SIZE + n);
       // Connect remaining free block onto free list
-      freePart = (free_header_t *) freeAddr;
+      freePart = (free_header_t *) nextFree;
       freePart->next = chosen->next;
-      freePart->prev = conv_to_ind(chosen);
+      freePart->prev = chosen->prev;
       freePart->size = (chosen->size) - (ALLOC_HEADER_SIZE + n);
       freePart->magic = MAGIC_FREE;  
-      // Set allocPart = same index as chosen (start of the address)
-      allocPart = (alloc_header_t *) conv_to_ptr(chosen->prev);
-      allocPart->magic = MAGIC_ALLOC;
-      allocPart->size = ALLOC_HEADER_SIZE + n;  
-      // Re-attach chosen
-      chosen->size = (chosen->size) - (ALLOC_HEADER_SIZE + n);
-      chosen->next = conv_to_ind(freePart);
    } else {                                                         // Allocation without split      
       allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
       allocPart->magic = MAGIC_ALLOC;
@@ -228,7 +227,7 @@ void *vlad_malloc(u_int32_t n)
    //   re-point new free_list_ptr (if the first free block was allocated)
 
    byte *chosen_ptr = (byte *) allocPart;
-   return ((void*) chosen_ptr + ALLOC_HEADER_SIZE);            // Return first byte after header for allocated region (location of allocated region)
+   return ((void*) chosen_ptr + ALLOC_HEADER_SIZE);            // Return 1st byte immediately after header of allocated region
 }
 
 
