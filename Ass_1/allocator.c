@@ -248,13 +248,15 @@ void vlad_free(void *object)
    alloc_header_t *alloc_block = (alloc_header_t *) alloc_addr;
    printf("...Initialisation successful\n");
 
-   byte *regionStart = (byte *) alloc_block - ALLOC_HEADER_SIZE;
+   vaddr_t index = conv_to_ind(alloc_block);
+
+   //byte *regionStart = (byte *) alloc_block - ALLOC_HEADER_SIZE;
    
-   //Check if ptr lies within allocated region
+   /*Check if ptr lies within allocated region
    if (regionStart >= NULL) {
       fprintf(stderr, "vlad_free: Attempt to free via invalid pointer\n");
       exit(EXIT_FAILURE);
-   }
+   }*/
 
    // Check if region is allocated
    if (alloc_block->magic != MAGIC_ALLOC){
@@ -282,9 +284,8 @@ static void vlad_merge(vaddr_t index)
    free_header_t *curr = (free_header_t *) conv_to_ptr(index);
    free_header_t *temp = (free_header_t *) conv_to_ptr(index);
    // Check adjacency
-   while (curr->next != conv_to_ptr(free_list_ptr)) {
-      if (index + curr->size == curr->next){
-         temp->magic = 0;
+   while (curr->next != free_list_ptr) {
+      if (index + curr->size == curr->next){ 
          curr->next = temp->next;
          temp = conv_to_ptr(temp->next);
          temp->prev = index;
