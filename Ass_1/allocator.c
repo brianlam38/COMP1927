@@ -208,39 +208,33 @@ void *vlad_malloc(u_int32_t n)
    free_header_t *temp2 = NULL;
    byte *nextFree;                                                 // Declare nextFree memory address
    if (chosen->size >= THRESHOLD) {                                // Allocation with split
-      // Set allocPart = same index as chosen (start of the address)
+      // Allocate region partially
       allocPart = (alloc_header_t *) chosen;
       allocPart->magic = MAGIC_ALLOC;
       allocPart->size = ALLOC_HEADER_SIZE + n;
-      // Set nextFree memory address = region after allocated block
-      nextFree = (byte *) chosen + (allocPart->size);
       // Connect remaining free block onto free list
+      nextFree = (byte *) chosen + (allocPart->size);
       freePart = (free_header_t *) nextFree;
       freePart->next = chosen->next;
       freePart->prev = chosen->prev;
       temp1 = conv_to_ptr(chosen->prev);
-      temp1->next = conv_to_ind(freePart);
       temp2 = conv_to_ptr(chosen->next);
+      temp1->next = conv_to_ind(freePart);
       temp2->prev = conv_to_ind(freePart);
       freePart->size = (chosen->size) - (allocPart->size);
-      freePart->magic = MAGIC_FREE;  
+      freePart->magic = MAGIC_FREE;
+      chosen->magic = MAGIC_ALLOC;  
    } else {                                                         // Allocation without split
-      // Set allocPart    
+      // Allocate entire region
       allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
       allocPart->magic = MAGIC_ALLOC;
       allocPart->size = ALLOC_HEADER_SIZE + n;
-      // Set nextFree memory address
-      nextFree = (byte *) chosen + (allocPart->size);
-      // Connect remaining free block onto free list
-      freePart = (free_header_t *) nextFree;
-      freePart->next = chosen->next;
-      freePart->prev = chosen->prev;
+      // Re-link prev free region to next region
       temp1 = conv_to_ptr(chosen->prev);
-      temp1->next = conv_to_ind(freePart);
       temp2 = conv_to_ptr(chosen->next);
-      temp2->prev = conv_to_ind(freePart);
-      freePart->size = (chosen->size) - (allocPart->size);
-      freePart->magic = MAGIC_FREE;        
+      temp1->next = conv_to_ind(temp2);
+      temp2->prev = conv_to_ind(temp1);
+      chosen->magic = MAGIC_ALLOC;      
    }
 
    //   re-point new free_list_ptr (if the first free block was allocated)
