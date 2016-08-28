@@ -81,7 +81,7 @@ static u_int32_t conv_n_bytes(u_int32_t n) {
    while (n%MULTIPLE != 0) {
       n++;
    }
-   printf("n bytes is now size: %d\n", n);
+   printf("...n bytes is now size: %d\n", n);
    assert(n%MULTIPLE == 0);
    return n;
 }
@@ -162,7 +162,7 @@ void *vlad_malloc(u_int32_t n)
    // Convert n bytes
    printf("(1) Begin conversion\n");
    n = conv_n_bytes(n);
-   printf("Conversion is successful!\n");
+   printf("...Conversion is successful!\n");
    // Set current ptr to 1st free block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
    if (curr->magic != MAGIC_FREE) {
@@ -183,31 +183,34 @@ void *vlad_malloc(u_int32_t n)
          curr = (free_header_t *) conv_to_ptr(curr->next);
       }
    } while (curr != conv_to_ptr(free_list_ptr) && found == FALSE);
-   printf("Region is found!\n");
+   printf("...Region is found!\n");
 
-      printf("Size of chosen is: %d\n", chosen->size);
+   printf("...Size of chosen is: %d\n", chosen->size);
 
    // Check if chosen is last free region available
    printf("(3) Begin last free region check\n");   
    if (chosen->next == conv_to_ind(chosen) && chosen->size < THRESHOLD) {
       return NULL;
    }
-   printf("Passed last free region check\n"); 
+   printf("...Passed last free region check\n"); 
 
    // Determine split and or allocate
-   printf("(4) Begin allocation and or split\n");
    alloc_header_t *allocPart = NULL;
    free_header_t *freePart = NULL;
    free_header_t *temp1 = NULL;
    free_header_t *temp2 = NULL;
    byte *nextFree;                                                 // Declare nextFree memory address
-   if (chosen->size >= THRESHOLD) {                                // Allocation with split
-      // Allocate region partially
-      printf("Start partial allocation\n");    
-      allocPart = (alloc_header_t *) chosen;
-      allocPart->magic = MAGIC_ALLOC;
-      allocPart->size = ALLOC_HEADER_SIZE + n;
 
+   // Allocation
+   printf("(4) Begin allocation process\n");
+   allocPart = (alloc_header_t *) chosen;
+   allocPart->magic = MAGIC_ALLOC;
+   allocPart->size = ALLOC_HEADER_SIZE + n;
+   printf("...Size of allocPart is: %d\n", allocPart->size);
+
+   // Relinking free regions
+   printf("(5) Begin relinking process\n");
+   if (chosen->size >= THRESHOLD) {
       // Connect remaining free block onto free list
       printf("Start relinking remaining block onto free list\n");
       nextFree = (byte *) chosen + (allocPart->size);
@@ -226,13 +229,7 @@ void *vlad_malloc(u_int32_t n)
       freePart->size = (chosen->size) - (allocPart->size);
       freePart->magic = MAGIC_FREE;
       chosen->magic = MAGIC_ALLOC;
-   } else {                                                         // Allocation without split
-      // Allocate entire region
-      printf("Start whole region allocation\n"); 
-      allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
-      allocPart->magic = MAGIC_ALLOC;
-      allocPart->size = ALLOC_HEADER_SIZE + n;
-
+   } else {
       // Re-link prev free region to next region
       printf("Start relinking prev region to next region\n");
       temp1 = conv_to_ptr(chosen->prev);
