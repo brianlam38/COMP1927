@@ -185,6 +185,8 @@ void *vlad_malloc(u_int32_t n)
    } while (curr != conv_to_ptr(free_list_ptr) && found == FALSE);
    printf("Region is found!\n");
 
+      printf("Size of chosen is: %d\n", chosen->size);
+
    // Check if chosen is last free region available
    printf("(3) Begin last free region check\n");   
    if (chosen->next == conv_to_ind(chosen) && chosen->size < THRESHOLD) {
@@ -201,32 +203,43 @@ void *vlad_malloc(u_int32_t n)
    byte *nextFree;                                                 // Declare nextFree memory address
    if (chosen->size >= THRESHOLD) {                                // Allocation with split
       // Allocate region partially
+      printf("Start partial allocation\n");    
       allocPart = (alloc_header_t *) chosen;
       allocPart->magic = MAGIC_ALLOC;
       allocPart->size = ALLOC_HEADER_SIZE + n;
+
       // Connect remaining free block onto free list
+      printf("Start relinking remaining block onto free list\n");
       nextFree = (byte *) chosen + (allocPart->size);
       freePart = (free_header_t *) nextFree;
       freePart->next = chosen->next;
       freePart->prev = chosen->prev;
+      printf("Size of chosen is: %d\n", chosen->size);
+      printf("Size of freePart is: %d\n", freePart->size);
+      printf("Size of allocPart is: %d\n", allocPart->size);
+
       temp1 = conv_to_ptr(chosen->prev);
       temp2 = conv_to_ptr(chosen->next);
       temp1->next = conv_to_ind(freePart);
       temp2->prev = conv_to_ind(freePart);
+
       freePart->size = (chosen->size) - (allocPart->size);
       freePart->magic = MAGIC_FREE;
-      chosen->magic = MAGIC_ALLOC;  
+      chosen->magic = MAGIC_ALLOC;
    } else {                                                         // Allocation without split
       // Allocate entire region
+      printf("Start whole region allocation\n"); 
       allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
       allocPart->magic = MAGIC_ALLOC;
       allocPart->size = ALLOC_HEADER_SIZE + n;
+
       // Re-link prev free region to next region
+      printf("Start relinking prev region to next region\n");
       temp1 = conv_to_ptr(chosen->prev);
       temp2 = conv_to_ptr(chosen->next);
       temp1->next = conv_to_ind(temp2);
       temp2->prev = conv_to_ind(temp1);
-      chosen->magic = MAGIC_ALLOC;      
+      chosen->magic = MAGIC_ALLOC;
    }
 
    //   re-point new free_list_ptr (if the first free block was allocated)
