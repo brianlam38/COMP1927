@@ -174,13 +174,13 @@ void *vlad_malloc(u_int32_t n)
    // Convert n bytes
    n = conv_n_bytes(n);
 
-   // Initialise curr ptr to first free block
+   // Set current ptr to 1st free block
    free_header_t *curr = (free_header_t*) conv_to_ptr(free_list_ptr);
    if (curr->magic != MAGIC_FREE) {
       fprintf(stderr, "vlad_alloc: Memory corruption\n");
       exit(EXIT_FAILURE);
    }
-   // Search for a suitable region
+   // Search for suitable region
    int found = FALSE;
    free_header_t *chosen = NULL;
    while (found == FALSE) {
@@ -196,7 +196,7 @@ void *vlad_malloc(u_int32_t n)
       }
    }
 
-   // Check if chosen is the last free region available
+   // Check if chosen is last free region available
    if (chosen->next == conv_to_ind(chosen)) {
       return NULL;
    }
@@ -216,7 +216,7 @@ void *vlad_malloc(u_int32_t n)
       freePart = (free_header_t *) nextFree;
       freePart->next = chosen->next;
       freePart->prev = chosen->prev;
-      freePart->size = (chosen->size) - (ALLOC_HEADER_SIZE + n);
+      freePart->size = (chosen->size) - (allocPart->size);
       freePart->magic = MAGIC_FREE;  
    } else {                                                         // Allocation without split      
       allocPart = (alloc_header_t *) chosen;                        // Allocate entire chosen region
