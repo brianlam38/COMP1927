@@ -1,0 +1,399 @@
+Map of Europe
+=============
+V=72, E=198
+Adriatic Sea connects to Venice by boat
+Adriatic Sea connects to Ionian Sea by boat
+Adriatic Sea connects to Bari by boat
+Alicante connects to Mediterranean Sea by boat
+Alicante connects to Madrid by rail
+Alicante connects to Barcelona by rail
+Alicante connects to Saragossa by road
+Alicante connects to Madrid by road
+Alicante connects to Granada by road
+Amsterdam connects to North Sea by boat
+Amsterdam connects to Cologne by road
+Amsterdam connects to Brussels by road
+Athens connects to Ionian Sea by boat
+Athens connects to Valona by road
+Atlantic Ocean connects to North Sea by boat
+Atlantic Ocean connects to Mediterranean Sea by boat
+Atlantic Ocean connects to Lisbon by boat
+Atlantic Ocean connects to Irish Sea by boat
+Atlantic Ocean connects to Galway by boat
+Atlantic Ocean connects to English Channel by boat
+Atlantic Ocean connects to Cadiz by boat
+Atlantic Ocean connects to Bay of Biscay by boat
+Barcelona connects to Mediterranean Sea by boat
+Barcelona connects to Saragossa by rail
+Barcelona connects to Alicante by rail
+Barcelona connects to Toulouse by road
+Barcelona connects to Saragossa by road
+Bari connects to Adriatic Sea by boat
+Bari connects to Naples by rail
+Bari connects to Rome by road
+Bari connects to Naples by road
+Bay of Biscay connects to Santander by boat
+Bay of Biscay connects to Nantes by boat
+Bay of Biscay connects to Bordeaux by boat
+Bay of Biscay connects to Atlantic Ocean by boat
+Belgrade connects to Szeged by rail
+Belgrade connects to Sofia by rail
+Belgrade connects to Szeged by road
+Belgrade connects to St Joseph and St Marys by road
+Belgrade connects to Sofia by road
+Belgrade connects to Sarajevo by road
+Belgrade connects to Klausenburg by road
+Belgrade connects to Bucharest by road
+Berlin connects to Prague by rail
+Berlin connects to Leipzig by rail
+Berlin connects to Hamburg by rail
+Berlin connects to Prague by road
+Berlin connects to Leipzig by road
+Berlin connects to Hamburg by road
+Black Sea connects to Varna by boat
+Black Sea connects to Ionian Sea by boat
+Black Sea connects to Constanta by boat
+Bordeaux connects to Bay of Biscay by boat
+Bordeaux connects to Saragossa by rail
+Bordeaux connects to Paris by rail
+Bordeaux connects to Toulouse by road
+Bordeaux connects to Saragossa by road
+Bordeaux connects to Nantes by road
+Bordeaux connects to Clermont-Ferrand by road
+Brussels connects to Paris by rail
+Brussels connects to Cologne by rail
+Brussels connects to Strasbourg by road
+Brussels connects to Paris by road
+Brussels connects to Le Havre by road
+Brussels connects to Cologne by road
+Brussels connects to Amsterdam by road
+Bucharest connects to Szeged by rail
+Bucharest connects to Galatz by rail
+Bucharest connects to Constanta by rail
+Bucharest connects to Sofia by road
+Bucharest connects to Klausenburg by road
+Bucharest connects to Galatz by road
+Bucharest connects to Constanta by road
+Bucharest connects to Belgrade by road
+Budapest connects to Vienna by rail
+Budapest connects to Szeged by rail
+Budapest connects to Zagreb by road
+Budapest connects to Vienna by road
+Budapest connects to Szeged by road
+Budapest connects to Klausenburg by road
+Cadiz connects to Atlantic Ocean by boat
+Cadiz connects to Madrid by road
+Cadiz connects to Lisbon by road
+Cadiz connects to Granada by road
+Cagliari connects to Tyrrhenian Sea by boat
+Cagliari connects to Mediterranean Sea by boat
+Castle Dracula connects to Klausenburg by road
+Castle Dracula connects to Galatz by road
+Clermont-Ferrand connects to Toulouse by road
+Clermont-Ferrand connects to Paris by road
+Clermont-Ferrand connects to Nantes by road
+Clermont-Ferrand connects to Marseilles by road
+Clermont-Ferrand connects to Geneva by road
+Clermont-Ferrand connects to Bordeaux by road
+Cologne connects to Frankfurt by rail
+Cologne connects to Brussels by rail
+Cologne connects to Strasbourg by road
+Cologne connects to Leipzig by road
+Cologne connects to Hamburg by road
+Cologne connects to Frankfurt by road
+Cologne connects to Brussels by road
+Cologne connects to Amsterdam by road
+Constanta connects to Black Sea by boat
+Constanta connects to Bucharest by rail
+Constanta connects to Varna by road
+Constanta connects to Galatz by road
+Constanta connects to Bucharest by road
+Dublin connects to Irish Sea by boat
+Dublin connects to Galway by road
+Edinburgh connects to North Sea by boat
+Edinburgh connects to Manchester by rail
+Edinburgh connects to Manchester by road
+English Channel connects to Plymouth by boat
+English Channel connects to North Sea by boat
+English Channel connects to London by boat
+English Channel connects to Le Havre by boat
+English Channel connects to Atlantic Ocean by boat
+Florence connects to Rome by rail
+Florence connects to Milan by rail
+Florence connects to Venice by road
+Florence connects to Rome by road
+Florence connects to Genoa by road
+Frankfurt connects to Strasbourg by rail
+Frankfurt connects to Leipzig by rail
+Frankfurt connects to Cologne by rail
+Frankfurt connects to Strasbourg by road
+Frankfurt connects to Nuremburg by road
+Frankfurt connects to Leipzig by road
+Frankfurt connects to Cologne by road
+Galatz connects to Bucharest by rail
+Galatz connects to Klausenburg by road
+Galatz connects to Constanta by road
+Galatz connects to Castle Dracula by road
+Galatz connects to Bucharest by road
+Galway connects to Atlantic Ocean by boat
+Galway connects to Dublin by road
+Geneva connects to Milan by rail
+Geneva connects to Zurich by road
+Geneva connects to Strasbourg by road
+Geneva connects to Paris by road
+Geneva connects to Marseilles by road
+Geneva connects to Clermont-Ferrand by road
+Genoa connects to Tyrrhenian Sea by boat
+Genoa connects to Milan by rail
+Genoa connects to Venice by road
+Genoa connects to Milan by road
+Genoa connects to Marseilles by road
+Genoa connects to Florence by road
+Granada connects to Madrid by road
+Granada connects to Cadiz by road
+Granada connects to Alicante by road
+Hamburg connects to North Sea by boat
+Hamburg connects to Berlin by rail
+Hamburg connects to Leipzig by road
+Hamburg connects to Cologne by road
+Hamburg connects to Berlin by road
+Ionian Sea connects to Valona by boat
+Ionian Sea connects to Tyrrhenian Sea by boat
+Ionian Sea connects to Salonica by boat
+Ionian Sea connects to Black Sea by boat
+Ionian Sea connects to Athens by boat
+Ionian Sea connects to Adriatic Sea by boat
+Irish Sea connects to Swansea by boat
+Irish Sea connects to Liverpool by boat
+Irish Sea connects to Dublin by boat
+Irish Sea connects to Atlantic Ocean by boat
+Klausenburg connects to Szeged by road
+Klausenburg connects to Galatz by road
+Klausenburg connects to Castle Dracula by road
+Klausenburg connects to Budapest by road
+Klausenburg connects to Bucharest by road
+Klausenburg connects to Belgrade by road
+Leipzig connects to Nuremburg by rail
+Leipzig connects to Frankfurt by rail
+Leipzig connects to Berlin by rail
+Leipzig connects to Nuremburg by road
+Leipzig connects to Hamburg by road
+Leipzig connects to Frankfurt by road
+Leipzig connects to Cologne by road
+Leipzig connects to Berlin by road
+Le Havre connects to English Channel by boat
+Le Havre connects to Paris by rail
+Le Havre connects to Paris by road
+Le Havre connects to Nantes by road
+Le Havre connects to Brussels by road
+Lisbon connects to Atlantic Ocean by boat
+Lisbon connects to Madrid by rail
+Lisbon connects to Santander by road
+Lisbon connects to Madrid by road
+Lisbon connects to Cadiz by road
+Liverpool connects to Irish Sea by boat
+Liverpool connects to Manchester by rail
+Liverpool connects to Swansea by road
+Liverpool connects to Manchester by road
+London connects to English Channel by boat
+London connects to Swansea by rail
+London connects to Manchester by rail
+London connects to Swansea by road
+London connects to Plymouth by road
+London connects to Manchester by road
+Madrid connects to Saragossa by rail
+Madrid connects to Santander by rail
+Madrid connects to Lisbon by rail
+Madrid connects to Alicante by rail
+Madrid connects to Saragossa by road
+Madrid connects to Santander by road
+Madrid connects to Lisbon by road
+Madrid connects to Granada by road
+Madrid connects to Cadiz by road
+Madrid connects to Alicante by road
+Manchester connects to London by rail
+Manchester connects to Liverpool by rail
+Manchester connects to Edinburgh by rail
+Manchester connects to London by road
+Manchester connects to Liverpool by road
+Manchester connects to Edinburgh by road
+Marseilles connects to Mediterranean Sea by boat
+Marseilles connects to Paris by rail
+Marseilles connects to Zurich by road
+Marseilles connects to Toulouse by road
+Marseilles connects to Milan by road
+Marseilles connects to Genoa by road
+Marseilles connects to Geneva by road
+Marseilles connects to Clermont-Ferrand by road
+Mediterranean Sea connects to Tyrrhenian Sea by boat
+Mediterranean Sea connects to Marseilles by boat
+Mediterranean Sea connects to Cagliari by boat
+Mediterranean Sea connects to Barcelona by boat
+Mediterranean Sea connects to Atlantic Ocean by boat
+Mediterranean Sea connects to Alicante by boat
+Milan connects to Zurich by rail
+Milan connects to Genoa by rail
+Milan connects to Geneva by rail
+Milan connects to Florence by rail
+Milan connects to Zurich by road
+Milan connects to Venice by road
+Milan connects to Munich by road
+Milan connects to Marseilles by road
+Milan connects to Genoa by road
+Munich connects to Nuremburg by rail
+Munich connects to Zurich by road
+Munich connects to Zagreb by road
+Munich connects to Vienna by road
+Munich connects to Venice by road
+Munich connects to Strasbourg by road
+Munich connects to Nuremburg by road
+Munich connects to Milan by road
+Nantes connects to Bay of Biscay by boat
+Nantes connects to Paris by road
+Nantes connects to Le Havre by road
+Nantes connects to Clermont-Ferrand by road
+Nantes connects to Bordeaux by road
+Naples connects to Tyrrhenian Sea by boat
+Naples connects to Rome by rail
+Naples connects to Bari by rail
+Naples connects to Rome by road
+Naples connects to Bari by road
+North Sea connects to Hamburg by boat
+North Sea connects to English Channel by boat
+North Sea connects to Edinburgh by boat
+North Sea connects to Atlantic Ocean by boat
+North Sea connects to Amsterdam by boat
+Nuremburg connects to Munich by rail
+Nuremburg connects to Leipzig by rail
+Nuremburg connects to Strasbourg by road
+Nuremburg connects to Prague by road
+Nuremburg connects to Munich by road
+Nuremburg connects to Leipzig by road
+Nuremburg connects to Frankfurt by road
+Paris connects to Marseilles by rail
+Paris connects to Le Havre by rail
+Paris connects to Brussels by rail
+Paris connects to Bordeaux by rail
+Paris connects to Strasbourg by road
+Paris connects to Nantes by road
+Paris connects to Le Havre by road
+Paris connects to Geneva by road
+Paris connects to Clermont-Ferrand by road
+Paris connects to Brussels by road
+Plymouth connects to English Channel by boat
+Plymouth connects to London by road
+Prague connects to Vienna by rail
+Prague connects to Berlin by rail
+Prague connects to Vienna by road
+Prague connects to Nuremburg by road
+Prague connects to Berlin by road
+Rome connects to Tyrrhenian Sea by boat
+Rome connects to Naples by rail
+Rome connects to Florence by rail
+Rome connects to Naples by road
+Rome connects to Florence by road
+Rome connects to Bari by road
+Salonica connects to Ionian Sea by boat
+Salonica connects to Sofia by rail
+Salonica connects to Valona by road
+Salonica connects to Sofia by road
+Santander connects to Bay of Biscay by boat
+Santander connects to Madrid by rail
+Santander connects to Saragossa by road
+Santander connects to Madrid by road
+Santander connects to Lisbon by road
+Saragossa connects to Madrid by rail
+Saragossa connects to Bordeaux by rail
+Saragossa connects to Barcelona by rail
+Saragossa connects to Toulouse by road
+Saragossa connects to Santander by road
+Saragossa connects to Madrid by road
+Saragossa connects to Bordeaux by road
+Saragossa connects to Barcelona by road
+Saragossa connects to Alicante by road
+Sarajevo connects to Zagreb by road
+Sarajevo connects to Valona by road
+Sarajevo connects to St Joseph and St Marys by road
+Sarajevo connects to Sofia by road
+Sarajevo connects to Belgrade by road
+Sofia connects to Varna by rail
+Sofia connects to Salonica by rail
+Sofia connects to Belgrade by rail
+Sofia connects to Varna by road
+Sofia connects to Valona by road
+Sofia connects to Sarajevo by road
+Sofia connects to Salonica by road
+Sofia connects to Bucharest by road
+Sofia connects to Belgrade by road
+Strasbourg connects to Zurich by rail
+Strasbourg connects to Frankfurt by rail
+Strasbourg connects to Zurich by road
+Strasbourg connects to Paris by road
+Strasbourg connects to Nuremburg by road
+Strasbourg connects to Munich by road
+Strasbourg connects to Geneva by road
+Strasbourg connects to Frankfurt by road
+Strasbourg connects to Cologne by road
+Strasbourg connects to Brussels by road
+St Joseph and St Marys connects to Zagreb by road
+St Joseph and St Marys connects to Szeged by road
+St Joseph and St Marys connects to Sarajevo by road
+St Joseph and St Marys connects to Belgrade by road
+Swansea connects to Irish Sea by boat
+Swansea connects to London by rail
+Swansea connects to London by road
+Swansea connects to Liverpool by road
+Szeged connects to Budapest by rail
+Szeged connects to Bucharest by rail
+Szeged connects to Belgrade by rail
+Szeged connects to Zagreb by road
+Szeged connects to St Joseph and St Marys by road
+Szeged connects to Klausenburg by road
+Szeged connects to Budapest by road
+Szeged connects to Belgrade by road
+Toulouse connects to Saragossa by road
+Toulouse connects to Marseilles by road
+Toulouse connects to Clermont-Ferrand by road
+Toulouse connects to Bordeaux by road
+Toulouse connects to Barcelona by road
+Tyrrhenian Sea connects to Rome by boat
+Tyrrhenian Sea connects to Naples by boat
+Tyrrhenian Sea connects to Mediterranean Sea by boat
+Tyrrhenian Sea connects to Ionian Sea by boat
+Tyrrhenian Sea connects to Genoa by boat
+Tyrrhenian Sea connects to Cagliari by boat
+Valona connects to Ionian Sea by boat
+Valona connects to Sofia by road
+Valona connects to Sarajevo by road
+Valona connects to Salonica by road
+Valona connects to Athens by road
+Varna connects to Black Sea by boat
+Varna connects to Sofia by rail
+Varna connects to Sofia by road
+Varna connects to Constanta by road
+Venice connects to Adriatic Sea by boat
+Venice connects to Vienna by rail
+Venice connects to Munich by road
+Venice connects to Milan by road
+Venice connects to Genoa by road
+Venice connects to Florence by road
+Vienna connects to Venice by rail
+Vienna connects to Prague by rail
+Vienna connects to Budapest by rail
+Vienna connects to Zagreb by road
+Vienna connects to Prague by road
+Vienna connects to Munich by road
+Vienna connects to Budapest by road
+Zagreb connects to Vienna by road
+Zagreb connects to Szeged by road
+Zagreb connects to St Joseph and St Marys by road
+Zagreb connects to Sarajevo by road
+Zagreb connects to Munich by road
+Zagreb connects to Budapest by road
+Zurich connects to Strasbourg by rail
+Zurich connects to Milan by rail
+Zurich connects to Strasbourg by road
+Zurich connects to Munich by road
+Zurich connects to Milan by road
+Zurich connects to Marseilles by road
+Zurich connects to Geneva by road
