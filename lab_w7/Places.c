@@ -113,6 +113,15 @@ int nameToID(char *name)
       if (strcmp(name,places[i].name) == 0)
          return places[i].id;
    }
+   /* binary search
+   int mid = ((MIN_MAP_LOCATION + MAX_MAP_LOCATION)/2);
+   int hi = MAX_MAP_LOCATION - 1;
+   int lo = MIN_MAP_LOCATION;
+   if (strcmp(name,places[mid].name) == 0) {
+      
+   }
+
+*/
    return NOWHERE;
 }
 
