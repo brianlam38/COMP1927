@@ -18,23 +18,23 @@ struct QueueRep {
 // create new empty queue
 Queue newQueue(int length)
 {
-	Queue new = malloc(sizeof(struct QueueRep));
-	assert(new != NULL);
-	new->size = length;
-	new->nitems = 0;
-	new->head = 0;
-	new->tail = -1;
-	new->data = malloc(length*sizeof(Item));
-	assert(new->data != NULL);
+	Queue new = malloc(sizeof(struct QueueRep)); // malloc space for queue representation
+	assert(new != NULL);						 // check that new ptr is pointing to nothing
+	new->size = length;						     // initialise size of queue
+	new->nitems = 0;							 // initially empty
+	new->head = 0;								 // location starting at 0
+	new->tail = -1;							     // location starting at -1
+	new->data = malloc(length*sizeof(Item));	 // malloc space for array (storing queue data)
+	assert(new->data != NULL);					 // check that data is pointing to nothing		
 	return new;
 }
  
 // release queue data
 void dropQueue(Queue q)
 {
-	assert(q != NULL);
-	free(q->data);
-	free(q);
+	assert(q != NULL);	// check that queue exists
+	free(q->data);		// free up data
+	free(q);			// free up rest of the structure
 }
  
 // add item onto queue
@@ -59,25 +59,26 @@ Item dequeue(Queue q)
 // queue contains no items?
 int isEmpty(Queue q)
 {
-	return (nItems(q) == 0);
+	return (nItems(q) == 0);	// check there are no items in queue
 }
  
 // how many items in queue
 int nItems(Queue q)
 {
-	assert(q != NULL);
-	return q->nitems;
+	assert(q != NULL);			// check queue is not empty
+	return q->nitems;			// return number of items
 }
  
 // display queue on stdout
 void show(Queue q)
 {
 	int i;
-	if (q->nitems == 0) {
+	if (q->nitems == 0) {		// queue is empty
 		printf("<empty>\n");
 		return;
 	}
-	for (i = q->head; i != q->tail; i = (i+1)%q->size)	
+	for (i = q->head; i != q->tail; i = (i+1)%q->size)
+	// increment: mod size of queue, so it will go back to index 0
 		printf("%d->",q->data[i]);
-	printf("%d@%d\n",q->data[i],i);
+		printf("%d@%d\n",q->data[i],i);
 }
