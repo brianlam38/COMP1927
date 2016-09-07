@@ -157,7 +157,7 @@ int connections(Map g, LocationID start, LocationID end, TransportID type[])
       type[nc] = BOAT;
       nc++;
    }
-   return nc;  // to keep the compiler happy
+   return nc;
 }
 
 // Add edges to Graph representing map of Europe
