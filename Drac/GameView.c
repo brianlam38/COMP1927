@@ -7,22 +7,20 @@
 #include "GameView.h"
 // #include "Map.h" ... if you decide to use the Map ADT
      
-struct gameView {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
+struct gameView {                                               //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     // Create gameview struct
-    // What items would we need in this?
+    // What types of data would we need in this?
     int hello;
 };
      
 
 // Creates a new GameView to summarise the current state of the game
-GameView newGameView(char *pastPlays, PlayerMessage messages[])
+GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    // Initialise gameView struct details
     GameView gameView = malloc(sizeof(struct gameView));
     gameView->hello = 42;
-    return gameView;
+    return gameView;e
 }
      
      
