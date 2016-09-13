@@ -9,6 +9,9 @@
      
 struct gameView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
+    // Create gameview struct
+    // What items would we need in this?
     int hello;
 };
      
