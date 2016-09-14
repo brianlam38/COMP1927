@@ -64,10 +64,10 @@ void disposeGameView(GameView toBeDeleted)
     free(toBeDeleted->gameScore);
     free(toBeDeleted->roundNumber);
     free(toBeDeleted->pastPlays);
-    free(toBeDeleted->messages;
+    free(toBeDeleted->messages);
     free(toBeDeleted->map);
     free(toBeDeleted->currentPlayer);
-    // Free hunter data
+    // Free hunter player data
     int x;
     for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER; x++) {
         free(toBeDeleted->players[x]->playerHealth);
@@ -77,7 +77,7 @@ void disposeGameView(GameView toBeDeleted)
             free(toBeDeleted->players[x]->playerTrail[y]);
         }       
     }
-    // Free dracula data
+    // Free dracula player data
     free(toBeDeleted->players[PLAYER_DRACULA]->playerHealth);
     free(toBeDeleted->players[PLAYER_DRACULA]->playerLocation);
     int y;
@@ -88,6 +88,7 @@ void disposeGameView(GameView toBeDeleted)
     free(toBeDeleted);
     toBeDeleted = NULL;
     assert(toBeDeleted == NULL);
+
 }
 
 
@@ -97,8 +98,6 @@ void disposeGameView(GameView toBeDeleted)
 Round getRound(GameView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    int x;
-    currentView->
     return 0;
 }
 
@@ -127,7 +126,6 @@ int getHealth(GameView currentView, PlayerID player)
 LocationID getLocation(GameView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    currentView->
     return 0;
 }
 
