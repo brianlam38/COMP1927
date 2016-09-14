@@ -7,22 +7,53 @@
 #include "GameView.h"
 // #include "Map.h" ... if you decide to use the Map ADT
      
-struct gameView {                                               //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    // Create gameview struct
-    // What types of data would we need in this?
-    int hello;
+typedef struct _playerInfo {
+  int playerHealth;
+  LocationID playerLocation;
+  LocationID playerTrail[5];
+} playerInfo;
+
+struct gameView {
+    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    int gameScore;
+    Round roundNumber;
+    char *pastPlays;
+    PlayerMessage* messages;
+    Map map;
+    PlayerID currentPlayer;
+    playerInfo *players[NUM_PLAYERS];
 };
      
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 {
-    // Initialise gameView struct details
+    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GameView gameView = malloc(sizeof(struct gameView));
-    gameView->hello = 42;
-    return gameView;e
-}
-     
+    gameView->gameScore = GAME_START_SCORE;
+    gameView->roundNumber = 0;
+    gameView->pastPlays = pastPlays;
+    gameView->messages = messages;
+    gameView->map = newMap();
+    gameView->currentPlayer = PLAYER_LORD_GODALMING;
+    int x;
+    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER ; x++) {
+      gameView->players[x]->playerHealth = GAME_START_HUNTER_LIFE_POINTS;
+      gameView->players[x]->playerLocation = ST_JOSEPH_AND_ST_MARYS;
+      int y;
+      for (y = 0; y < TRAIL_SIZE ; y++) {
+        gameView->players[x]->playerTrail[y] = UNKNOWN_LOCATION;
+      }
+    }
+    gameView->players[PLAYER_DRACULA]->playerHealth = GAME_START_BLOOD_POINTS;
+    gameView->players[PLAYER_DRACULA]->playerLocation = CASTLE_DRACULA;
+    int y;
+    for (y = 0; y < TRAIL_SIZE ; y++) {
+      gameView->players[PLAYER_DRACULA]->playerTrail[y] = UNKNOWN_LOCATION;
+    }
+
+    return gameView;
+}     
      
 // Frees all memory previously allocated for the GameView toBeDeleted
 void disposeGameView(GameView toBeDeleted)
@@ -69,15 +100,6 @@ LocationID getLocation(GameView currentView, PlayerID player)
     return 0;
 }
 
-//// Functions that return information about the history of the game
-
-// Fills the trail array with the location ids of the last 6 turns
-void getHistory(GameView currentView, PlayerID player,
-                            LocationID trail[TRAIL_SIZE])
-{
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-}
-
 //// Functions that query the map to find information about connectivity
 
 // Returns an array of LocationIDs for all directly connected locations
@@ -87,5 +109,22 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return NULL;
+    int size = *numLocations;
+    LocationID* array = (LocationID *)malloc(sizeof(LocationID)*size);
+    array[0] = from;
+    // int x=1;
+    // VList curr = currentView->map->connections[x];
+    // while ( x < size || curr!= NULL) {
+    //   array[x++] = curr->v;
+    //   int unrepeated = 1;
+    //   while (unrepeated) {
+    //     curr = curr->next;
+    //     int y;
+    //     for (y=0 ; y <= x; y++) {
+    //       if (curr->v == array[y]) unrepeated = 0;
+    //     }
+    //   }
+    // }
+
+    return array;
 }
