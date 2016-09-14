@@ -38,20 +38,19 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS W
     gameView->currentPlayer = PLAYER_LORD_GODALMING;
     int x;
     for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER ; x++) {
-      gameView->players[x]->playerHealth = GAME_START_HUNTER_LIFE_POINTS;
-      gameView->players[x]->playerLocation = ST_JOSEPH_AND_ST_MARYS;
-      int y;
-      for (y = 0; y < TRAIL_SIZE ; y++) {
-        gameView->players[x]->playerTrail[y] = UNKNOWN_LOCATION;
-      }
+        gameView->players[x]->playerHealth = GAME_START_HUNTER_LIFE_POINTS;
+        gameView->players[x]->playerLocation = ST_JOSEPH_AND_ST_MARYS;
+        int y;
+        for (y = 0; y < TRAIL_SIZE ; y++) {
+            gameView->players[x]->playerTrail[y] = UNKNOWN_LOCATION;
+        }
     }
     gameView->players[PLAYER_DRACULA]->playerHealth = GAME_START_BLOOD_POINTS;
     gameView->players[PLAYER_DRACULA]->playerLocation = CASTLE_DRACULA;
     int y;
     for (y = 0; y < TRAIL_SIZE ; y++) {
-      gameView->players[PLAYER_DRACULA]->playerTrail[y] = UNKNOWN_LOCATION;
+        gameView->players[PLAYER_DRACULA]->playerTrail[y] = UNKNOWN_LOCATION;
     }
-
     return gameView;
 }     
      
@@ -59,7 +58,17 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS W
 void disposeGameView(GameView toBeDeleted)
 {
     //COMPLETE THIS IMPLEMENTATION
-    free( toBeDeleted );
+    assert(toBeDeleted != NULL);         // Check game data exists
+
+    free(toBeDeleted->gameScore);        // Free struct data
+    free(toBeDeleted->roundNumber);
+    free(toBeDeleted->pastPlays);
+    free(toBeDeleted->messages;
+    free(toBeDeleted->map);
+    free(toBeDeleted->currentPlayer);
+
+    free(toBeDeleted);
+    toBeDeleted = NULL;
 }
 
 
@@ -69,6 +78,8 @@ void disposeGameView(GameView toBeDeleted)
 Round getRound(GameView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    int x;
+    currentView->
     return 0;
 }
 
@@ -97,6 +108,7 @@ int getHealth(GameView currentView, PlayerID player)
 LocationID getLocation(GameView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    currentView->
     return 0;
 }
 
