@@ -278,7 +278,7 @@ int NormalizeURL(char* URL)
         ||(!strncmp((URL + i), ".php", 4))
         ||(!strncmp((URL + i), ".jsp", 4))
         ) {
-      len = len; // do nothing.
+      // len = len; // do nothing.
     } else {
       return 0; // bad type
     }
