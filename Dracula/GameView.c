@@ -67,6 +67,16 @@ void disposeGameView(GameView toBeDeleted)
     free(toBeDeleted->map);
     free(toBeDeleted->currentPlayer);
 
+    int x;
+    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER; x++) {
+        free(toBeDeleted->players[x]->playerHealth);
+        free(toBeDeleted->players[x]->playerLocation);
+        int y;
+        for (y = 0; y < TRAIL_SIZE; y++) {
+            free(toBeDeleted->players[x]->playerTrail[y] = UNKNOWN_LOCATION);
+        }       
+    }
+
     free(toBeDeleted);
     toBeDeleted = NULL;
 }
