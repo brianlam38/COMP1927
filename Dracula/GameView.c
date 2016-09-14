@@ -5,11 +5,11 @@
 #include "Globals.h"
 #include "Game.h"
 #include "GameView.h"
-// #include "Map.h" ... if you decide to use the Map ADT
+#include "Map.h" //... if you decide to use the Map ADT
      
 typedef struct _playerInfo {
   int playerHealth;
-  LocationID playerLocation;
+  LocationID playerLocation;    
   LocationID playerTrail[5];
 } playerInfo;
 
@@ -56,29 +56,38 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS W
      
 // Frees all memory previously allocated for the GameView toBeDeleted
 void disposeGameView(GameView toBeDeleted)
-{
-    //COMPLETE THIS IMPLEMENTATION
-    assert(toBeDeleted != NULL);         // Check game data exists
-
-    free(toBeDeleted->gameScore);        // Free struct data
+{ //COMPLETE THIS IMPLEMENTATION
+    
+    // Check game data exists
+    assert(toBeDeleted != NULL);         
+    // Free general data
+    free(toBeDeleted->gameScore);
     free(toBeDeleted->roundNumber);
     free(toBeDeleted->pastPlays);
     free(toBeDeleted->messages;
     free(toBeDeleted->map);
     free(toBeDeleted->currentPlayer);
-
+    // Free hunter data
     int x;
     for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER; x++) {
         free(toBeDeleted->players[x]->playerHealth);
         free(toBeDeleted->players[x]->playerLocation);
         int y;
         for (y = 0; y < TRAIL_SIZE; y++) {
-            free(toBeDeleted->players[x]->playerTrail[y] = UNKNOWN_LOCATION);
+            free(toBeDeleted->players[x]->playerTrail[y]);
         }       
     }
-
+    // Free dracula data
+    free(toBeDeleted->players[PLAYER_DRACULA]->playerHealth);
+    free(toBeDeleted->players[PLAYER_DRACULA]->playerLocation);
+    int y;
+    for (y = 0; y < TRAIL_SIZE; y++) {
+        free(toBeDeleted->players[PLAYER_DRACULA]->playerTrail[y]);
+    }
+    // Free struct ptr + set to NULL + check
     free(toBeDeleted);
     toBeDeleted = NULL;
+    assert(toBeDeleted == NULL);
 }
 
 
