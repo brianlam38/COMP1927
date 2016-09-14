@@ -140,6 +140,15 @@ LocationID getLocation(GameView currentView, PlayerID player)
     return 0;
 }
 
+// #################
+// GET HISTORIC DATA
+// #################
+
+void getHistory(GameView currentView, PlayerID player,
+                 LocationID trail[TRAIL_SIZE]) {
+    
+}
+
 // ###################
 // MAP QUERY FUNCTIONS
 // ###################
