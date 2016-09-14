@@ -60,76 +60,89 @@ void disposeGameView(GameView toBeDeleted)
     
     // Check game data exists
     assert(toBeDeleted != NULL);         
-    // Free general data
-    free(toBeDeleted->gameScore);
-    free(toBeDeleted->roundNumber);
+    // Free game struct data
     free(toBeDeleted->pastPlays);
     free(toBeDeleted->messages);
     free(toBeDeleted->map);
-    free(toBeDeleted->currentPlayer);
-    // Free hunter player data
+    // Free player struct
     int x;
-    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER; x++) {
-        free(toBeDeleted->players[x]->playerHealth);
-        free(toBeDeleted->players[x]->playerLocation);
-        int y;
-        for (y = 0; y < TRAIL_SIZE; y++) {
-            free(toBeDeleted->players[x]->playerTrail[y]);
-        }       
-    }
-    // Free dracula player data
-    free(toBeDeleted->players[PLAYER_DRACULA]->playerHealth);
-    free(toBeDeleted->players[PLAYER_DRACULA]->playerLocation);
-    int y;
-    for (y = 0; y < TRAIL_SIZE; y++) {
-        free(toBeDeleted->players[PLAYER_DRACULA]->playerTrail[y]);
+    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_DRACULA; x++) {
+        free(toBeDeleted->players[x]);
+        toBeDeleted->players[x] = NULL;
+        assert(toBeDeleted->players[x] == NULL);
     }
     // Free struct ptr + set to NULL + check
     free(toBeDeleted);
     toBeDeleted = NULL;
     assert(toBeDeleted == NULL);
-
 }
 
+// ################
+// SETTER FUNCTIONS
+// ################
 
-//// Functions to return simple information about the current state of the game
+// ################
+// GETTER FUNCTIONS
+// ################
 
 // Get the current round
 Round getRound(GameView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    assert(currentView != NULL);
+    int round = currentView->roundNumber;
+    assert(round >= 0);
+
+    return round;
 }
 
 // Get the id of current player - ie whose turn is it?
 PlayerID getCurrentPlayer(GameView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    assert(currentView != NULL);
+    int player = currentView->currentPlayer;
+    assert(player < NUM_PLAYERS);
+
+    return player;
 }
 
 // Get the current score
 int getScore(GameView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    assert(currentView != NULL);
+    int score = currentView->gameScore;
+    assert(score <= GAME_START_SCORE);
+
+    return score;
 }
 
 // Get the current health points for a given player
 int getHealth(GameView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return 0;
+    assert(currentView != NULL);
+    int health = currentView->players[currentView->currentPlayer]->playerHealth;
+    if (currentView->currentPlayer == PLAYER_DRACULA) {
+        assert(health <= 40 && health > 0);
+    } else {
+        assert(health <= 9);
+    }
+    return health;
 }
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    assert(currentView != NULL);
     return 0;
 }
 
-//// Functions that query the map to find information about connectivity
+// ###################
+// MAP QUERY FUNCTIONS
+// ###################
 
 // Returns an array of LocationIDs for all directly connected locations
 
