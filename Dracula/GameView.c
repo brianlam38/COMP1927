@@ -23,7 +23,6 @@ struct gameView {
     PlayerID currentPlayer;
     playerInfo *players[NUM_PLAYERS];
 };
-     
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -179,3 +178,37 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
 
     return array;
 }
+
+
+// ##################
+// IN HOUSE FUNCTIONS
+// ##################
+
+// given a special abbreviation (2 char), return its ID number
+static int specialToID(char *abbrev) {
+
+    if (strcmp(abbrev, "C?") == 0) {
+        return CITY_UNKNOWN;
+    } else if (strcmp(abbrev,"S?") == 0) {
+        return SEA_UNKNOWN;
+    } else if (strcmp(abbrev,"HI") == 0) {
+        return HIDE;
+    } else if (strcmp(abbrev,"D1") == 0) {      // Investigate if D1 D2 D3 exists
+        return DOUBLE_BACK_1;
+    } else {
+        return abbrevToID(abbrev);
+    }
+}
+
+// PARSING CHECKLIST
+    // char *pastPlays
+// 1. Take in location ABBREV from trail -> Give AI number      DONE (given by default places.c?)
+// 2. Take in special ABBREV (actions etc) -> Give AI number    IN PROGRESS (gameView.c)
+// 3. Take in AI move -> return location ABBREV                 NOT STARTED
+// 4. Take in AI action -> return special ABBREV                NOT STARTED
+    // PlayerMessage messages[]
+// 1. Take in AI message -> Store in messages                   NOT STARTED
+// 2. Take messages from storage -> Translate for AI            NOT STARTED
+
+
+
