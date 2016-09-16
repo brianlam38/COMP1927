@@ -30,13 +30,14 @@ typedef struct _playerInfo {
 
 struct gameView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    char *pastPlays;
+    char *pastPlays;            // Hunter = 1:Name 2:Loc 4:Encounters     Drac = 1:D 2:Loc 2:Encounters 1:Action
     int gameScore;
     Round roundNumber;
     PlayerID currentPlayer;
     PlayerMessage messages[];
     Map map;
     playerInfo *players[NUM_PLAYERS];
+
 };
 
 // #####################
@@ -61,7 +62,7 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS W
     currentView->currentPlayer = getCurrentPlayer(currentView);
     
     
-        int i;
+    int i;
     for (i = 0; i < NUM_PLAYERS; i++) {
         getHistory(currentView, i, currentView->player[i]->trail);
       currentView->player[i]->location = getLocation(currentView, i);
@@ -153,14 +154,6 @@ PlayerID getCurrentPlayer(GameView currentView)
     int nChar = countChar(currentView->pastPlays);
     currentPlayer = ((nChar + 1)/8) % 5
     return currentPlayer;
-  
-    
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView != NULL);
-    int player = currentView->currentPlayer;
-    assert(player < NUM_PLAYERS);
-
-    return player;
 }
 
 // Get the current score
@@ -176,17 +169,26 @@ Dracula wants the score to be low, the Hunters want the score to be high.
     int score = GAME_START_SCORE;
     Round round = getRound(currentView);
     char *p;
-    char c;
-    for (p = currentView->pastPlays; *p != '\0'; p++) {
-            if (*p == '
-  
-  
+    //char c;
+    
+    for (p = currentView->pastPlays; *p != '\0'; p +=6) {
+      
+        if (p[0] == 'D') {
+            score--;
+        }
+      
+        if (p[0] == 'D' && p[4] == 'V') {
+            score -= 13;
+        }
+      
+        
+        if (p[0] != 'D' && p[1] == 'J' && p[1] == 'M') { // need to keep track of hunters' lifepoints to know whether they teleoported or moved to hospital
+            score -= 6;
+        }
+    }
+
   
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView != NULL);
-    int score = currentView->gameScore;
-    assert(score <= GAME_START_SCORE);
-
     return score;
 }
 
@@ -231,7 +233,16 @@ a single '.' character
             } else if (strcmp(dracLocation, "TP") == 0) {
                 health += LIFE_GAIN_CASTLE_DRACULA;
             }
+            entPointer += 40;
         }
+        for (char *p = (currentView->pastPlays + 3); 
+            for (entCounter = 0; entCounter < 3; entCounter++) {
+                if (*entPointer == 'D') {
+                    health -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                }
+                entPointer++;
+            }
+            p += 8;
     } else {
         int health = GAME_START_HUNTER_LIFE_POINTS;
         return health if (round == 0);  
@@ -244,26 +255,26 @@ a single '.' character
                         health -= LIFE_LOSS_TRAP_ENCOUNTER;
                         break;
                     case 'D' :
-                            health -= LIFE_LOSS_DRACULA_ENCOUNTER;
-                          break;
-                        default :
+                        health -= LIFE_LOSS_DRACULA_ENCOUNTER;
                         break;
-                    }
+                    default :
+                        break;
+                }
             }
             if (loopCounter > 0) {
                 char currLocation[] = {*(entPointer - 2), *(entPointer - 1)};
                 if (strcmp(currLocation, prevLocation) == 0) {
-                        health += LIFE_GAIN_REST;
+                    health += LIFE_GAIN_REST;
                     if (health > GAME_START_HUNTER_LIFE_POINTS) {
                             health = GAME_START_HUNTER_LIFE_POINTS;
                     }
                 }
                 strcpy(prevLocation, currLocation);
             }
-                entPointer += 40;
-            }
-        assert(health <= GAME_START_HUNTER_LIFE_POINTS);
+            entPointer += 40;
         }
+        assert(health <= GAME_START_HUNTER_LIFE_POINTS);
+    }
     return health;
   
   
@@ -300,7 +311,7 @@ void getHistory(GameView currentView, PlayerID player,
   int firstMove = player*8;
   
   for (i = firstMove; i <= getRound(currentView)*40; i += 40) {
-    char id[3] = {currentView->pastPlays[i+1],currentView->pastPlays[i+2],"\0"};
+    char id[3] = {currentView->pastPlays[i+1],currentView->pastPlays[i+2],'\0'};
     updatePlayerTrail(currentView,player, abbrevToID(id)); 
   }
   
@@ -428,8 +439,8 @@ int inArray(int *array,int object, int size) {
 
     // PARSING CHECKLIST
     // char *pastPlays
-// 1. Take in location ABBREV from trail -> Give AI number      DONE (given by default places.c?)
-// 2. Take in special ABBREV (actions etc) -> Give AI number    IN PROGRESS (gameView.c)
+// 1. Take in location ABBREV from trail -> Give AI int value   DONE (given by default places.c?)
+// 2. Take in special ABBREV (actions etc) -> Give AI int value DONE (gameView.c)
 // 3. Take in AI move -> return location ABBREV                 NOT STARTED
 // 4. Take in AI action -> return special ABBREV                NOT STARTED
     // PlayerMessage messages[]
@@ -460,13 +471,28 @@ LocationID otherToID(char *abbrev) {
         return abbrevToID(abbrev);
     }
 }
-
-// Parsing AI moves into game engine                      
-void registerBestPlay(char *play, playerMessage message) {
-    // Takes in play move (*play , a 2-char string)
-    // Takes in string of max len=99 containing an arbitrary message (best use for AI LOGS)
-    
+             
+PlayerID nameAbbrevToID(char *name) {
+    if (strmp(name,"G") == 0) {
+        return PLAYER_LORD_GODALMING;
+    } else if (strcmp(name,"S") == 0) {
+        return PLAYER_DR_SEWARD;
+    } else if (strcmp(name,"H") == 0) {
+        return PLAYER_VAN_HELSING;
+    } else if (strcmp(name,"M") == 0) {
+        return PLAYER_MINA_HARKER;
+    } else if (strcmp(name,"D") == 0) {
+        return DRACULA;
 }
+
+// Parses pastPlays string and sets current data
+void setCurrPlayer(char *pastPlays){
+    int turn;
+    for (turn = 0; turn < strlen(pastPlays); turn++;) {
+        if (
+    }
+}
+
 
 
 //To count the number of chars in a string
