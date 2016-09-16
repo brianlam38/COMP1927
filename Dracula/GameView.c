@@ -300,6 +300,8 @@ LocationID otherToID(char *abbrev) {
         return DOUBLE_BACK_4;
     } else if (strcmp(abbrev,"D5") == 0) {
         return DOUBLE_BACK_5;
+    } else if (strcmp(abbrev,"TP") == 0) {
+        return TELEPORT;
     } else {
         return abbrevToID(abbrev);
     }
@@ -308,7 +310,7 @@ LocationID otherToID(char *abbrev) {
 // PARSING CHECKLIST
     // char *pastPlays
 // 1. Take in location ABBREV from trail -> Give AI number      DONE (given by default places.c?)
-// 2. Take in special ABBREV (actions etc) -> Give AI number    IN PROGRESS (gameView.c)
+// 2. Take in special ABBREV (actions etc) -> Give AI number    DONE (gameView.c)
 // 3. Take in AI move -> return location ABBREV                 NOT STARTED
 // 4. Take in AI action -> return special ABBREV                NOT STARTED
     // PlayerMessage messages[]
