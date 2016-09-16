@@ -1,3 +1,16 @@
+// Pairsing Function
+    // Read [The Data]
+// Play --> Move
+// Encounters
+    // Health
+    // GameScore
+    // Possibly others etc.
+// Update Trails
+// Maps
+    // Write an interface function inside the gameView.c file
+  // Every we need neighbours, call connected neighbours
+    // Think about special cases, such as rail connections etc.
+
 // GameView.c ... GameView ADT implementation
 
 #include <stdlib.h>
@@ -24,6 +37,13 @@ struct gameView {
     PlayerID currentPlayer;
     playerInfo *players[NUM_PLAYERS];
 };
+
+// #####################
+// FUNCTION DECLARATIONS
+// #####################
+
+LocationID otherToID(char *abbrev);
+     
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -78,11 +98,7 @@ void disposeGameView(GameView toBeDeleted)
 }
 
 // ################
-// SETTER FUNCTIONS
-// ################
-
-// ################
-// GETTER FUNCTIONS
+// GET FUNCTIONS
 // ################
 
 // Get the current round
@@ -160,41 +176,121 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    int size = *numLocations;
-    LocationID* array = (LocationID *)malloc(sizeof(LocationID)*size);
-    array[0] = from;
-    // int x=1;
-    // VList curr = currentView->map->connections[x];
-    // while ( x < size || curr!= NULL) {
-    //   array[x++] = curr->v;
-    //   int unrepeated = 1;
-    //   while (unrepeated) {
-    //     curr = curr->next;
-    //     int y;
-    //     for (y=0 ; y <= x; y++) {
-    //       if (curr->v == array[y]) unrepeated = 0;
-    //     }
-    //   }
-    // }
 
-    return array;
+    int numNearby = *numLocations;
+    LocationID *connections = malloc(numNearby*sizeof(LocationID));
+    int counter = 0;
+
+    if (road) {
+        LocationID nearby[71];
+        int numNeighbours = 0;
+        numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
+        int i = 0;
+
+    while (counter < numNeighbours) {
+            connections[counter] = nearby[i];
+            i++; counter++;
+        }
+  }
+    
+    if (sea) {
+        LocationID nearby[71];
+        int numNeighbours = 0;
+        numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
+
+    int i = 0;
+        while (numNeighbours > 0) {
+            if(!inArray(connections,nearby[i], counter)) {
+                connections[counter] = nearby[i];
+                counter++;
+        }
+            numNeighbours--; i++;
+        }
+    }
+
+    if (rail) {
+        LocationID stations[71];
+        int numStations = getStations(currentView->map, from, stations, player, round);
+        if (numStations != 0) {
+            while(numStations > 0) {
+                if (!inArray(connections,stations[numStations],counter)) {
+                    connections[counter] = stations[numStations];
+                    counter++;
+                }
+                numStations--;
+            }
+        }
+    }
+    return connections;
 }
 
 
-// ##################
-// IN HOUSE FUNCTIONS
-// ##################
+int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round) {
+
+    int stationsAllowed = (player+round)%4;
+    if (player == PLAYER_DRACULA || stationsAllowed == 0) return 0;
+
+    int counter = NearbyCities(map, from, stations, RAIL);
+    if (stationsAllowed == 1) return counter;
+
+    int numNearby = counter;
+
+  int i;
+    for(i = counter; i > 0; i--) {
+        LocationID secondaryStations[71];
+        int j = NearbyCities(map,stations[i],secondaryStations,RAIL);
+
+    while (j > 0) {
+            if (!inArray(stations,secondaryStations[j],counter)) {
+                stations[counter] = secondaryStations[j];
+                counter++;
+            }
+            j--;
+        }
+    }
+
+    if (stationsAllowed == 2) return counter;
+
+    int k;
+  for(k = counter; k > numNearby; k--) {
+  
+    LocationID tertiaryStations[71];
+    int j = NearbyCities(map,stations[k],tertiaryStations,RAIL);
+    
+    while (j > 0) {
+        if (!inArray(stations,tertiaryStations[j],counter)) {
+        stations[counter] = tertiaryStations[j];
+        counter++;
+      }
+      j--;
+        }
+ }
+  
+    return counter;
+}
+
+int inArray(int *array,int object, int size) {
+
+    int i;
+    for(i = 0; i < size; i++) {
+        if (array[i] == object) return 0;
+    }
+    return 1;
+}
+
+// #################
+// PARSING FUNCTIONS
+// #################
 
 // given an "other" location abbreviation, return its ID number
-static int otherToID(char *abbrev) {
-
+LocationID otherToID(char *abbrev) {
     if (strcmp(abbrev, "C?") == 0) {
         return CITY_UNKNOWN;
     } else if (strcmp(abbrev,"S?") == 0) {
         return SEA_UNKNOWN;
     } else if (strcmp(abbrev,"HI") == 0) {
         return HIDE;
-    } else if (strcmp(abbrev,"D1") == 0) {      // Investigate if D1 D2 D3 exists
+    } else if (strcmp(abbrev,"D1") == 0) {
         return DOUBLE_BACK_1;
     } else if (strcmp(abbrev,"D2") == 0) {
         return DOUBLE_BACK_2;
