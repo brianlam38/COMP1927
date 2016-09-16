@@ -44,6 +44,8 @@ struct gameView {
 // #####################
 
 LocationID otherToID(char *abbrev);
+int inArray(int *array,int object, int size);
+int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round);
      
 
 // Creates a new GameView to summarise the current state of the game
