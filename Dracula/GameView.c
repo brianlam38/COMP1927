@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h" //... if you decide to use the Map ADT
+#include "Places.h" // Using Places ADT
      
 typedef struct _playerInfo {
   int playerHealth;
@@ -184,8 +185,8 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
 // IN HOUSE FUNCTIONS
 // ##################
 
-// given a special abbreviation (2 char), return its ID number
-static int specialToID(char *abbrev) {
+// given an "other" location abbreviation, return its ID number
+static int otherToID(char *abbrev) {
 
     if (strcmp(abbrev, "C?") == 0) {
         return CITY_UNKNOWN;
@@ -195,6 +196,14 @@ static int specialToID(char *abbrev) {
         return HIDE;
     } else if (strcmp(abbrev,"D1") == 0) {      // Investigate if D1 D2 D3 exists
         return DOUBLE_BACK_1;
+    } else if (strcmp(abbrev,"D2") == 0) {
+        return DOUBLE_BACK_2;
+    } else if (strcmp(abbrev,"D3") == 0) {
+        return DOUBLE_BACK_3;
+    } else if (strcmp(abbrev,"D4") == 0) {
+        return DOUBLE_BACK_4;
+    } else if (strcmp(abbrev,"D5") == 0) {
+        return DOUBLE_BACK_5;
     } else {
         return abbrevToID(abbrev);
     }
