@@ -310,6 +310,12 @@ LocationID otherToID(char *abbrev) {
     }
 }
 
+char IDToPlays(LocationID playerLocation) {
+    return pastPlays    
+}
+
+
+
 // PARSING CHECKLIST
     // char *pastPlays
 // 1. Take in location ABBREV from trail -> Give AI number      DONE (given by default places.c?)
