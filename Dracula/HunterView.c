@@ -78,8 +78,9 @@ int giveMeTheScore(HunterView currentView)
 int howHealthyIs(HunterView currentView, PlayerID player)
 {
     assert(currentView->view != NULL);
+    assert(player <= NUM_PLAYERS);
 
-    return 0;
+    return getHealth(currentView->view, player);
 }
 
 // Get the current location id of a given player
