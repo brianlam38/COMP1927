@@ -43,7 +43,10 @@ struct gameView {
 // #####################
 // FUNCTION DECLARATIONS
 // #####################
+#define NUM_EVENT_ENCOUNTER 3
+
 int countChar(char* string);
+int hunterTurnHealth(char *pastPlays, LocationID prevLocation);
 void updatePlayerTrail(GameView g, int player, LocationID newLocation);
 //^updates player trail of given player, by inserting newLocation at the starts
 LocationID otherToID(char *abbrev);
@@ -103,8 +106,11 @@ void disposeGameView(GameView toBeDeleted)
     assert(toBeDeleted != NULL);         
     // Free game struct data
     free(toBeDeleted->pastPlays);
+    toBeDeleted->pastPlays = NULL;
     free(toBeDeleted->messages);
+    toBeDeleted->messages = NULL;
     disposeMap(toBeDeleted->map);
+    toBeDeleted->map = NULL;
     // Free player struct
     int x;
     for (x = PLAYER_LORD_GODALMING; x <= PLAYER_DRACULA; x++) {
@@ -149,85 +155,95 @@ PlayerID getCurrentPlayer(GameView currentView)
 }
 
 // Get the current score
-int getScore(GameView currentView)
-{
-The game score starts at 366 points.
-The score decreases by 1 each time Dracula finishes a turn.
-The score decreases by 6 each time a Hunter is teleported to the hospital.
-The score decreases by 13 each time a Vampire matures (ie falls off the trail).
-Dracula wants the score to be low, the Hunters want the score to be high.
+int getScore(GameView currentView) {
     // new ver
     assert(currentView != NULL);
-    int score = GAME_START_SCORE;
-    Round round = getRound(currentView);
-    char *p;
-    //char c;
-    
-    for (p = currentView->pastPlays; *p != '\0'; p +=6) {
+    int score = GAME_START_SCORE;                  //the current score to be returned
+    Round round = getRound(currentView);           //current round number
+    int dracTurnCount = 0;                         //number of times Dracula finishes a turn 
+    int matureCount = 0;                           //number of times a Vampire matures
+    int teleportCount = 0;                         //number of times a hunter is teleported to the hospital
+    PlayerID player;
+    int health = GAME_START_HUNTER_LIFE_POINTS;    //hunters' health in each turn
+    LocationID prevLocation = NUM_MAP_LOCATIONS;   //hunters' previous location in each turn
+    int loopCounter;                               //counter for loops
+    //count the number of times a hunter is teleported to the hospital
+    for (player = 0; player < NUM_PLAYERS - 1; player++) {
+        char *entPointer = (currentView->pastPlays + (player * 8)); 
+        char currLocation[] = {*(entPointer + 1), *(entPointer + 2)};
+        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
+            health = hunterTurnHealth(entPointer, health, prevLocation);
+            prevLocation = abbrevToID(currLocation);
+            if (health <= 0) {
+                health = GAME_START_HUNTER_LIFE_POINTS;
+                teleportCount++;
+            }
+            entPointer += 40;
+        }
+    }
+    //count the number of times Dracula finishes a turn
+    if ((countChar(currentView->pastPlays) + 1) % 40 == 0) {
+        dracTurnCount = round + 1;
+    } else {
+        dracTurnCount = round;
+    }
+    //count the number of times a Vampire matures
+    entPointer = (currentView->pastPlays + (PLAYER_DRACULA * 8));
+    for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
+        if (entPointer[5] == 'V') {
+            matureCount++;
+        }
+        entPointer += 40;
+    }
+    //calculate the final score
+    score -= (teleportCount * 6 + dracTurnCount + matureCount * 13);
+    assert(score <= GAME_START_SCORE);
+    return score;
+  
+  
+  
+    for (p = currentView->pastPlays; *p != '\0'; p +=6) { ////u cant put '\0' as u r stepping 6 , not 1
       
         if (p[0] == 'D') {
             score--;
         }
       
-        if (p[0] == 'D' && p[4] == 'V') {
+        if (p[0] == 'D' && p[4] == 'V') {//// mature is in the 6th place, not 5
             score -= 13;
         }
       
-        
+        ////should be p[2] 'M', but hunter acn go to the hospital without being teleport, so it cant be the case 
         if (p[0] != 'D' && p[1] == 'J' && p[1] == 'M') { // need to keep track of hunters' lifepoints to know whether they teleoported or moved to hospital
             score -= 6;
         }
     }
-
-  
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    return score;
 }
 
 // Get the current health points for a given player
 int getHealth(GameView currentView, PlayerID player)
 {
-  4 letters representing, in order, the Encounters that occurred:
-one 'T' for each Trap encountered (and disarmed)
-'V' if an immature Vampire was encountered (and vanquished)
-'D' if, finally, Dracula was confronted
-then '.' for the remaining 0..4 characters
-  
-  2 uppercase characters representing the new location of Dracula
-'C?' = City move (unknown city)
-'S?' = Sea move (unknown sea)
-'HI' = Hide move, if we have discovered it was a hide move
-'Dn' = Double Back move: D followed by a single character number (n) from 1-5 specifying the position in his trail to which Dracula is doubling back (eg 1 means staying in his most recent location, 5 means returning to his location 5 moves ago)
-'TP' = Teleport to Castle Dracula
-any valid location code (see below), if we know Dracula's location (e.g. via research or confrontation)
-2 characters representing the encounter Dracula placed:
-'T' if a Trap was placed, otherwise '.'
-'V' if an immature Vampire was placed, otherwise '.'
-1 character representing the action phase of Dracula's turn:
-'M' if a Trap has left the trail (malfunctions due to old age), and vanishes without a trace. (yay!)
-'V' if a Vampire has matured. (eek!)
-'.' if nothing has occurred (e.g. early in game)
-a single '.' character
     // new ver
     assert(currentView != NULL);
     assert(player >= 0 && player < NUM_PLAYERS);
-    char *entPointer = (currentView->pastPlays + (player * 8) + 3);    //pointer to the first encountered event of the player
+    char *p = (currentView->pastPlays + (player * 8));
     Round round = getRound(currentView);
+    LocationID prevLocation = NUM_MAP_LOCATIONS;
     int loopCounter;    //counter for each time the same player has acted
     int entCounter;     //counter for the event encountered by each player each turn
     if (player == PLAYER_DRACULAR) {
         int health = GAME_START_BLOOD_POINTS;
         return health if (round == 0);
-        char dracLocation[] = {*(entPointer - 2), *(entPointer - 1)};
+        char dracLocation[] = {*(p + 1), *(p + 2)};
         for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            if (strcmp(dracLocation, "S?") == 0) {
+            if (otherToID(dracLocation) == SEA_UNKNOWN) {
                 health -= LIFE_LOSS_SEA;
-            } else if (strcmp(dracLocation, "TP") == 0) {
+            } else if (otherToID(dracLocation) == TELEPORT) {
                 health += LIFE_GAIN_CASTLE_DRACULA;
             }
             entPointer += 40;
         }
-        for (char *p = (currentView->pastPlays + 3); 
+        char *p = (currentView->pastPlays + 3);
+        for (loopCounter = 0; loopCounter < ((round + 1) * 5); loopCounter++) {
             for (entCounter = 0; entCounter < 3; entCounter++) {
                 if (*entPointer == 'D') {
                     health -= LIFE_LOSS_HUNTER_ENCOUNTER;
@@ -235,35 +251,18 @@ a single '.' character
                 entPointer++;
             }
             p += 8;
+        }
     } else {
         int health = GAME_START_HUNTER_LIFE_POINTS;
-        return health if (round == 0);  
-        char prevLocation[] = {*(entPointer - 2), *(entPointer - 1)};
+        return health if (round == 0);   
+        char currLocation[] = {*(p + 1), *(p + 2)};
         for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            char *p = entPointer;    //pointer to each event that the player encountered
-            for (entCounter = 0; entCounter < 3; entCounter++) {
-                switch(*p) {
-                    case 'T' :
-                        health -= LIFE_LOSS_TRAP_ENCOUNTER;
-                        break;
-                    case 'D' :
-                        health -= LIFE_LOSS_DRACULA_ENCOUNTER;
-                        break;
-                    default :
-                        break;
-                }
+            health = hunterTurnHealth(p, health, prevLocation);
+            prevLocation = abbrevToID(currLocation);
+            if (health <= 0) {
+                health = GAME_START_HUNTER_LIFE_POINTS;
             }
-            if (loopCounter > 0) {
-                char currLocation[] = {*(entPointer - 2), *(entPointer - 1)};
-                if (strcmp(currLocation, prevLocation) == 0) {
-                    health += LIFE_GAIN_REST;
-                    if (health > GAME_START_HUNTER_LIFE_POINTS) {
-                            health = GAME_START_HUNTER_LIFE_POINTS;
-                    }
-                }
-                strcpy(prevLocation, currLocation);
-            }
-            entPointer += 40;
+            p += 40;
         }
         assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     }
@@ -272,7 +271,19 @@ a single '.' character
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player) {
-  
+  for (player = 0; player < NUM_PLAYERS - 1; player++) {
+        char *entPointer = (currentView->pastPlays + (player * 8)); 
+        char currLocation[] = {*(entPointer + 1), *(entPointer + 2)};
+        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
+            health = hunterTurnHealth(entPointer, prevLocation);
+            prevLocation = abbrevToID(currLocation);
+            if (health <= 0) {
+                health = GAME_START_HUNTER_LIFE_POINTS;
+                teleportCount++;
+            }
+            entPointer += 40;
+        }
+    }
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL);
     return currentView->player[player]->playerTrail[0];
@@ -467,6 +478,38 @@ int countChar(char* string) {
         nChar++;
     }
     return nChar;
+}
+  
+  
+//get the health of hunter in each turn
+int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation) {
+    assert(pastPlays != NULL);
+    assert(health <= GAME_START_HUNTER_LIFE_POINTS);
+    assert(prevLocation >= MIN_MAP_LOCATION && prevLocation <= NUM_MAP_LOCATIONS);
+    char *p = pastPlays;
+    char currLocation[] = {*(p + 1), *(p + 2)};
+    if (abbrevToID(currLocation) == prevLocation) {
+        health += LIFE_GAIN_REST;
+        if (health > GAME_START_HUNTER_LIFE_POINTS) {
+            health = GAME_START_HUNTER_LIFE_POINTS;
+        }
+    }
+    p += 3;
+    for (loopCounter = 0; loopCounter < NUM_EVENT_ENCOUNTER; loopCounter++) {
+        switch(*p) {
+            case 'T' :
+                health -= LIFE_LOSS_TRAP_ENCOUNTER;
+                break;
+            case 'D' :
+                health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                break;
+            default :
+                break;
+        }
+        p++;
+    }
+    assert(health <= GAME_START_HUNTER_LIFE_POINTS);
+    return health;
 }
           
           

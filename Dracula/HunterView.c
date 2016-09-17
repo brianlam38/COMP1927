@@ -36,13 +36,12 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[])
 // Frees all memory previously allocated for the HunterView toBeDeleted
 void disposeHunterView(HunterView toBeDeleted)
 {
-    // Dispose hunter view
-    disposeGameView(toBeDeleted->view);
+    // Dispose messages
     free(toBeDeleted->messages);
-
+    toBeDeleted->messages = NULL;
+    // Dispose view
+    disposeGameView(toBeDeleted->view);
     toBeDeleted->view = NULL;
-    assert(toBeDeleted->view == NULL);
-    free(toBeDeleted->view);
     free(toBeDeleted);
 }
 
