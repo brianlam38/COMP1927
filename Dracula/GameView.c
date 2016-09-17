@@ -329,7 +329,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     LocationID *connections = malloc(numNearby*sizeof(LocationID));
     int counter = 0;
 
-    if (road) {
+    if (road) { ///////////u also need to consider the case that dracula cant go to hospital
         LocationID nearby[NUM_LOCATIONS];
         int numNeighbours = 0;
         numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
@@ -455,7 +455,30 @@ static LocationID otherToID(char *abbrev) {
     }
 }
 
-// Given player ID, return player char
+// Given "other" location ID, return location abbrev    // Remove if not used
+static char IDToOther(LocationID other) {
+    if (other == CITY_UNKNOWN) {
+        return "C?";
+    } else if (other == SEA_UKNOWN) {
+        return "S?";
+    } else if (other == HIDE) {
+        return "HI";
+    } else if (other == DOUBLE_BACK_1) {
+        return "D1";
+    } else if (other == DOUBLE_BACK_2) {
+        return "D2";
+    } else if (other == DOUBLE_BACK_3) {
+        return "D3";
+    } else if (other == DOUBLE_BACK_4) {
+        return "D4";
+    } else if (other == DOUBLE_BACK_5) {
+        return "D5";
+    } else if (other == TELEPORT) {
+        return "TP";
+    }
+}
+
+// Given player ID, return player char              // Remove if not used
 static char IDToPlayer(PlayerID player) {
     if (player == PLAYER_LORD_GOLDAMING) {
         return 'G';
@@ -470,7 +493,7 @@ static char IDToPlayer(PlayerID player) {
     }
 }
 
-// Given player char, return their PlayerID
+// Given player char, return their PlayerID         // Remove if not used
 static PlayerID playerToID(char *name) {
     if (strmp(name,'G') == 0) {
         return PLAYER_LORD_GODALMING;
@@ -498,7 +521,6 @@ static int countChar(char* string) {
     }
     return nChar;
 }
-  
   
 //get the health of hunter in each turn
 static int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation) {
