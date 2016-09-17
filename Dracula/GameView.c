@@ -135,14 +135,6 @@ Round getRound(GameView currentView)
         round = ((nChar - 39)/40) + 1;
     }
     return round;
-  
-  
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView != NULL);
-    int round = currentView->roundNumber;
-    assert(round >= 0);
-
-    return round;
 }
 
 // Get the id of current player - ie whose turn is it?
@@ -276,18 +268,6 @@ a single '.' character
         assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     }
     return health;
-  
-  
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView != NULL);
-    int health = currentView->players[currentView->currentPlayer]->playerHealth;
-    if (currentView->currentPlayer == PLAYER_DRACULA) {
-//        assert(health <= 40 && health > 0); Dracula's health can be above 40
-    
-    } else {
-        assert(health <= 9);
-    }
-    return health;
 }
 
 // Get the current location id of a given player
@@ -295,7 +275,7 @@ LocationID getLocation(GameView currentView, PlayerID player) {
   
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL);
-    return currentView->player[player]->trail[0];
+    return currentView->player[player]->playerTrail[0];
 }
 
 // #################
@@ -306,7 +286,7 @@ void getHistory(GameView currentView, PlayerID player,
                  LocationID trail[TRAIL_SIZE]) {
   int i = 0;
   for (i = 0; i < TRAIL_SIZE; i++) 
-    currentView->player[player]->trail[i] = UNKNOWN_LOCATION;
+    currentView->player[player]->playerTrail[i] = UNKNOWN_LOCATION;
   
   int firstMove = player*8;
   
@@ -316,7 +296,7 @@ void getHistory(GameView currentView, PlayerID player,
   }
   
   for (i = 0; i < TRAIL_SIZE; i++) {
-    trail[i] = currentView->player[player]->trail[i];
+    trail[i] = currentView->player[player]->playerTrail[i];
   }
 }
 
@@ -437,16 +417,6 @@ int inArray(int *array,int object, int size) {
 // PARSING FUNCTIONS
 // #################
 
-    // PARSING CHECKLIST
-    // char *pastPlays
-// 1. Take in location ABBREV from trail -> Give AI int value   DONE (given by default places.c?)
-// 2. Take in special ABBREV (actions etc) -> Give AI int value DONE (gameView.c)
-// 3. Take in AI move -> return location ABBREV                 NOT STARTED
-// 4. Take in AI action -> return special ABBREV                NOT STARTED
-    // PlayerMessage messages[]
-// 1. Take in AI message -> Store in messages                   NOT STARTED
-// 2. Take messages from storage -> Translate for AI            NOT STARTED
-
 // given an "other" location abbreviation, return its ID number
 LocationID otherToID(char *abbrev) {
     if (strcmp(abbrev, "C?") == 0) {
@@ -485,13 +455,7 @@ PlayerID nameAbbrevToID(char *name) {
         return DRACULA;
 }
 
-// Parses pastPlays string and sets current data
-void setCurrPlayer(char *pastPlays){
-    int turn;
-    for (turn = 0; turn < strlen(pastPlays); turn++;) {
-        if (
-    }
-}
+
 
 
 
@@ -507,12 +471,12 @@ int countChar(char* string) {
           
           
 void updatePlayerTrail(GameView g, int player, LocationID newLocation) {
-        int counter = 5;
+    int counter = 5;
     while (counter > 0) {
-        g->player[player]->trail[counter] = g->player[player]->trail[counter];
+        g->player[player]->playerTrail[counter] = g->player[player]->playerTrail[counter-1];
       counter--;
     }
-      g->player[player]->trail[0] = newLocation;  
+      g->player[player]->playerTrail[0] = newLocation;  
 }
 
 

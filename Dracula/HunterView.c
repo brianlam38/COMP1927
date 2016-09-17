@@ -10,16 +10,22 @@
      
 struct hunterView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    int hello;
+    GameView view;
+    PlayerMessage *messages;
 };
      
 
 // Creates a new HunterView to summarise the current state of the game
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[])
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    // Alloc + init hunter data
     HunterView hunterView = malloc(sizeof(struct hunterView));
-    hunterView->hello = 42;
+    hunterView->view = newGameView(pastPlays, messages);
+
+    // Alloc messages
+    int turnNum = getRound(hunterView->view);
+    hunterView->messages = malloc(sizeof(PlayerMessage) * turnNum);
+
     return hunterView;
 }
      
