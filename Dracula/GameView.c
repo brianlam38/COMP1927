@@ -49,7 +49,8 @@ int countChar(char* string);
 int hunterTurnHealth(char *pastPlays, LocationID prevLocation);
 void updatePlayerTrail(GameView g, int player, LocationID newLocation);
 //^updates player trail of given player, by inserting newLocation at the starts
-LocationID otherToID(char *abbrev);
+LocationID otherToID(char *abbrev);     // Parse "other" location chars to LocationID
+PlayerID playerToID(char *name);        // Parse "player" name chars to PlayerID
 int inArray(int *array,int object, int size);
 int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round);
      
@@ -453,7 +454,7 @@ LocationID otherToID(char *abbrev) {
     }
 }
              
-PlayerID nameAbbrevToID(char *name) {
+PlayerID playerToID(char *name) {
     if (strmp(name,"G") == 0) {
         return PLAYER_LORD_GODALMING;
     } else if (strcmp(name,"S") == 0) {
