@@ -12,6 +12,7 @@
 #include "graph.h"
 #include "html.h"
 #include "url_file.h"
+#include "queue.h"
 
 #define BUFSIZE 1024
 
@@ -39,7 +40,43 @@ int main(int argc, char **argv)
 	}
 		
 	// You need to modify the code below to implement:
-	//
+	Queue todoList = newQueue();
+	Graph newG = newGraph(maxURLs);
+	Set seen = newSet();
+
+	enterQueue(todoList,firstURL);
+	insertInto(seen,firstURL);
+
+
+	while (!emptyQueue(todoList) && nVertices(newG) < maxURLs) {
+		char *curr = leaveQueue(todoList);
+
+		if (strstr(curr,"unsw.edu.au")) continue;
+		if (!(handle = url_fopen(curr, "r"))) {
+			fprintf(stderr,"Couldn't open %s\n", next);
+			exit(1);
+		}
+		while(!url_feof(handle)) {
+			url_fgets(buffer,sizeof(buffer),handle);
+		//fputs(buffer,stdout);
+			int pos = 0;
+			char result[BUFSIZE];
+			memset(result,0,BUFSIZE);
+			if (nVertices(newG) < maxURLs && isConnected(newG,curr,result)) {
+				while ((pos = GetNextURL(buffer, firstURL, result, pos)) > 0) {
+					printf("Found: '%s'\n",result);
+					memset(result,0,BUFSIZE);
+					if (nVertices(newG) < maxURLs || isConnected(newG,curr,result)) {
+						insertInto(seen,result);
+						enterQueue(todoList,result);
+					}
+				}
+			}
+	url_fclose(handle);
+	sleep(1);
+
+		}
+	}
 	// add firstURL to the ToDo list
 	// initialise Graph to hold up to maxURLs
 	// initialise set of Seen URLs
@@ -56,8 +93,8 @@ int main(int argc, char **argv)
 	//          }
 	//       }
     //    }
-	//    close the opened URL
-	//    sleep(1)
+//	    close the opened URL
+//	    sleep(1)
 	// }
 	if (!(handle = url_fopen(firstURL, "r"))) {
 		fprintf(stderr,"Couldn't open %s\n", next);
