@@ -71,23 +71,23 @@ static VList insertVList(VList L, LocationID v, TransportID type)
 
 static int inVList(VList L, LocationID v, TransportID type)
 {
-	VList cur;
-	for (cur = L; cur != NULL; cur = cur->next) {
-		if (cur->v == v && cur->type == type) return 1;
-	}
-	return 0;
+   VList cur;
+   for (cur = L; cur != NULL; cur = cur->next) {
+      if (cur->v == v && cur->type == type) return 1;
+   }
+   return 0;
 }
 
 // Add a new edge to the Map/Graph
 void addLink(Map g, LocationID start, LocationID end, TransportID type)
 {
-	assert(g != NULL);
-	// don't add edges twice
-	if (!inVList(g->connections[start],end,type)) {
-   	g->connections[start] = insertVList(g->connections[start],end,type);
-   	g->connections[end] = insertVList(g->connections[end],start,type);
-   	g->nE++;
-	}
+   assert(g != NULL);
+   // don't add edges twice
+   if (!inVList(g->connections[start],end,type)) {
+      g->connections[start] = insertVList(g->connections[start],end,type);
+      g->connections[end] = insertVList(g->connections[end],start,type);
+      g->nE++;
+   }
 }
 
 // Display content of Map/Graph
@@ -132,6 +132,20 @@ int numE(Map g, TransportID type)
       }
     }
     return nE;
+}
+
+//count the number of nearby cities of a specified location and store the nearby cities in an array without duplicates
+LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type) {
+    VList curr;
+    for(curr = map->connections[from]; curr != NULL; curr = curr->next) {
+        if (curr->type == type) {
+            (*size)++;
+            nearby = realloc(nearby, (*size) * sizeof(LocationID));
+            assert(nearby != NULL);
+            nearby[*size - 1] = curr->v;
+        }
+    }
+    return nearby;
 }
 
 // Add edges to Graph representing map of Europe

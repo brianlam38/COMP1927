@@ -1,16 +1,3 @@
-// Pairsing Function
-    // Read [The Data]
-// Play --> Move
-// Encounters
-    // Health
-    // GameScore
-    // Possibly others etc.
-// Update Trails
-// Maps
-    // Write an interface function inside the gameView.c file
-  // Every we need neighbours, call connected neighbours
-    // Think about special cases, such as rail connections etc.
-
 // GameView.c ... GameView ADT implementation
 
 #include <stdlib.h>
@@ -25,7 +12,7 @@
 typedef struct _playerInfo {
   int playerHealth;
   LocationID playerLocation;    
-  LocationID playerTrail[5];
+  LocationID playerTrail[TRAIL_SIZE]; ///////trail sze is 6
 } playerInfo;
 
 struct gameView {
@@ -49,12 +36,12 @@ static int countChar(char* string);
 static int hunterTurnHealth(char *pastPlays, LocationID prevLocation);
 static void updatePlayerTrail(GameView g, int player, LocationID newLocation);
 //^updates player trail of given player, by inserting newLocation at the starts
-static LocationID otherToID(char *abbrev);      // Parse "other" location chars to location ID
-static char IDToPlayer(PlayerID player);        // Parse player ID to player char
-static PlayerID playerToID(char *name);         // Parse player char to player ID
+static LocationID otherToId(char *abbrev);      // Parse "other" location abbrev to location ID
+static char idToOther(LocationID other);        // Parse location ID to "other" location abbrev
+static char idToPlayer(PlayerID player);        // Parse player ID to player char
+static PlayerID playerToId(char *name);         // Parse player char to player ID
 static int inArray(int *array,int object, int size);
 static int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round);
-     
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -65,14 +52,14 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS W
     currentView->gameScore = getScore(currentView);
     currentView->roundNumber = getRound(currentView);
     currentView->currentPlayer = getCurrentPlayer(currentView);
-    
+
     
     int i;
     for (i = 0; i < NUM_PLAYERS; i++) {
+        currentView->players[i] = malloc(sizeof(playerInfo));
         getHistory(currentView, i, currentView->player[i]->trail);
-      currentView->player[i]->location = getLocation(currentView, i);
+        currentView->player[i]->location = getLocation(currentView, i);
     }
-  
   
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GameView gameView = malloc(sizeof(struct gameView));
@@ -107,7 +94,7 @@ void disposeGameView(GameView toBeDeleted)
     // Check game data exists
     assert(toBeDeleted != NULL);         
     // Free game struct data
-    free(toBeDeleted->pastPlays);
+    free(toBeDeleted->pastPlays); 
     toBeDeleted->pastPlays = NULL;
     free(toBeDeleted->messages);
     toBeDeleted->messages = NULL;
@@ -237,9 +224,9 @@ int getHealth(GameView currentView, PlayerID player)
         return health if (round == 0);
         char dracLocation[] = {*(p + 1), *(p + 2)};
         for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            if (otherToID(dracLocation) == SEA_UNKNOWN) {
+            if (otherToId(dracLocation) == SEA_UNKNOWN) {
                 health -= LIFE_LOSS_SEA;
-            } else if (otherToID(dracLocation) == TELEPORT) {
+            } else if (otherToId(dracLocation) == TELEPORT) {
                 health += LIFE_GAIN_CASTLE_DRACULA;
             }
             entPointer += 40;
@@ -303,9 +290,29 @@ void getHistory(GameView currentView, PlayerID player,
   
   int firstMove = player*8;
   
-  for (i = firstMove; i <= getRound(currentView)*40; i += 40) { ////////u will get 0 for round 0 and i is <= 0
+  for (i = firstMove; i <= (getRound(currentView) + 1)*40; i += 40) { ////////u will get 0 for round 0 and i is <= 0
     char id[3] = {currentView->pastPlays[i+1],currentView->pastPlays[i+2],'\0'};
-    updatePlayerTrail(currentView,player, abbrevToID(id)); 
+    switch (id) {
+        case(strcmp(id,"C?") == 0):
+            updatePlayerTrail(currentView,player,CITY_UNKNOWN);
+            break;
+        case(strcmp(id,"S?") == 0):
+            updatePlayerTrail(currentView,player,SEA_UNKNOWN);
+            break;
+        case(strcmp(id,"HI") == 0):
+            updatePlayerTrail(currentView,player,HIDE_MOVE);
+            break;
+        case(strcmp(id,"TP") == 0):
+            updatePlayerTrail(currentView,player,CASTLE_DRACULA);
+            break;    
+        case('0' < id[1] && id[1] <= '5'):
+            updatePlayerTrail(currentView,player,DOUBLE_BACK_1 + id[1] - '1');
+            break;
+        default: 
+            updatePlayerTrail(currentView,player,abbrevToId(id))
+
+    }
+    updatePlayerTrail(currentView,player); 
   }
   
   for (i = 0; i < TRAIL_SIZE; i++) {
@@ -325,24 +332,30 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
-    int numNearby = *numLocations; ////////it is the value we have to determine, not a given value, cant use it directly
-    LocationID *connections = malloc(numNearby*sizeof(LocationID));
+     ////////it is the value we have to determine, not a given value, cant use it directly
+    LocationID *connections = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
     int counter = 0;
+    *numLocations = 0;
 
     if (road) { ///////////u also need to consider the case that dracula cant go to hospital
-        LocationID nearby[NUM_LOCATIONS];
+        LocationID nearby[NUM_MAP_LOCATIONS];////////what is NUM_LOCATION?
         int numNeighbours = 0;
         numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
+        *numLocations += numNeighbours 
         int i = 0;
 
-    while (counter < numNeighbours) {
+    for(counter = 0; counter < numNeighbours; i++) {
+      if (player == PLAYER_DRACULA && nearby[i] == ST_JOSEPH_AND_ST_MARYS) {
+              numNeighbours--;
+      } else {
             connections[counter] = nearby[i];
-            i++; counter++;
-        }
+            counter++;
+      }
+    }
   }
     
     if (sea) {
-        LocationID nearby[NUM_LOCATIONS];
+        LocationID nearby[NUM_MAP_LOCATIONS];
         int numNeighbours = 0;
         numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
 
@@ -350,20 +363,20 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         while (numNeighbours > 0) {
             if(!inArray(connections,nearby[i], counter)) {
                 connections[counter] = nearby[i];
-                counter++;
+                counter++; *numLocations++;
         }
             numNeighbours--; i++;
         }
     }
 
     if (rail) {
-        LocationID stations[NUM_LOCATIONS];
+        LocationID stations[NUM_MAP_LOCATIONS];
         int numStations = getStations(currentView->map, from, stations, player, round);
         if (numStations != 0) {
             while(numStations > 0) {
                 if (!inArray(connections,stations[numStations],counter)) {
                     connections[counter] = stations[numStations];
-                    counter++;
+                    counter++; *numLocations++;
                 }
                 numStations--;
             }
@@ -385,7 +398,7 @@ static int getStations(Map map,LocationID from, LocationID *stations, PlayerID p
 
   int i;
     for(i = counter; i > 0; i--) {
-        LocationID secondaryStations[NUM_LOCATIONS];
+        LocationID secondaryStations[NUM_MAP_LOCATIONS];
         int j = NearbyCities(map,stations[i],secondaryStations,RAIL);
 
     while (j > 0) {
@@ -402,7 +415,7 @@ static int getStations(Map map,LocationID from, LocationID *stations, PlayerID p
     int k;
   for(k = counter; k > numNearby; k--) {
   
-    LocationID tertiaryStations[NUM_LOCATIONS];
+    LocationID tertiaryStations[NUM_MAP_LOCATIONS];
     int j = NearbyCities(map,stations[k],tertiaryStations,RAIL);
     
     while (j > 0) {
@@ -429,9 +442,8 @@ static int inArray(int *array,int object, int size) {
 // #################
 // PARSING FUNCTIONS
 // #################
-
 // Given an "other" location abbreviation, return its ID number
-static LocationID otherToID(char *abbrev) {
+static LocationID otherToId(char *abbrev) {
     if (strcmp(abbrev, "C?") == 0) {
         return CITY_UNKNOWN;
     } else if (strcmp(abbrev,"S?") == 0) {
@@ -454,9 +466,8 @@ static LocationID otherToID(char *abbrev) {
         return abbrevToID(abbrev);
     }
 }
-
-// Given "other" location ID, return location abbrev    // Remove if not used
-static char IDToOther(LocationID other) {
+// Given "other" location ID, return location abbrev    // Remove if not used at end of ass
+static char idToOther(LocationID other) {
     if (other == CITY_UNKNOWN) {
         return "C?";
     } else if (other == SEA_UKNOWN) {
@@ -477,9 +488,8 @@ static char IDToOther(LocationID other) {
         return "TP";
     }
 }
-
-// Given player ID, return player char              // Remove if not used
-static char IDToPlayer(PlayerID player) {
+// Given player ID, return player char              // Remove if not used at end of ass
+static char idToPlayer(PlayerID player) {
     if (player == PLAYER_LORD_GOLDAMING) {
         return 'G';
     } else if (player == PLAYER_DR_SEWARD) {
@@ -492,9 +502,8 @@ static char IDToPlayer(PlayerID player) {
         return 'D';
     }
 }
-
-// Given player char, return their PlayerID         // Remove if not used
-static PlayerID playerToID(char *name) {
+// Given player char, return their PlayerID         // Remove if not used at end of ass
+static PlayerID playerToId(char *name) {
     if (strmp(name,'G') == 0) {
         return PLAYER_LORD_GODALMING;
     } else if (strcmp(name,'S') == 0) {
@@ -556,11 +565,10 @@ static int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation
           
 static void updatePlayerTrail(GameView g, int player, LocationID newLocation) {
     int counter = 5;
-    while (counter > 0) {
-        g->player[player]->playerTrail[counter] = g->player[player]->playerTrail[counter-1];
-      counter--;
-    }
-      g->player[player]->playerTrail[0] = newLocation;  
+    for(counter = 5; counter > 0; counter--)
+        g->players[player]->playerTrail[counter] = g->players[player]->playerTrail[counter-1];
+  
+    g->players[player]->playerTrail[0] = newLocation;  
 }
 
 
