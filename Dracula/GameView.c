@@ -504,7 +504,7 @@ static char idToPlayer(PlayerID player) {
 }
 // Given player char, return their PlayerID         // Remove if not used at end of ass
 static PlayerID playerToId(char *name) {
-    if (strmp(name,'G') == 0) {
+    if (strcmp(name,'G') == 0) {
         return PLAYER_LORD_GODALMING;
     } else if (strcmp(name,'S') == 0) {
         return PLAYER_DR_SEWARD;
