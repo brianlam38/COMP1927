@@ -1,3 +1,4 @@
+////////////////////////code for gameView.c ///////////////////////////////////////
 // GameView.c ... GameView ADT implementation
 #include <stdlib.h>
 #include <assert.h>
@@ -7,6 +8,7 @@
 #include "GameView.h"
 #include "Map.h" //... if you decide to use the Map ADT
 #include "Places.h" // Using Places ADT
+#include <stdio.h>
 
 typedef struct _playerInfo {
     int playerHealth;
@@ -19,7 +21,7 @@ struct gameView {
     int gameScore;
     Round roundNumber;
     PlayerID currentPlayer;
-    //PlayerMessage *messages;
+    PlayerMessage *messages;
     playerInfo *players[NUM_PLAYERS];
     
 };
@@ -34,28 +36,32 @@ struct gameView {
 int inArray(int *array, int object, int size);
 LocationID otherToID(char *abbrev);
 int countChar(char* string);
-int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation);
+int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation, LocationID currLocation);
 void updatePlayerTrail(LocationID trail[TRAIL_SIZE], LocationID newLocation);
 LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
+    int i;
+    int nChar = countChar(pastPlays);
     GameView currentView = malloc(sizeof(struct gameView));
     assert(currentView != NULL);
-    int nChar = countChar(pastPlays);
     currentView->pastPlays = malloc((nChar + 1) * sizeof(char));
     assert(currentView->pastPlays != NULL);
     strcpy(currentView->pastPlays, pastPlays);
     currentView->gameScore = getScore(currentView);
     currentView->roundNumber = getRound(currentView);
     currentView->currentPlayer = getCurrentPlayer(currentView);
-    //currentView->messages = calloc(((nChar + 1)/NUM_CHAR_ONE_TURN) * MESSAGE_SIZE, sizeof(char));
-    //assert(currentView->messages != NULL);
     PlayerID player = currentView->currentPlayer;
-    //int i;
-    //for (i = 0; i <= currentView->roundNumber * NUM_PLAYERS + player; i++) {
-    //    strcpy(currentView->messages[i], messages[i]);
-    //}
+    if (((nChar + 1)/NUM_CHAR_ONE_TURN) != 0) {
+        currentView->messages = calloc(((nChar + 1)/NUM_CHAR_ONE_TURN) , sizeof(char[MESSAGE_SIZE]));
+        assert(currentView->messages != NULL);
+        for (i = 0; i < currentView->roundNumber * NUM_PLAYERS + player; i++) {
+            strcpy(currentView->messages[i], messages[i]);
+        }
+    } else {
+        currentView->messages = NULL;
+    }
     for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
         currentView->players[player] = malloc(sizeof(playerInfo));
         assert(currentView->players[player] != NULL);
@@ -68,14 +74,25 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
 
 // Frees all memory previously allocated for the GameView toBeDeleted
 void disposeGameView(GameView toBeDeleted) {
-    assert(toBeDeleted != NULL);
-    PlayerID player;
-    for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
-        free(toBeDeleted->players[player]);
-    }
-    //free(toBeDeleted->messages);
-    free(toBeDeleted->pastPlays);
-    free(toBeDeleted);
+    if (toBeDeleted != NULL) {
+        PlayerID player;
+        for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
+            if (toBeDeleted->players[player] != NULL) {
+                free(toBeDeleted->players[player]);
+                toBeDeleted->players[player] = NULL;
+            }
+        }
+        if (toBeDeleted->messages != NULL) {
+            free(toBeDeleted->messages);
+            toBeDeleted->messages = NULL;
+        }
+        if (toBeDeleted->pastPlays != NULL) {
+            free(toBeDeleted->pastPlays);
+            toBeDeleted->pastPlays = NULL;
+        }
+        free(toBeDeleted);
+        toBeDeleted = NULL;
+    } 
 }
 
 //// Functions to return simple information about the current state of the game
@@ -112,21 +129,21 @@ int getScore(GameView currentView) {
     PlayerID player;
     int health = GAME_START_HUNTER_LIFE_POINTS;    //hunters' health in each turn
     LocationID prevLocation = UNKNOWN_LOCATION;    //hunters' previous location in each turn
-    int loopCounter;                               //counter for loops
-    char *p;
+    int i = 0;
+    int firstMove;
+    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
     //count the number of times a hunter is teleported to the hospital
     for (player = PLAYER_LORD_GODALMING; player <= PLAYER_MINA_HARKER; player++) {
-        p = (currentView->pastPlays + (player * NUM_CHAR_ONE_TURN));    //pointer to first turn of current player
-        char currLocation[] = {*(p + 1), *(p + 2), '\0'};           //hunters' current location in each turn
+        firstMove = player * NUM_CHAR_ONE_TURN;
         //loop each time a hunter has played
-        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            health = hunterTurnHealth(p, health, prevLocation);
+        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
+            char currLocation[] = {currentView->pastPlays[i+1], currentView->pastPlays[i+2], '\0'};           //hunters' current location in each turn
+            health = hunterTurnHealth(&currentView->pastPlays[i], health, prevLocation, abbrevToID(currLocation));
             prevLocation = abbrevToID(currLocation);
             if (health <= 0) {
                 health = GAME_START_HUNTER_LIFE_POINTS;
                 teleportCount++;
             }
-            p += NUM_CHAR_ONE_ROUND;
         }
     }
     //count the number of times Dracula finishes a turn
@@ -136,13 +153,12 @@ int getScore(GameView currentView) {
         dracTurnCount = round;
     }
     //count the number of times a Vampire matures
-    p = (currentView->pastPlays + (PLAYER_DRACULA * NUM_CHAR_ONE_TURN));
+    firstMove = PLAYER_DRACULA * NUM_CHAR_ONE_TURN;
     //loop each time dracula has played
-    for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
-        if (p[5] == 'V') {
+    for (i = firstMove; i < nChar; i += NUM_CHAR_ONE_ROUND) {
+        if (currentView->pastPlays[i+5] == 'V') {
             matureCount++;
         }
-        p += NUM_CHAR_ONE_ROUND;
     }
     //calculate the final score
     score -= (teleportCount * SCORE_LOSS_HUNTER_HOSPITAL + dracTurnCount * SCORE_LOSS_DRACULA_TURN + matureCount * SCORE_LOSS_VAMPIRE_MATURES);
@@ -153,25 +169,25 @@ int getScore(GameView currentView) {
 // Get the current health points for a given player
 int getHealth(GameView currentView, PlayerID player) {
     assert(currentView != NULL);
-    assert(player >= 0 && player < NUM_PLAYERS);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     int health = 0;
-    char *p = currentView->pastPlays;
     Round round = getRound(currentView);                  //current round number
     LocationID prevLocation = UNKNOWN_LOCATION;           //hunters' previous location in each turn
     LocationID currID;
-    int loopCounter;                                      //counter for loops
+    int i;
     int eventCounter;                                     //counter for the events encountered by each player each turn
+    int firstMove = player * NUM_CHAR_ONE_TURN;
+    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
     //health calculation for dracula
     if (player == PLAYER_DRACULA) {
         health = GAME_START_BLOOD_POINTS;
         if (round == 0) return health;
-        p += (player * NUM_CHAR_ONE_TURN);    //pointer to first move of current player
         //initialise all the trail locations
-        for (int i = 0; i < TRAIL_SIZE; i++) currentView->players[player]->playerTrail[i] = UNKNOWN_LOCATION;
+        for (i = 0; i < TRAIL_SIZE; i++) currentView->players[player]->playerTrail[i] = UNKNOWN_LOCATION;
         //loop each time dracula has played
-        for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
+        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
             int type = NONE;
-            char dracLocation[] = {*(p + 1), *(p + 2), '\0'};
+            char dracLocation[] = {currentView->pastPlays[i+1], currentView->pastPlays[i+2], '\0'};
             //get the trail for dracula
             updatePlayerTrail(currentView->players[player]->playerTrail, otherToID(dracLocation));
             //get the exactly location of dracula when he uses hide or double back
@@ -183,34 +199,27 @@ int getHealth(GameView currentView, PlayerID player) {
             } else if (currID == TELEPORT) {
                 health += LIFE_GAIN_CASTLE_DRACULA;
             }
-            p += NUM_CHAR_ONE_ROUND;
         }
-        p = (currentView->pastPlays + 3);
         //loop each time a player has played
-        for (loopCounter = 0; loopCounter < ((round + 1) * NUM_PLAYERS); loopCounter++) {
-            char *eventPointer = p;
+        for (i = 3; i < nChar; i += NUM_CHAR_ONE_TURN) {
             for (eventCounter = 0; eventCounter < NUM_EVENT_ENCOUNTER; eventCounter++) {
-                if (*eventPointer == 'D') {
+                if (currentView->pastPlays[i + eventCounter] == 'D') {
                     health -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
-                eventPointer++;
             }
-            p += NUM_CHAR_ONE_TURN;
         }
     } else {
         //health calculation for hunters
         health = GAME_START_HUNTER_LIFE_POINTS;
         if (round == 0) return health;
-        p += (player * NUM_CHAR_ONE_TURN);    //pointer to first move of current player
-        char currLocation[] = {*(p + 1), *(p + 2), '\0'};
         //loop each time a hunter has played
-        for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
-            health = hunterTurnHealth(p, health, prevLocation);
+        for (i = firstMove; i < nChar; i += NUM_CHAR_ONE_ROUND) {
+            char currLocation[] = {currentView->pastPlays[i+1], currentView->pastPlays[i+2], '\0'};
+            health = hunterTurnHealth(&currentView->pastPlays[i], health, prevLocation, abbrevToID(currLocation));
             prevLocation = abbrevToID(currLocation);
             if (health <= 0) {
                 health = GAME_START_HUNTER_LIFE_POINTS;
             }
-            p += NUM_CHAR_ONE_ROUND;
         }
         assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     }
@@ -220,7 +229,7 @@ int getHealth(GameView currentView, PlayerID player) {
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player) {
     assert(currentView != NULL);
-    assert(player >= 0 && player < NUM_PLAYERS);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     Round round = getRound(currentView);                  //current round number
     if (round == 0) return NOWHERE;                       //player has not had a turn yet
     getHistory(currentView, player, currentView->players[player]->playerTrail);
@@ -231,7 +240,7 @@ LocationID getLocation(GameView currentView, PlayerID player) {
 // Fills the trail array with the location ids of the last 6 turns
 void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
     assert(currentView != NULL);
-    assert(player >= 0 && player < NUM_PLAYERS);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     int i = 0;
     int firstMove = player * NUM_CHAR_ONE_TURN;
     int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
@@ -253,7 +262,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     assert(currentView != NULL);
     assert(*numLocations >= 0 && *numLocations <= NUM_MAP_LOCATIONS);
     assert(validPlace(from));
-    assert(player >= 0 && player < NUM_PLAYERS);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     assert(round >= 0);
     *numLocations = 1;        //initialise the array size
     LocationID *connections = malloc((*numLocations) * sizeof(LocationID));
@@ -372,15 +381,15 @@ int countChar(char* string) {
 }
 
 //get the health of hunter in each turn
-int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation) {
+int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation, LocationID currLocation) {
     assert(pastPlays != NULL);
     assert(health <= GAME_START_HUNTER_LIFE_POINTS);
-    assert(prevLocation >= UNKNOWN_LOCATION && prevLocation < NUM_MAP_LOCATIONS);
+    assert(validPlace(prevLocation) || prevLocation == UNKNOWN_LOCATION);
+    assert(validPlace(currLocation) || currLocation == UNKNOWN_LOCATION);
     char *p = pastPlays;
-    char currLocation[] = {*(p + 1), *(p + 2), '\0'};
     int i;
     //check if the previous and the current location is the same
-    if (abbrevToID(currLocation) == prevLocation) {
+    if (currLocation == prevLocation) {
         health += LIFE_GAIN_REST;
         if (health > GAME_START_HUNTER_LIFE_POINTS) {
             health = GAME_START_HUNTER_LIFE_POINTS;
@@ -438,4 +447,3 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]) 
     }
     return currID;
 }
-
