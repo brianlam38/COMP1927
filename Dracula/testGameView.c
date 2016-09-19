@@ -151,7 +151,7 @@ int main()
     free(edges);
     printf("passed\n");
     disposeGameView(gv);
-
+  
   
 /*#######################################################
                      OUR TESTS HERE:
@@ -175,24 +175,25 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
   
     // TEST_PLAY_1
     printf("Starting tests on TEST_PLAY_1\n");
-    gv = newGameView(TEST_PLAYS_1,messages4[]);
+    PlayerMessage messages6[] = {"Hello","this","is","a","placeholder","message"};
+    gv = newGameView(TEST_PLAYS_1, messages6);
     
     assert(getRound(gv) == 8);
     assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
     assert(getScore(gv) == 352);
     printf("Testing Player Locations\n");
   
-    assert(getLocation(PLAYER_MINA_HARKER) == MADRID);
-    assert(getLocation(PLAYER_DR_SEWARD) == BELGRADE);
-    assert(getLocation(PLAYER_VAN_HELSING) == MEDITERRANEAN_SEA);
-    assert(getLocation(PLAYER_LORD_GODALMING) == LONDON);
-    assert(getLocation(PLAYER_DRACULA) == MADRID);
+    assert(getLocation(gv,PLAYER_MINA_HARKER) == MADRID);
+    assert(getLocation(gv,PLAYER_DR_SEWARD) == BELGRADE);
+    assert(getLocation(gv,PLAYER_VAN_HELSING) == MEDITERRANEAN_SEA);
+    assert(getLocation(gv,PLAYER_LORD_GODALMING) == LONDON);
+    assert(getLocation(gv,PLAYER_DRACULA) == MADRID);
 
         printf("Test for player health\n");
     assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
     assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
-    assert(getHealth(gv,PLAYER_MINAHARKER) == );
+    assert(getHealth(gv,PLAYER_MINA_HARKER) == 3);
     assert(getHealth(gv,PLAYER_DRACULA) == 20);
     printf("passed\n");
 
@@ -201,24 +202,25 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
 /////////////////////////////////////////////////////////////////   
     // TEST_PLAY_2
     printf("Starting tests on TEST_PLAY_2\n");
-    gv = newGameView(TEST_PLAYS_2,messages4[]);//
+    PlayerMessage messages7[] = {"Hello","this","is","a","placeholder","message"};
+    gv = newGameView(TEST_PLAYS_2, messages7);//
     
     assert(getRound(gv) == 10);
-    assert(getCurrentPlayer(gv) == LORD_GODALMING);
-    assert(getScore(gv) == /*insert score*/);
+    assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
+    assert(getScore(gv) == 366); /* Score is incorrect, just placeholder */
     printf("Testing Player Locations\n");
   
-    assert(getLocation(PLAYER_MINA_HARKER) == SARAGOSSA);
-    assert(getLocation(PLAYER_DR_SEWARD) == KLAUSENBURG);
-    assert(getLocation(PLAYER_VAN_HELSING) == PARIS);
-    assert(getLocation(PLAYER_LORD_GODALMING) == BRUSSELS);
-    assert(getLocation(PLAYER_DRACULA) == SARAGOSSA);
+    assert(getLocation(gv,PLAYER_MINA_HARKER) == SARAGOSSA);
+    assert(getLocation(gv,PLAYER_DR_SEWARD) == KLAUSENBURG);
+    assert(getLocation(gv,PLAYER_VAN_HELSING) == PARIS);
+    assert(getLocation(gv,PLAYER_LORD_GODALMING) == BRUSSELS);
+    assert(getLocation(gv,PLAYER_DRACULA) == SARAGOSSA);
 
         printf("Test for player health\n");
     assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
     assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
-    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_MINA_HARKER) == 3);
     assert(getHealth(gv,PLAYER_DRACULA) == 30);
     printf("passed\n");
 
@@ -228,24 +230,25 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
   
   ///////////////////// test set 3 ////////////////////////
     printf("Starting tests on TEST_PLAY_3\n");
-    gv = newGameView(TEST_PLAYS_3,messages4[]);//
+    PlayerMessage messages8[] = {"Hello","this","is","a","placeholder","message"};
+    gv = newGameView(TEST_PLAYS_3, messages8);//
     
     assert(getRound(gv) == 11);
-    assert(getCurrentPlayer(gv) == LORD_GODALMING);
-    assert(getScore(gv) == /*insert score*/);
+    assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
+    assert(getScore(gv) == 3366); /* Incorrect score, just placeholder */
     printf("Testing Player Locations\n");
   
-    assert(getLocation(PLAYER_MINA_HARKER) == MADRID);
-    assert(getLocation(PLAYER_DR_SEWARD) == CASTLE_DRACULA);
-    assert(getLocation(PLAYER_VAN_HELSING) == SARAJEVO);
-    assert(getLocation(PLAYER_LORD_GODALMING) == NUREMBERG);
-    assert(getLocation(PLAYER_DRACULA) == MEDITERRANEAN_SEA);
+    assert(getLocation(gv,PLAYER_MINA_HARKER) == MADRID);
+    assert(getLocation(gv,PLAYER_DR_SEWARD) == CASTLE_DRACULA);
+    assert(getLocation(gv,PLAYER_VAN_HELSING) == SARAJEVO);
+    assert(getLocation(gv,PLAYER_LORD_GODALMING) == NUREMBURG);
+    assert(getLocation(gv,PLAYER_DRACULA) == MEDITERRANEAN_SEA);
 
         printf("Test for player health\n");
     assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
     assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
-    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_MINA_HARKER) == 3);
     assert(getHealth(gv,PLAYER_DRACULA) == 20);
     printf("passed\n");
 
