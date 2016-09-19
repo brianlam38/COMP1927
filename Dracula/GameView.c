@@ -19,7 +19,7 @@ struct gameView {
     int gameScore;
     Round roundNumber;
     PlayerID currentPlayer;
-    PlayerMessage *messages;
+    //PlayerMessage *messages;
     playerInfo *players[NUM_PLAYERS];
     
 };
@@ -49,13 +49,13 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
     currentView->gameScore = getScore(currentView);
     currentView->roundNumber = getRound(currentView);
     currentView->currentPlayer = getCurrentPlayer(currentView);
-    currentView->messages = calloc(((nChar + 1)/NUM_CHAR_ONE_TURN) * MESSAGE_SIZE, sizeof(char));
-    assert(currentView->messages != NULL);
+    //currentView->messages = calloc(((nChar + 1)/NUM_CHAR_ONE_TURN) * MESSAGE_SIZE, sizeof(char));
+    //assert(currentView->messages != NULL);
     PlayerID player = currentView->currentPlayer;
-    int i;
-    for (i = 0; i <= currentView->roundNumber * NUM_PLAYERS + player; i++) {
-        strcpy(currentView->messages[i], messages[i]);
-    }
+    //int i;
+    //for (i = 0; i <= currentView->roundNumber * NUM_PLAYERS + player; i++) {
+    //    strcpy(currentView->messages[i], messages[i]);
+    //}
     for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
         currentView->players[player] = malloc(sizeof(playerInfo));
         assert(currentView->players[player] != NULL);
@@ -73,7 +73,7 @@ void disposeGameView(GameView toBeDeleted) {
     for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
         free(toBeDeleted->players[player]);
     }
-    free(toBeDeleted->messages);
+    //free(toBeDeleted->messages);
     free(toBeDeleted->pastPlays);
     free(toBeDeleted);
 }

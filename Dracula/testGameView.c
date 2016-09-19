@@ -170,7 +170,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea);
 #######################################################*/
-        assert(gv == NULL);
+    assert(gv == NULL);
     printf("Starting our own tests\n");
   
     // TEST_PLAY_1

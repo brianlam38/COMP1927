@@ -9,15 +9,15 @@
 #include "Map.h" //... if you decide to use the Map ADT
 
 typedef struct _encounterData {
-    LocationID loc;
-    int encounterType;
+    LocationID location;
+    int numTraps;
+    int numVamps;
 } encounterData;
   
 struct dracView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GameView view;
-    PlayerMessage *messages;
-    encounterData encounters[TRAIL_SIZE + 1];
+    encounterData *encounters[TRAIL_SIZE];
 };
 
 static int DracLocationKnown(GameView g);
@@ -60,7 +60,7 @@ void disposeDracView(DracView toBeDeleted)
 Round giveMeTheRound(DracView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView->view != NULL);
+    assert(curretnView != NULL && currentView->view != NULL);
     return currentView->view->roundNumber;
 }
 
@@ -68,7 +68,7 @@ Round giveMeTheRound(DracView currentView)
 int giveMeTheScore(DracView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView->view != NULL);
+    assert(currentView != NULL && currentView->view != NULL);
     return currentView->view->gameScore;
 }
 
@@ -76,7 +76,7 @@ int giveMeTheScore(DracView currentView)
 int howHealthyIs(DracView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView->view != NULL);
+    assert(currentView != NULL && currentView->view != NULL);
     return currentView->view->players[player]->playerHealth;
 }
 
@@ -84,6 +84,11 @@ int howHealthyIs(DracView currentView, PlayerID player)
 LocationID whereIs(DracView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+    assert(currentView != NULL && currentView->view != NULL);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
+    return currentView->view->players[player]->playerCurrLocation;
+  
+  /*  
     if (player != PLAYER_DRACULA)
       return getLocation(currentView->view, player);
 
@@ -92,16 +97,17 @@ LocationID whereIs(DracView currentView, PlayerID player)
       return dracLocation;
     if (inSea(dracLocation)) return SEA_UNKNOWN;
 
-    return CITY_UNKNOWN;
+    return CITY_UNKNOWN;*/
 }
 
 // Get the most recent move of a given player
-void lastMove(DracView currentView, PlayerID player,
-                 LocationID *start, LocationID *end)
+void lastMove(DracView currentView, PlayerID player, LocationID *start, LocationID *end)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    start = currentView->view-players[player]->playerTrail[0];
-    end = currentView->view-players[player]->playerLocation;
+    assert(currentView != NULL && currentView->view != NULL);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
+    *start = currentView->view-players[player]->playerTrail[1];
+    *end = currentView->view-players[player]->playerTrail[0];
     return;
 }
 
@@ -110,9 +116,25 @@ void whatsThere(DracView currentView, LocationID where,
                          int *numTraps, int *numVamps)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
-
-
+        assert(currentView != NULL && currentView->view != NULL);
+        assert(validPlace(where) || where == NOWHERE);
+  int i;
+    int firstMove = PLAYER_DRACULA * NUM_CHAR_ONE_TURN;
+    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
+    LocationID currID;
+    LocationID trail[TRAIL_SIZE];
+  if (where == NOWHERE || idToType(where) == SEA) {
+    *numTraps = 0;
+    *numVamps = 0;
+  } else {
+        //initialise all the trail locations
+        for (i = 0; i < TRAIL_SIZE; i++) trail[i] = UNKNOWN_LOCATION;
+        //loop till the last round
+        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
+        char currLocation[] = {currentView->view->pastPlays[i+1], currentView->view->pastPlays[i+2], '\0'};
+        currID = dracSpecialLocation(otherToID(currLocation), currentView->view->players[PLAYER_DRACULA]->playerTrail);
+        updatePlayerTrail(trail, currID);
+        }
     return;
 }
 
@@ -123,8 +145,26 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
                             LocationID trail[TRAIL_SIZE])
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    getHistory(currentView->view, player, trail);
-
+    assert(currentView != NULL && currentView->view != NULL);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
+    int i;
+    int firstMove = player * NUM_CHAR_ONE_TURN;
+    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
+    LocationID currID;
+    if (player == PLAYER_DRACULA) {
+        //initialise all the trail locations
+        for (i = 0; i < TRAIL_SIZE; i++) trail[i] = UNKNOWN_LOCATION;
+        //loop till the last round
+        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
+        char currLocation[] = {currentView->view->pastPlays[i+1], currentView->view->pastPlays[i+2], '\0'};
+        currID = dracSpecialLocation(otherToID(currLocation), trail);
+        updatePlayerTrail(trail, currID);
+        }
+    } else {
+      for (i = 0; i < TRAIL_SIZE; i++ ) {
+        trail[i] = currentView->view->players[player]->playerTrail[i];
+      }
+    }
 }
 
 //// Functions that query the map to find information about connectivity
