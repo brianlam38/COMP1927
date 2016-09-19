@@ -1,5 +1,4 @@
 // GameView.c ... GameView ADT implementation
-
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -8,250 +7,207 @@
 #include "GameView.h"
 #include "Map.h" //... if you decide to use the Map ADT
 #include "Places.h" // Using Places ADT
-     
+
 typedef struct _playerInfo {
-  int playerHealth;
-  LocationID playerLocation;    
-  LocationID playerTrail[TRAIL_SIZE]; ///////trail sze is 6
+    int playerHealth;
+    LocationID playerCurrLocation;
+    LocationID playerTrail[TRAIL_SIZE];
 } playerInfo;
 
 struct gameView {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    char *pastPlays;            // Hunter = 1:Name 2:Loc 4:Encounters     Drac = 1:D 2:Loc 2:Encounters 1:Action
+    char *pastPlays;
     int gameScore;
     Round roundNumber;
     PlayerID currentPlayer;
-    PlayerMessage messages[];
-    Map map;
+    PlayerMessage *messages;
     playerInfo *players[NUM_PLAYERS];
-
+    
 };
 
-// #####################
-// FUNCTION DECLARATIONS
-// #####################
+//max number of event encountered each turn
 #define NUM_EVENT_ENCOUNTER 3
+//number of chars in pastPlays in one round
+#define NUM_CHAR_ONE_ROUND  40
+//number of chars in pastPlays in one turn
+#define NUM_CHAR_ONE_TURN   8
 
-static int countChar(char* string);
-static int hunterTurnHealth(char *pastPlays, LocationID prevLocation);
-static void updatePlayerTrail(GameView g, int player, LocationID newLocation);
-//^updates player trail of given player, by inserting newLocation at the starts
-static LocationID otherToId(char *abbrev);      // Parse "other" location abbrev to location ID
-static char idToOther(LocationID other);        // Parse location ID to "other" location abbrev
-static char idToPlayer(PlayerID player);        // Parse player ID to player char
-static PlayerID playerToId(char *name);         // Parse player char to player ID
-static int inArray(int *array,int object, int size);
-static int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round);
+int inArray(int *array, int object, int size);
+LocationID otherToID(char *abbrev);
+int countChar(char* string);
+int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation);
+void updatePlayerTrail(LocationID trail[TRAIL_SIZE], LocationID newLocation);
+LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 
 // Creates a new GameView to summarise the current state of the game
-GameView newGameView(char *pastPlays, PlayerMessage messages[]) //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-{
-    //new ver
+GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
     GameView currentView = malloc(sizeof(struct gameView));
-    strcpy(currentView->pastPlays, pastPlays);  
+    assert(currentView != NULL);
+    int nChar = countChar(pastPlays);
+    currentView->pastPlays = malloc((nChar + 1) * sizeof(char));
+    assert(currentView->pastPlays != NULL);
+    strcpy(currentView->pastPlays, pastPlays);
     currentView->gameScore = getScore(currentView);
     currentView->roundNumber = getRound(currentView);
     currentView->currentPlayer = getCurrentPlayer(currentView);
-
-    
+    currentView->messages = calloc(((nChar + 1)/NUM_CHAR_ONE_TURN) * MESSAGE_SIZE, sizeof(char));
+    assert(currentView->messages != NULL);
+    PlayerID player = currentView->currentPlayer;
     int i;
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        currentView->players[i] = malloc(sizeof(playerInfo));
-        getHistory(currentView, i, currentView->player[i]->trail);
-        currentView->player[i]->location = getLocation(currentView, i);
+    for (i = 0; i <= currentView->roundNumber * NUM_PLAYERS + player; i++) {
+        strcpy(currentView->messages[i], messages[i]);
     }
-  
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    GameView gameView = malloc(sizeof(struct gameView));
-    gameView->gameScore = GAME_START_SCORE;
-    gameView->roundNumber = 0;
-    gameView->pastPlays = pastPlays;
-    gameView->messages = messages;
-    gameView->map = newMap();
-    gameView->currentPlayer = PLAYER_LORD_GODALMING;
-    int x;
-    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_MINA_HARKER ; x++) {
-        gameView->players[x]->playerHealth = GAME_START_HUNTER_LIFE_POINTS;
-        gameView->players[x]->playerLocation = ST_JOSEPH_AND_ST_MARYS;
-        int y;
-        for (y = 0; y < TRAIL_SIZE ; y++) {
-            gameView->players[x]->playerTrail[y] = UNKNOWN_LOCATION;
-        }
+    for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
+        currentView->players[player] = malloc(sizeof(playerInfo));
+        assert(currentView->players[player] != NULL);
+        currentView->players[player]->playerHealth = getHealth(currentView, player);
+        currentView->players[player]->playerCurrLocation = getLocation(currentView, player);
+        getHistory(currentView, player, currentView->players[player]->playerTrail);
     }
-    gameView->players[PLAYER_DRACULA]->playerHealth = GAME_START_BLOOD_POINTS;
-    gameView->players[PLAYER_DRACULA]->playerLocation = CASTLE_DRACULA;
-    int y;
-    for (y = 0; y < TRAIL_SIZE ; y++) {
-        gameView->players[PLAYER_DRACULA]->playerTrail[y] = UNKNOWN_LOCATION;
-    }
-    return gameView;
-}     
-     
-// Frees all memory previously allocated for the GameView toBeDeleted
-void disposeGameView(GameView toBeDeleted)
-{ //COMPLETE THIS IMPLEMENTATION
-    
-    // Check game data exists
-    assert(toBeDeleted != NULL);         
-    // Free game struct data
-    free(toBeDeleted->pastPlays); 
-    toBeDeleted->pastPlays = NULL;
-    free(toBeDeleted->messages);
-    toBeDeleted->messages = NULL;
-    disposeMap(toBeDeleted->map);
-    toBeDeleted->map = NULL;
-    // Free player struct
-    int x;
-    for (x = PLAYER_LORD_GODALMING; x <= PLAYER_DRACULA; x++) {
-        free(toBeDeleted->players[x]);
-        toBeDeleted->players[x] = NULL;
-        assert(toBeDeleted->players[x] == NULL);
-    }
-    // Free struct ptr + set to NULL + check
-    free(toBeDeleted);
-    toBeDeleted = NULL;
-    assert(toBeDeleted == NULL);
+    return currentView;
 }
 
-// ################
-// GET FUNCTIONS
-// ################
+// Frees all memory previously allocated for the GameView toBeDeleted
+void disposeGameView(GameView toBeDeleted) {
+    assert(toBeDeleted != NULL);
+    PlayerID player;
+    for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
+        free(toBeDeleted->players[player]);
+    }
+    free(toBeDeleted->messages);
+    free(toBeDeleted->pastPlays);
+    free(toBeDeleted);
+}
 
+//// Functions to return simple information about the current state of the game
 // Get the current round
-Round getRound(GameView currentView)
-{
-    // new ver
+Round getRound(GameView currentView) {
     assert(currentView != NULL);
     Round round;
     int nChar = countChar(currentView->pastPlays);
-        if (nChar < 40) {
-            round = 0;
+    if (nChar < NUM_CHAR_ONE_ROUND - 1) {
+        round = 0;
     } else {
-        round = ((nChar - 39)/40) + 1;
+        round = ((nChar - 39)/NUM_CHAR_ONE_ROUND) + 1;
     }
     return round;
 }
 
 // Get the id of current player - ie whose turn is it?
-PlayerID getCurrentPlayer(GameView currentView)
-{
-        // new ver
+PlayerID getCurrentPlayer(GameView currentView) {
     assert(currentView != NULL);
     PlayerID currentPlayer;
     int nChar = countChar(currentView->pastPlays);
-    currentPlayer = ((nChar + 1)/8) % 5
+    currentPlayer = ((nChar + 1)/NUM_CHAR_ONE_TURN) % NUM_PLAYERS;
     return currentPlayer;
 }
 
 // Get the current score
 int getScore(GameView currentView) {
-    // new ver
     assert(currentView != NULL);
     int score = GAME_START_SCORE;                  //the current score to be returned
     Round round = getRound(currentView);           //current round number
-    int dracTurnCount = 0;                         //number of times Dracula finishes a turn 
+    int dracTurnCount = 0;                         //number of times Dracula finishes a turn
     int matureCount = 0;                           //number of times a Vampire matures
     int teleportCount = 0;                         //number of times a hunter is teleported to the hospital
     PlayerID player;
     int health = GAME_START_HUNTER_LIFE_POINTS;    //hunters' health in each turn
-    LocationID prevLocation = NUM_MAP_LOCATIONS;   //hunters' previous location in each turn
+    LocationID prevLocation = UNKNOWN_LOCATION;    //hunters' previous location in each turn
     int loopCounter;                               //counter for loops
+    char *p;
     //count the number of times a hunter is teleported to the hospital
-    for (player = 0; player < NUM_PLAYERS - 1; player++) {
-        char *entPointer = (currentView->pastPlays + (player * 8)); 
-        char currLocation[] = {*(entPointer + 1), *(entPointer + 2)};
-        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            health = hunterTurnHealth(entPointer, health, prevLocation);
-            prevLocation = abbrevToID(currLocation);
-            if (health <= 0) {
-                health = GAME_START_HUNTER_LIFE_POINTS;
-                teleportCount++;
-            }
-            entPointer += 40;
-        }
-    }
-    //count the number of times Dracula finishes a turn
-    if ((countChar(currentView->pastPlays) + 1) % 40 == 0) {
-        dracTurnCount = round + 1;
-    } else {
-        dracTurnCount = round;
-    }
-    //count the number of times a Vampire matures
-    entPointer = (currentView->pastPlays + (PLAYER_DRACULA * 8));
-    for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-        if (entPointer[5] == 'V') {
-            matureCount++;
-        }
-        entPointer += 40;
-    }
-    //calculate the final score
-    score -= (teleportCount * 6 + dracTurnCount + matureCount * 13);
-    assert(score <= GAME_START_SCORE);
-    return score;
-  
-  
-  
-    for (p = currentView->pastPlays; *p != '\0'; p +=6) { ////u cant put '\0' as u r stepping 6 , not 1
-      
-        if (p[0] == 'D') {
-            score--;
-        }
-      
-        if (p[0] == 'D' && p[4] == 'V') {//// mature is in the 6th place, not 5
-            score -= 13;
-        }
-      
-        ////should be p[2] 'M', but hunter acn go to the hospital without being teleport, so it cant be the case 
-        if (p[0] != 'D' && p[1] == 'J' && p[1] == 'M') { // need to keep track of hunters' lifepoints to know whether they teleoported or moved to hospital
-            score -= 6;
-        }
-    }
-}
-
-// Get the current health points for a given player
-int getHealth(GameView currentView, PlayerID player)
-{
-    // new ver
-    assert(currentView != NULL);
-    assert(player >= 0 && player < NUM_PLAYERS);
-    char *p = (currentView->pastPlays + (player * 8));
-    Round round = getRound(currentView);
-    LocationID prevLocation = NUM_MAP_LOCATIONS;
-    int loopCounter;    //counter for each time the same player has acted
-    int entCounter;     //counter for the event encountered by each player each turn
-    if (player == PLAYER_DRACULAR) {
-        int health = GAME_START_BLOOD_POINTS;
-        return health if (round == 0);
-        char dracLocation[] = {*(p + 1), *(p + 2)};
-        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            if (otherToId(dracLocation) == SEA_UNKNOWN) {
-                health -= LIFE_LOSS_SEA;
-            } else if (otherToId(dracLocation) == TELEPORT) {
-                health += LIFE_GAIN_CASTLE_DRACULA;
-            }
-            entPointer += 40;
-        }
-        char *p = (currentView->pastPlays + 3);
-        for (loopCounter = 0; loopCounter < ((round + 1) * 5); loopCounter++) {
-            for (entCounter = 0; entCounter < 3; entCounter++) {
-                if (*entPointer == 'D') {
-                    health -= LIFE_LOSS_HUNTER_ENCOUNTER;
-                }
-                entPointer++;
-            }
-            p += 8;
-        }
-    } else {
-        int health = GAME_START_HUNTER_LIFE_POINTS;
-        return health if (round == 0);   
-        char currLocation[] = {*(p + 1), *(p + 2)};
+    for (player = PLAYER_LORD_GODALMING; player <= PLAYER_MINA_HARKER; player++) {
+        p = (currentView->pastPlays + (player * NUM_CHAR_ONE_TURN));    //pointer to first turn of current player
+        char currLocation[] = {*(p + 1), *(p + 2), '\0'};           //hunters' current location in each turn
+        //loop each time a hunter has played
         for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
             health = hunterTurnHealth(p, health, prevLocation);
             prevLocation = abbrevToID(currLocation);
             if (health <= 0) {
                 health = GAME_START_HUNTER_LIFE_POINTS;
+                teleportCount++;
             }
-            p += 40;
+            p += NUM_CHAR_ONE_ROUND;
+        }
+    }
+    //count the number of times Dracula finishes a turn
+    if ((countChar(currentView->pastPlays) + 1) % NUM_CHAR_ONE_ROUND == 0) {
+        dracTurnCount = round + 1;
+    } else {
+        dracTurnCount = round;
+    }
+    //count the number of times a Vampire matures
+    p = (currentView->pastPlays + (PLAYER_DRACULA * NUM_CHAR_ONE_TURN));
+    //loop each time dracula has played
+    for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
+        if (p[5] == 'V') {
+            matureCount++;
+        }
+        p += NUM_CHAR_ONE_ROUND;
+    }
+    //calculate the final score
+    score -= (teleportCount * SCORE_LOSS_HUNTER_HOSPITAL + dracTurnCount * SCORE_LOSS_DRACULA_TURN + matureCount * SCORE_LOSS_VAMPIRE_MATURES);
+    assert(score <= GAME_START_SCORE);
+    return score;
+}
+
+// Get the current health points for a given player
+int getHealth(GameView currentView, PlayerID player) {
+    assert(currentView != NULL);
+    assert(player >= 0 && player < NUM_PLAYERS);
+    int health = 0;
+    char *p = currentView->pastPlays;
+    Round round = getRound(currentView);                  //current round number
+    LocationID prevLocation = UNKNOWN_LOCATION;           //hunters' previous location in each turn
+    LocationID currID;
+    int loopCounter;                                      //counter for loops
+    int eventCounter;                                     //counter for the events encountered by each player each turn
+    //health calculation for dracula
+    if (player == PLAYER_DRACULA) {
+        health = GAME_START_BLOOD_POINTS;
+        if (round == 0) return health;
+        p += (player * NUM_CHAR_ONE_TURN);    //pointer to first move of current player
+        //initialise all the trail locations
+        for (int i = 0; i < TRAIL_SIZE; i++) currentView->players[player]->playerTrail[i] = UNKNOWN_LOCATION;
+        //loop each time dracula has played
+        for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
+            int type = NONE;
+            char dracLocation[] = {*(p + 1), *(p + 2), '\0'};
+            updatePlayerTrail(currentView->players[player]->playerTrail, otherToID(dracLocation));
+            currID = dracSpecialLocation(otherToID(dracLocation), currentView->players[player]->playerTrail);
+            if (validPlace(currID)) type = idToType(currID);
+            if (currID == SEA_UNKNOWN || type == SEA) {
+                health -= LIFE_LOSS_SEA;
+            } else if (currID == TELEPORT) {
+                health += LIFE_GAIN_CASTLE_DRACULA;
+            }
+            p += NUM_CHAR_ONE_ROUND;
+        }
+        p = (currentView->pastPlays + 3);
+        //loop each time a player has played
+        for (loopCounter = 0; loopCounter < ((round + 1) * NUM_PLAYERS); loopCounter++) {
+            char *eventPointer = p;
+            for (eventCounter = 0; eventCounter < NUM_EVENT_ENCOUNTER; eventCounter++) {
+                if (*eventPointer == 'D') {
+                    health -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                }
+                eventPointer++;
+            }
+            p += NUM_CHAR_ONE_TURN;
+        }
+    } else {
+        //health calculation for hunters
+        health = GAME_START_HUNTER_LIFE_POINTS;
+        if (round == 0) return health;
+        p += (player * NUM_CHAR_ONE_TURN);    //pointer to first move of current player
+        char currLocation[] = {*(p + 1), *(p + 2), '\0'};
+        //loop each time a hunter has played
+        for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
+            health = hunterTurnHealth(p, health, prevLocation);
+            prevLocation = abbrevToID(currLocation);
+            if (health <= 0) {
+                health = GAME_START_HUNTER_LIFE_POINTS;
+            }
+            p += NUM_CHAR_ONE_ROUND;
         }
         assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     }
@@ -260,190 +216,125 @@ int getHealth(GameView currentView, PlayerID player)
 
 // Get the current location id of a given player
 LocationID getLocation(GameView currentView, PlayerID player) {
-  for (player = 0; player < NUM_PLAYERS - 1; player++) {
-        char *entPointer = (currentView->pastPlays + (player * 8)); 
-        char currLocation[] = {*(entPointer + 1), *(entPointer + 2)};
-        for (loopCounter = 0; loopCounter <= round + 1; loopCounter ++) {
-            health = hunterTurnHealth(entPointer, prevLocation);
-            prevLocation = abbrevToID(currLocation);
-            if (health <= 0) {  
-                health = GAME_START_HUNTER_LIFE_POINTS;
-                teleportCount++;
-            }
-            entPointer += 40;
-        }
-    }
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL);
-    return currentView->player[player]->playerTrail[0];
+    assert(player >= 0 && player < NUM_PLAYERS);
+    Round round = getRound(currentView);                  //current round number
+    if (round == 0) return NOWHERE;                       //player has not had a turn yet
+    getHistory(currentView, player, currentView->players[player]->playerTrail);
+    return currentView->players[player]->playerTrail[0];
 }
 
-// #################
-// GET HISTORIC DATA ...done
-// #################
-
-void getHistory(GameView currentView, PlayerID player,
-                 LocationID trail[TRAIL_SIZE]) {
-  int i = 0;
-  for (i = 0; i < TRAIL_SIZE; i++) 
-    currentView->player[player]->playerTrail[i] = UNKNOWN_LOCATION;
-  
-  int firstMove = player*8;
-  
-  for (i = firstMove; i <= (getRound(currentView) + 1)*40; i += 40) { ////////u will get 0 for round 0 and i is <= 0
-    char id[3] = {currentView->pastPlays[i+1],currentView->pastPlays[i+2],'\0'};
-    switch (id) {
-        case(strcmp(id,"C?") == 0):
-            updatePlayerTrail(currentView,player,CITY_UNKNOWN);
-            break;
-        case(strcmp(id,"S?") == 0):
-            updatePlayerTrail(currentView,player,SEA_UNKNOWN);
-            break;
-        case(strcmp(id,"HI") == 0):
-            updatePlayerTrail(currentView,player,HIDE_MOVE);
-            break;
-        case(strcmp(id,"TP") == 0):
-            updatePlayerTrail(currentView,player,CASTLE_DRACULA);
-            break;    
-        case('0' < id[1] && id[1] <= '5'):
-            updatePlayerTrail(currentView,player,DOUBLE_BACK_1 + id[1] - '1');
-            break;
-        default: 
-            updatePlayerTrail(currentView,player,abbrevToId(id))
-
+//// Functions that return information about the history of the game
+// Fills the trail array with the location ids of the last 6 turns
+void getHistory(GameView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
+    assert(currentView != NULL);
+    assert(player >= 0 && player < NUM_PLAYERS);
+    int i = 0;
+    int firstMove = player * NUM_CHAR_ONE_TURN;
+    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
+    //initialise all the trail locations
+    for (i = 0; i < TRAIL_SIZE; i++) trail[i] = UNKNOWN_LOCATION;
+    //loop till the last round
+    for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
+        char currLocation[3] = {currentView->pastPlays[i+1], currentView->pastPlays[i+2], '\0'};
+        updatePlayerTrail(trail, otherToID(currLocation));
     }
-    updatePlayerTrail(currentView,player); 
-  }
-  
-  for (i = 0; i < TRAIL_SIZE; i++) {
-    trail[i] = currentView->player[player]->playerTrail[i];
-  }
 }
 
-// ###################
-// MAP QUERY FUNCTIONS ...done
-// ###################
-
+//// Functions that query the map to find information about connectivity
 // Returns an array of LocationIDs for all directly connected locations
-
 LocationID *connectedLocations(GameView currentView, int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
-     ////////it is the value we have to determine, not a given value, cant use it directly
-    LocationID *connections = malloc(NUM_MAP_LOCATIONS*sizeof(LocationID));
-    int counter = 0;
-    *numLocations = 0;
-
-    if (road) { ///////////u also need to consider the case that dracula cant go to hospital
-        LocationID nearby[NUM_MAP_LOCATIONS];////////what is NUM_LOCATION?
-        int numNeighbours = 0;
-        numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
-        *numLocations += numNeighbours 
-        int i = 0;
-
-    for(counter = 0; counter < numNeighbours; i++) {
-      if (player == PLAYER_DRACULA && nearby[i] == ST_JOSEPH_AND_ST_MARYS) {
-              numNeighbours--;
-      } else {
-            connections[counter] = nearby[i];
-            counter++;
-      }
-    }
-  }
-    
-    if (sea) {
-        LocationID nearby[NUM_MAP_LOCATIONS];
-        int numNeighbours = 0;
-        numNeighbours = NearbyCities(currentView->map, from, nearby, ROAD);
-
-    int i = 0;
-        while (numNeighbours > 0) {
-            if(!inArray(connections,nearby[i], counter)) {
-                connections[counter] = nearby[i];
-                counter++; *numLocations++;
-        }
-            numNeighbours--; i++;
-        }
-    }
-
-    if (rail) {
-        LocationID stations[NUM_MAP_LOCATIONS];
-        int numStations = getStations(currentView->map, from, stations, player, round);
-        if (numStations != 0) {
-            while(numStations > 0) {
-                if (!inArray(connections,stations[numStations],counter)) {
-                    connections[counter] = stations[numStations];
-                    counter++; *numLocations++;
+    assert(currentView != NULL);
+    assert(*numLocations >= 0 && *numLocations <= NUM_MAP_LOCATIONS);
+    assert(validPlace(from));
+    assert(player >= 0 && player < NUM_PLAYERS);
+    assert(round >= 0);
+    *numLocations = 1;        //initialise the array size
+    LocationID *connections = malloc((*numLocations) * sizeof(LocationID));
+    assert(connections != NULL);
+    connections[0] = from;    //initialise the array
+    Map map = newMap();
+    int i, j;
+    //find the nearby cities of type ROAD
+    if (road) {
+        connections = NearbyCities(map, from, connections, numLocations, ROAD);
+        //case: Dracula can't move to hospital
+        if (player == PLAYER_DRACULA && inArray(connections, ST_JOSEPH_AND_ST_MARYS, *numLocations)) {
+            for (i = 0; i < *numLocations; i++) {
+                if (connections[i] == ST_JOSEPH_AND_ST_MARYS) {
+                    for (j = i; j + 1 < *numLocations; j++) {
+                        connections[j] = connections[j + 1];
+                    }
+                    i = *numLocations;
                 }
-                numStations--;
+            }
+            (*numLocations)--;
+            connections = realloc(connections, *numLocations * sizeof(LocationID));
+            assert(connections != NULL);
+        }
+    }
+    //find the nearby cities of type BOAT
+    if (sea) {
+        connections = NearbyCities(map, from, connections, numLocations, BOAT);
+    }
+    //find the nearby cities of type RAIL
+    if (rail) {
+        int stationsAllowed = (player + round) % 4;
+        int priNumStations = 0;
+        int secNumStations = 0;
+        int numStations = 1;
+        LocationID *railConnections = malloc(numStations * sizeof(LocationID));
+        assert(railConnections != NULL);
+        railConnections[0] = from;
+        //no rail allowed for Dracula or stations allowed is zero
+        if (player == PLAYER_DRACULA || stationsAllowed == 0) return connections;
+        //get the primary rail connections from the given location
+        connections = NearbyCities(map, from, connections, numLocations, RAIL);
+        if (stationsAllowed == 1) return connections;
+        //get the primary rail connections and store it into the railConnections array
+        railConnections = NearbyCities(map, from, railConnections, &numStations, RAIL);
+        priNumStations = numStations;
+        //loop through the primary rail stations and find their nearby rail stations
+        for (i = 0; i < priNumStations; i++) {
+            railConnections = NearbyCities(map, railConnections[i], railConnections, &numStations, RAIL);
+        }
+        //loop through the secondary rail stations and find their nearby rail stations
+        if (stationsAllowed == 3) {
+            secNumStations = numStations;
+            for (i = priNumStations - 1; i < secNumStations; i++) {
+                railConnections = NearbyCities(map, railConnections[i], railConnections, &numStations, RAIL);
+            }
+        }
+        //put the nearby cities of type RAIL to the connections array
+        for (i = 0; i < numStations; i++) {
+            for (j = 0; j < *numLocations; j++) {
+                if (connections[j] == railConnections[i]) j = *numLocations + 1;
+            }
+            if (j != *numLocations + 1) {
+                (*numLocations)++;
+                connections = realloc(connections, *numLocations * sizeof(LocationID));
+                assert(connections != NULL);
+                connections[*numLocations - 1] = railConnections[i];
             }
         }
     }
     return connections;
 }
 
-
-static int getStations(Map map,LocationID from, LocationID *stations, PlayerID player, Round round) {
-
-    int stationsAllowed = (player+round)%4;
-    if (player == PLAYER_DRACULA || stationsAllowed == 0) return 0;
-
-    int counter = NearbyCities(map, from, stations, RAIL);
-    if (stationsAllowed == 1) return counter;
-
-    int numNearby = counter;
-
-  int i;
-    for(i = counter; i > 0; i--) {
-        LocationID secondaryStations[NUM_MAP_LOCATIONS];
-        int j = NearbyCities(map,stations[i],secondaryStations,RAIL);
-
-    while (j > 0) {
-            if (!inArray(stations,secondaryStations[j],counter)) {
-                stations[counter] = secondaryStations[j];
-                counter++;
-            }
-            j--;
-        }
-    }
-
-    if (stationsAllowed == 2) return counter;
-
-    int k;
-  for(k = counter; k > numNearby; k--) {
-  
-    LocationID tertiaryStations[NUM_MAP_LOCATIONS];
-    int j = NearbyCities(map,stations[k],tertiaryStations,RAIL);
-    
-    while (j > 0) {
-        if (!inArray(stations,tertiaryStations[j],counter)) {
-        stations[counter] = tertiaryStations[j];
-        counter++;
-      }
-      j--;
-        }
- }
-  
-    return counter;
-}
-
-static int inArray(int *array,int object, int size) {
-
+//check if an element is in the given array
+int inArray(int *array, int object, int size) {
     int i;
     for(i = 0; i < size; i++) {
-        if (array[i] == object) return 0;
+        if (array[i] == object) return 1;
     }
-    return 1;
+    return 0;
 }
 
-// #################
-// PARSING FUNCTIONS
-// #################
-// Given an "other" location abbreviation, return its ID number
-static LocationID otherToId(char *abbrev) {
+// given an "other" location abbreviation, return its ID number
+LocationID otherToID(char *abbrev) {
     if (strcmp(abbrev, "C?") == 0) {
         return CITY_UNKNOWN;
     } else if (strcmp(abbrev,"S?") == 0) {
@@ -466,63 +357,9 @@ static LocationID otherToId(char *abbrev) {
         return abbrevToID(abbrev);
     }
 }
-// Given "other" location ID, return location abbrev    // Remove if not used at end of ass
-static char idToOther(LocationID other) {
-    if (other == CITY_UNKNOWN) {
-        return "C?";
-    } else if (other == SEA_UKNOWN) {
-        return "S?";
-    } else if (other == HIDE) {
-        return "HI";
-    } else if (other == DOUBLE_BACK_1) {
-        return "D1";
-    } else if (other == DOUBLE_BACK_2) {
-        return "D2";
-    } else if (other == DOUBLE_BACK_3) {
-        return "D3";
-    } else if (other == DOUBLE_BACK_4) {
-        return "D4";
-    } else if (other == DOUBLE_BACK_5) {
-        return "D5";
-    } else if (other == TELEPORT) {
-        return "TP";
-    }
-}
-// Given player ID, return player char              // Remove if not used at end of ass
-static char idToPlayer(PlayerID player) {
-    if (player == PLAYER_LORD_GOLDAMING) {
-        return 'G';
-    } else if (player == PLAYER_DR_SEWARD) {
-        return 'S';
-    } else if (player == PLAYER_VAN_HELSING) {
-        return 'H';
-    } else if (player == PLAYER_MINA_HARKER) {
-        return 'M';
-    } else if (currentPlayer == PLAYER_DRACULA) {
-        return 'D';
-    }
-}
-// Given player char, return their PlayerID         // Remove if not used at end of ass
-static PlayerID playerToId(char *name) {
-    if (strcmp(name,'G') == 0) {
-        return PLAYER_LORD_GODALMING;
-    } else if (strcmp(name,'S') == 0) {
-        return PLAYER_DR_SEWARD;
-    } else if (strcmp(name,'H') == 0) {
-        return PLAYER_VAN_HELSING;
-    } else if (strcmp(name,'M') == 0) {
-        return PLAYER_MINA_HARKER;
-    } else if (strcmp(name,'D') == 0) {
-        return DRACULA;
-    }
-}
-
-
-
-
 
 //To count the number of chars in a string
-static int countChar(char* string) {
+int countChar(char* string) {
     char *p;
     int nChar = 0;
     for (p = string; *p != '\0'; p++) {
@@ -530,14 +367,16 @@ static int countChar(char* string) {
     }
     return nChar;
 }
-  
+
 //get the health of hunter in each turn
-static int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation) {
+int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation) {
     assert(pastPlays != NULL);
     assert(health <= GAME_START_HUNTER_LIFE_POINTS);
-    assert(prevLocation >= MIN_MAP_LOCATION && prevLocation <= NUM_MAP_LOCATIONS);
+    assert(prevLocation >= UNKNOWN_LOCATION && prevLocation < NUM_MAP_LOCATIONS);
     char *p = pastPlays;
-    char currLocation[] = {*(p + 1), *(p + 2)};
+    char currLocation[] = {*(p + 1), *(p + 2), '\0'};
+    int i;
+    //check if the previous and the current location is the same
     if (abbrevToID(currLocation) == prevLocation) {
         health += LIFE_GAIN_REST;
         if (health > GAME_START_HUNTER_LIFE_POINTS) {
@@ -545,7 +384,8 @@ static int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation
         }
     }
     p += 3;
-    for (loopCounter = 0; loopCounter < NUM_EVENT_ENCOUNTER; loopCounter++) {
+    //loop each time a hunter has encountered an event
+    for (i = 0; i < NUM_EVENT_ENCOUNTER; i++) {
         switch(*p) {
             case 'T' :
                 health -= LIFE_LOSS_TRAP_ENCOUNTER;
@@ -561,14 +401,37 @@ static int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation
     assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     return health;
 }
-          
-          
-static void updatePlayerTrail(GameView g, int player, LocationID newLocation) {
-    int counter = 5;
-    for(counter = 5; counter > 0; counter--)
-        g->players[player]->playerTrail[counter] = g->players[player]->playerTrail[counter-1];
-  
-    g->players[player]->playerTrail[0] = newLocation;  
+
+//updates player's trail by inserting newLocation at the starts
+void updatePlayerTrail(LocationID trail[TRAIL_SIZE], LocationID newLocation) {
+    int i;
+    for (i = TRAIL_SIZE - 1; i > 0; i--)
+        trail[i] = trail[i - 1];    //shift location in the array
+    trail[i] = newLocation;         //add current location to the array
 }
-
-
+            
+LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]) {
+    switch (currID) {
+        case HIDE:
+            currID = trail[0];
+            break;
+        case DOUBLE_BACK_1:
+            currID = trail[1];
+            break;
+        case DOUBLE_BACK_2:
+            currID = trail[2];
+            break;
+        case DOUBLE_BACK_3:
+            currID = trail[3];
+            break;
+        case DOUBLE_BACK_4:
+            currID = trail[4];
+            break;
+        case DOUBLE_BACK_5:
+            currID = trail[5];
+            break;
+        default:
+            break;
+    }
+    return currID;
+}

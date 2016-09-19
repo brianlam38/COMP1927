@@ -12,7 +12,6 @@ typedef struct _encounterData {
     LocationID loc;
     int encounterType;
 } encounterData;
-
   
 struct dracView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
@@ -183,7 +182,7 @@ static void addToEncounters(encounterData encounters, DracView currentView) {
     if (((currentView->view->roundNumber - x) % 13) == 0) {
         encounters[x]->enCounterType = VAMPIRE;
     }
-    
+    // to do
   }
 }
 

@@ -6,19 +6,61 @@
 #include <string.h>
 #include "GameView.h"
 
+#define TEST_PLAYS_1 "GED.... SGE.... HZU.... MCA.... DCF.V.. \
+                                            GMN.... SCFVD.. HGE.... MLS.... DBOT... \
+                                            GLO.... SMR.... HCF.... MMA.... DTOT... \
+                      GPL.... SMS.... HMR.... MGR.... DBAT... \
+                      GLO.... SBATD.. HMS.... MMA.... DSRT... \
+                      GPL.... SSJ.... HBA.... MGR.... DALT... \
+                      GPL.... SSJ.... HBA.... MGR.... DMAT... \
+                      GLO.... SBE.... HMS.... MMATD.. DHIT... "
+
+#define TEST_PLAYS_2 "GED.... SGE.... HZU.... MCA.... DCF.V.. \
+                                            GMN.... SCFVD.. HGE.... MLS.... DBO.V.. \
+                                            GLO.... SMR.... HCF.... MMA.... DTOT.M. \
+                      GPL.... SMS.... HMR.... MGR.... DBAT... \
+                      GLO.... SBATD.. HMS.... MMA.... DSRT... \
+                      GPL.... SSJ.... HBA.... MGR.... DALT... \
+                      GPL.... SSJ.... HBA.... MGR.... DMAT... \
+                      GLO.... SBE.... HMS.... MMATD.. DSRT... \
+                      GEC.... SSO.... HMR.... MMA.... DTPT... \
+                      GLE.... SBC.... HCF.... MSN.... DHIT... \
+                      GBU.... SKL.... HPA.... MMA.... DD4T... "
+
+
+#define TEST_PLAYS_3 "GED.... SGE.... HZU.... MCA.... DCF.V.. \
+                                            GMN.... SPA.... HGE.... MLS.... DBOT... \
+                                            GLO.... SMR.... HCF.... MMA.... DTOT.M. \
+                      GPL.... SMS.... HMR.... MGR.... DBAT... \
+                      GLO.... SBATD.. HMS.... MMA.... DSRT... \
+                      GPL.... SSJ.... HBA.... MGR.... DALT... \
+                      GPL.... SSJ.... HBA.... MGR.... DMAT.V. \
+                      GLI.... SCD.... HSJ.... MMATD.. DALT...   \
+                                            GLI.... SKL.... HSJ.... MBA.... DMS.... \
+                      GLI.... SCD.... HSJ.... MMS.... DHI.... \
+                      GLI.... SCD.... HSJ.... MMS.... DTPT... \
+                      GNU.... SCDTD.. HSJ.... MMA.... DD2.... "
+                      
+//Vampire Matured early
 int main()
 {
     int i;
     GameView gv;
-    
+
     printf("Test basic empty initialisation\n");
     PlayerMessage messages1[] = {};
     gv = newGameView("", messages1);
+    printf("Initilised new game\n");
     assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
+   printf("Got player 1\n");
     assert(getRound(gv) == 0);
+   printf("Round correct\n");
     assert(getHealth(gv,PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);
+   printf("health1 correct\n");
     assert(getHealth(gv,PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
+   printf("health2 correct\n");
     assert(getScore(gv) == GAME_START_SCORE);
+   printf("Score correct\n");
     assert(getLocation(gv,PLAYER_LORD_GODALMING) == UNKNOWN_LOCATION);
     printf("passed\n");
     disposeGameView(gv);
@@ -55,8 +97,9 @@ int main()
     getHistory(gv,PLAYER_DR_SEWARD,history);
     assert(history[0] == ATLANTIC_OCEAN);
     assert(history[1] == UNKNOWN_LOCATION);
-    printf("passed\n");        
+    printf("passed\n");
     disposeGameView(gv);
+
 
     printf("Test for Dracula doubling back at sea, and losing blood points (Hunter View)\n");
     PlayerMessage messages4[] = {"Hello","Rubbish","Stuff","","Mwahahah","Aha!","","","","Back I go"};
@@ -86,7 +129,7 @@ int main()
 
     printf("Test for connections\n");
     int size, seen[NUM_MAP_LOCATIONS], *edges;
-    gv = newGameView("", messages1);    
+    gv = newGameView("", messages1);
     printf("Checking Galatz road connections\n");
     edges = connectedLocations(gv,&size,GALATZ,PLAYER_LORD_GODALMING,0,1,0,0);
     memset(seen, 0, NUM_MAP_LOCATIONS*sizeof(int));
@@ -109,6 +152,112 @@ int main()
     free(edges);
     printf("passed\n");
     disposeGameView(gv);
-    return 0;
+  
+  
+/*#######################################################
+                     OUR TESTS HERE:
+Functions:
+GameView newGameView(char *pastPlays, PlayerMessage messages[]);
+void disposeGameView(GameView toBeDeleted);
+
+Round getRound(GameView currentView);
+PlayerID getCurrentPlayer(GameView currentView);
+int getScore(GameView currentView);
+int getHealth(GameView currentView, PlayerID player);
+LocationID getLocation(GameView currentView, PlayerID player);
+void getHistory(GameView currentView, PlayerID player,LocationID trail[TRAIL_SIZE]);
+
+LocationID *connectedLocations(GameView currentView, int *numLocations,
+                               LocationID from, PlayerID player, Round round,
+                               int road, int rail, int sea);
+#######################################################*/
+        assert(gv == NULL);
+    printf("Starting our own tests\n");
+  
+    // TEST_PLAY_1
+    printf("Starting tests on TEST_PLAY_1\n");
+    gv = newGameView(TEST_PLAYS_1,messages4[]);
+    
+    assert(getRound(gv) == 8);
+    assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
+    assert(getScore(gv) == 352);
+    printf("Testing Player Locations\n");
+  
+    assert(getLocation(PLAYER_MINA_HARKER) == MADRID);
+    assert(getLocation(PLAYER_DR_SEWARD) == BELGRADE);
+    assert(getLocation(PLAYER_VAN_HELSING) == MEDITERRANEAN_SEA);
+    assert(getLocation(PLAYER_LORD_GODALMING) == LONDON);
+    assert(getLocation(PLAYER_DRACULA) == MADRID);
+
+        printf("Test for player health\n");
+    assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
+    assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
+    assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
+    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_DRACULA) == 20);
+    printf("passed\n");
+
+    printf("all passed\n");
+    disposeGameView(gv);
+    
+    // TEST_PLAY_2
+    printf("Starting tests on TEST_PLAY_2\n");
+    gv = newGameView(TEST_PLAYS_2,messages4[]);//
+    
+    assert(getRound(gv) == 10);
+    assert(getCurrentPlayer(gv) == LORD_GODALMING);
+    assert(getScore(gv) == /*insert score*/);
+    printf("Testing Player Locations\n");
+  
+    assert(getLocation(PLAYER_MINA_HARKER) == MEDITERRANEAN_SEA);
+    assert(getLocation(PLAYER_DR_SEWARD) == CASTLE_DRACULA);
+    assert(getLocation(PLAYER_VAN_HELSING) == SARAJEVO);
+    assert(getLocation(PLAYER_LORD_GODALMING) == LEIPZIG);
+    assert(getLocation(PLAYER_DRACULA) == ALICANTE);
+
+        printf("Test for player health\n");
+    assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
+    assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
+    assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
+    assert(getHealth(gv,PLAYER_MINAHARKER) == 9);
+    assert(getHealth(gv,PLAYER_DRACULA) == 20);
+    printf("passed\n");
+
+    printf("all passed\n");
+    disposeGameView(gv);
+  
+  
+  ///////////////////// test set 3 ////////////////////////
+    printf("Starting tests on TEST_PLAY_3\n");
+    gv = newGameView(TEST_PLAYS_3,messages4[]);//
+    
+    assert(getRound(gv) == 11);
+    assert(getCurrentPlayer(gv) == LORD_GODALMING);
+    assert(getScore(gv) == /*insert score*/);
+    printf("Testing Player Locations\n");
+  
+    assert(getLocation(PLAYER_MINA_HARKER) == MADRID);
+    assert(getLocation(PLAYER_DR_SEWARD) == CASTLE_DRACULA);
+    assert(getLocation(PLAYER_VAN_HELSING) == SARAJEVO);
+    assert(getLocation(PLAYER_LORD_GODALMING) == NUREMBERG);
+    assert(getLocation(PLAYER_DRACULA) == MEDITERRANEAN_SEA);
+
+        printf("Test for player health\n");
+    assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
+    assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
+    assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
+    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_DRACULA) == 20);
+    printf("passed\n");
+
+    printf("all passed\n");
+    disposeGameView(gv);
+   
+  
+    return EXIT_SUCCESS;
 }
+
+
+
+
 
