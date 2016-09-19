@@ -16,7 +16,7 @@
                       GLO.... SBE.... HMS.... MMATD.. DHIT... "
 
 #define TEST_PLAYS_2 "GED.... SGE.... HZU.... MCA.... DCF.V.. \
-                                            GMN.... SCFVD.. HGE.... MLS.... DBO.V.. \
+                                            GMN.... SCFVD.. HGE.... MLS.... DBOT... \
                                             GLO.... SMR.... HCF.... MMA.... DTOT.M. \
                       GPL.... SMS.... HMR.... MGR.... DBAT... \
                       GLO.... SBATD.. HMS.... MMA.... DSRT... \
@@ -25,7 +25,7 @@
                       GLO.... SBE.... HMS.... MMATD.. DSRT... \
                       GEC.... SSO.... HMR.... MMA.... DTPT... \
                       GLE.... SBC.... HCF.... MSN.... DHIT... \
-                      GBU.... SKL.... HPA.... MMA.... DD4T... "
+                      GBU.... SKL.... HPA.... MSRTT.. DD4T... "
 
 
 #define TEST_PLAYS_3 "GED.... SGE.... HZU.... MCA.... DCF.V.. \
@@ -41,7 +41,6 @@
                       GLI.... SCD.... HSJ.... MMS.... DTPT... \
                       GNU.... SCDTD.. HSJ.... MMA.... DD2.... "
                       
-//Vampire Matured early
 int main()
 {
     int i;
@@ -50,7 +49,7 @@ int main()
     printf("Test basic empty initialisation\n");
     PlayerMessage messages1[] = {};
     gv = newGameView("", messages1);
-    printf("Initilised new game\n");
+    printf("Initialised new game\n");
     assert(getCurrentPlayer(gv) == PLAYER_LORD_GODALMING);
    printf("Got player 1\n");
     assert(getRound(gv) == 0);
@@ -152,7 +151,7 @@ int main()
     free(edges);
     printf("passed\n");
     disposeGameView(gv);
-  
+
   
 /*#######################################################
                      OUR TESTS HERE:
@@ -193,13 +192,13 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
     assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
-    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_MINAHARKER) == );
     assert(getHealth(gv,PLAYER_DRACULA) == 20);
     printf("passed\n");
 
     printf("all passed\n");
     disposeGameView(gv);
-    
+/////////////////////////////////////////////////////////////////   
     // TEST_PLAY_2
     printf("Starting tests on TEST_PLAY_2\n");
     gv = newGameView(TEST_PLAYS_2,messages4[]);//
@@ -209,18 +208,18 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     assert(getScore(gv) == /*insert score*/);
     printf("Testing Player Locations\n");
   
-    assert(getLocation(PLAYER_MINA_HARKER) == MEDITERRANEAN_SEA);
-    assert(getLocation(PLAYER_DR_SEWARD) == CASTLE_DRACULA);
-    assert(getLocation(PLAYER_VAN_HELSING) == SARAJEVO);
-    assert(getLocation(PLAYER_LORD_GODALMING) == LEIPZIG);
-    assert(getLocation(PLAYER_DRACULA) == ALICANTE);
+    assert(getLocation(PLAYER_MINA_HARKER) == SARAGOSSA);
+    assert(getLocation(PLAYER_DR_SEWARD) == KLAUSENBURG);
+    assert(getLocation(PLAYER_VAN_HELSING) == PARIS);
+    assert(getLocation(PLAYER_LORD_GODALMING) == BRUSSELS);
+    assert(getLocation(PLAYER_DRACULA) == SARAGOSSA);
 
         printf("Test for player health\n");
     assert(getHealth(gv,PLAYER_LORD_GODALMING) == 9);
     assert(getHealth(gv,PLAYER_DR_SEWARD) == 9);
     assert(getHealth(gv,PLAYER_VAN_HELSING) == 9);
-    assert(getHealth(gv,PLAYER_MINAHARKER) == 9);
-    assert(getHealth(gv,PLAYER_DRACULA) == 20);
+    assert(getHealth(gv,PLAYER_MINAHARKER) == 3);
+    assert(getHealth(gv,PLAYER_DRACULA) == 30);
     printf("passed\n");
 
     printf("all passed\n");

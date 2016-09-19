@@ -172,9 +172,12 @@ int getHealth(GameView currentView, PlayerID player) {
         for (loopCounter = 0; loopCounter <= round; loopCounter ++) {
             int type = NONE;
             char dracLocation[] = {*(p + 1), *(p + 2), '\0'};
+            //get the trail for dracula
             updatePlayerTrail(currentView->players[player]->playerTrail, otherToID(dracLocation));
+            //get the exactly location of dracula when he uses hide or double back
             currID = dracSpecialLocation(otherToID(dracLocation), currentView->players[player]->playerTrail);
             if (validPlace(currID)) type = idToType(currID);
+            //check if the place is in sea
             if (currID == SEA_UNKNOWN || type == SEA) {
                 health -= LIFE_LOSS_SEA;
             } else if (currID == TELEPORT) {
@@ -435,3 +438,4 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]) 
     }
     return currID;
 }
+
