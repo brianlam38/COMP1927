@@ -230,8 +230,8 @@ int getHealth(GameView currentView, PlayerID player) {
 LocationID getLocation(GameView currentView, PlayerID player) {
     assert(currentView != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    Round round = getRound(currentView);                  //current round number
-    if (round == 0) return NOWHERE;                       //player has not had a turn yet
+//     Round round = getRound(currentView);                  //current round number
+//     if (round == 0) return NOWHERE;                       //player has not had a turn yet
     getHistory(currentView, player, currentView->players[player]->playerTrail);
     return currentView->players[player]->playerTrail[0];
 }
@@ -260,7 +260,6 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                                int road, int rail, int sea)
 {
     assert(currentView != NULL);
-    assert(*numLocations >= 0 && *numLocations <= NUM_MAP_LOCATIONS);
     assert(validPlace(from));
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     assert(round >= 0);

@@ -10,7 +10,6 @@ int main()
 {
     int i;
     HunterView hv;
-    
     printf("Test basic empty initialisation\n");
     PlayerMessage messages1[] = {};
     hv = newHunterView("", messages1);

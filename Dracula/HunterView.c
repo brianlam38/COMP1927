@@ -102,7 +102,7 @@ LocationID whereIs(HunterView currentView, PlayerID player)
     return getLocation(currentView->view, player); 
 
   LocationID dracLocation = getLocation(currentView->view, player);
-  if (DracLocationKnown(currentView->view) == 0)
+  if (DracLocationKnown(currentView->view) == TRUE)
     return dracLocation; 
   if (inSea(dracLocation)) return SEA_UNKNOWN;
   

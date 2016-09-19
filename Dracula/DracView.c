@@ -1,42 +1,142 @@
 // DracView.c ... DracView ADT implementation
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include "Globals.h"
 #include "Game.h"
 #include "GameView.h"
 #include "DracView.h"
-#include "Map.h" //... if you decide to use the Map ADT
+// #include "Map.h" ... if you decide to use the Map ADT
+    
+//max number of event encountered each turn
+#define NUM_EVENT_ENCOUNTER 3
+//number of chars in pastPlays in one round
+#define NUM_CHAR_ONE_ROUND  40
+//number of chars in pastPlays in one turn
+#define NUM_CHAR_ONE_TURN   8
 
 typedef struct _encounterData {
     LocationID location;
     int numTraps;
     int numVamps;
 } encounterData;
-  
+
 struct dracView {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     GameView view;
     encounterData *encounters[TRAIL_SIZE];
 };
 
-static int DracLocationKnown(GameView g);
-static int inSea(LocationID id);
-static void addToEncounters(encounterData ecounters, DracView currentView);
+int countChar2(char* string);
 
 // Creates a new DracView to summarise the current state of the game
 DracView newDracView(char *pastPlays, PlayerMessage messages[])
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     DracView dracView = malloc(sizeof(struct dracView));
-    dracView->view = newGameView(pastPlays, messages[]);
+    dracView->view = newGameView(pastPlays, messages);
 
-    int turnNum = getRound(dracView->view);
-    dracView->messages = malloc(sizeof(PlayerMessage) * turnNum);
-    // Fill hunter messages with input messages + unused with \0
-    int x;
-    for (x=0; x<turnNum; x++) {
-        strncpy(hunterView->messages[x],messages[x],MESSAGE_SIZE);
+    int i;
+    for (i=0; i < TRAIL_SIZE ;i++) {
+      dracView->encounters[i] = malloc(sizeof(encounterData));
+      dracView->encounters[i]->numTraps = 0;
+      dracView->encounters[i]->numVamps = 0;
+    }
+
+    LocationID trail[TRAIL_SIZE];
+    getHistory(dracView->view, PLAYER_DRACULA, trail);
+
+    for (i=0; i < TRAIL_SIZE ; i++) {
+      dracView->encounters[i]->location = trail[i];
+    }
+
+    if ( countChar2(pastPlays) > 32 ) {
+      int maxTrail = 1;
+      int x = 33;
+      while (x < countChar2(pastPlays)) {
+        x += NUM_CHAR_ONE_ROUND;
+        maxTrail++;
+      }
+      if (maxTrail > TRAIL_SIZE) maxTrail = TRAIL_SIZE;
+
+      int lastroundPlayers = 0;
+      int lastDrac = countChar2(pastPlays) - 7;
+      while (pastPlays[lastDrac] != 'D') {
+        lastDrac -= 8;
+        lastroundPlayers++;
+      }
+
+      for(i= 0; i < maxTrail; i++) {
+        lastDrac = countChar2(pastPlays) - 7;
+        while (pastPlays[lastDrac] != 'D') {
+          lastDrac -= 8;
+        }
+        int prevRounds = i*NUM_CHAR_ONE_ROUND;
+        if (pastPlays[lastDrac + 3] == 'T' - prevRounds) dracView->encounters[i]->numTraps++;
+        if (pastPlays[lastDrac + 4] == 'V' - prevRounds) dracView->encounters[i]->numVamps++;
+        int y;
+        if (i == 0) {
+          for(y= 0; y < lastroundPlayers; y++) {
+            int jump2 = y*NUM_CHAR_ONE_TURN;
+            if (getLocation(dracView->view,y) == dracView->encounters[i]->location) {
+              if (pastPlays[countChar2(pastPlays)-5-jump2] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+              if (pastPlays[countChar2(pastPlays)-4-jump2] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+              if (pastPlays[countChar2(pastPlays)-3-jump2] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+
+              if (pastPlays[countChar2(pastPlays)-5-jump2] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays)-4-jump2] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays)-3-jump2] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays)-2-jump2] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+            }
+          }
+        } else {
+          for(y= 0; y < NUM_PLAYERS; y++) {
+            int jump1 = y*NUM_PLAYERS;
+            int jump2 = lastroundPlayers*NUM_CHAR_ONE_TURN;
+            int jump3 = (i>0) ? (i-1)*NUM_CHAR_ONE_ROUND : 0 ;
+            if (getLocation(dracView->view,y) == dracView->encounters[i]->location) {
+              if (pastPlays[countChar2(pastPlays)-5- jump3 - jump2-jump1] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+              if (pastPlays[countChar2(pastPlays) -4- jump3 - jump2-jump1] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+              if (pastPlays[countChar2(pastPlays) -3- jump3 - jump2-jump1] == 'T' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numTraps--;
+              }
+
+              if (pastPlays[countChar2(pastPlays) -5- jump3 - jump2-jump1] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays) -4- jump3 - jump2-jump1] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays) -3- jump3 - jump2-jump1] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+              if (pastPlays[countChar2(pastPlays) -2- jump3 - jump2-jump1] == 'V' && pastPlays[countChar2(pastPlays)-7-jump2] != 'D') {
+                dracView->encounters[i]->numVamps--;
+              }
+            }
+          }
+        }
+      }
+
     }
     return dracView;
 }
@@ -45,9 +145,6 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[])
 // Frees all memory previously allocated for the DracView toBeDeleted
 void disposeDracView(DracView toBeDeleted)
 {
-    //COMPLETE THIS IMPLEMENTATION
-    free( toBeDeleted->messages );
-    toBeDeleted->messages = NULL;
     free(toBeDeleted->view);
     toBeDeleted->view = NULL;
     free(toBeDeleted);
@@ -60,8 +157,8 @@ void disposeDracView(DracView toBeDeleted)
 Round giveMeTheRound(DracView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(curretnView != NULL && currentView->view != NULL);
-    return currentView->view->roundNumber;
+    assert(currentView != NULL && currentView->view != NULL);
+    return getRound(currentView->view);
 }
 
 // Get the current score
@@ -69,15 +166,16 @@ int giveMeTheScore(DracView currentView)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL && currentView->view != NULL);
-    return currentView->view->gameScore;
+    return getScore(currentView->view);
 }
+
 
 // Get the current health points for a given player
 int howHealthyIs(DracView currentView, PlayerID player)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL && currentView->view != NULL);
-    return currentView->view->players[player]->playerHealth;
+    return getHealth(currentView->view, player);
 }
 
 // Get the current location id of a given player
@@ -86,18 +184,7 @@ LocationID whereIs(DracView currentView, PlayerID player)
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return currentView->view->players[player]->playerCurrLocation;
-  
-  /*  
-    if (player != PLAYER_DRACULA)
-      return getLocation(currentView->view, player);
-
-    dracLocation = getLocation(currentView->view, player);
-    if (DracLocationKnown(currentView->view))
-      return dracLocation;
-    if (inSea(dracLocation)) return SEA_UNKNOWN;
-
-    return CITY_UNKNOWN;*/
+    return getLocation(currentView->view, player);
 }
 
 // Get the most recent move of a given player
@@ -106,8 +193,10 @@ void lastMove(DracView currentView, PlayerID player, LocationID *start, Location
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    *start = currentView->view-players[player]->playerTrail[1];
-    *end = currentView->view-players[player]->playerTrail[0];
+    LocationID trail[TRAIL_SIZE];
+    getHistory(currentView->view, player, trail);
+    *start = trail[1];
+    *end = trail[0];
     return;
 }
 
@@ -116,25 +205,18 @@ void whatsThere(DracView currentView, LocationID where,
                          int *numTraps, int *numVamps)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-        assert(currentView != NULL && currentView->view != NULL);
-        assert(validPlace(where) || where == NOWHERE);
-  int i;
-    int firstMove = PLAYER_DRACULA * NUM_CHAR_ONE_TURN;
-    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
-    LocationID currID;
-    LocationID trail[TRAIL_SIZE];
-  if (where == NOWHERE || idToType(where) == SEA) {
+    int i;
+    for (i=0; i < TRAIL_SIZE; i++) {
+      if (where == currentView->encounters[i]->location) {
+        *numTraps = currentView->encounters[i]->numTraps;
+        *numVamps = currentView->encounters[i]->numVamps;
+        return;
+      }
+    }
+
     *numTraps = 0;
     *numVamps = 0;
-  } else {
-        //initialise all the trail locations
-        for (i = 0; i < TRAIL_SIZE; i++) trail[i] = UNKNOWN_LOCATION;
-        //loop till the last round
-        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
-        char currLocation[] = {currentView->view->pastPlays[i+1], currentView->view->pastPlays[i+2], '\0'};
-        currID = dracSpecialLocation(otherToID(currLocation), currentView->view->players[PLAYER_DRACULA]->playerTrail);
-        updatePlayerTrail(trail, currID);
-        }
+
     return;
 }
 
@@ -145,26 +227,7 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
                             LocationID trail[TRAIL_SIZE])
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    assert(currentView != NULL && currentView->view != NULL);
-    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    int i;
-    int firstMove = player * NUM_CHAR_ONE_TURN;
-    int nChar = countChar(currentView->pastPlays);        //number of chars in pastPlays
-    LocationID currID;
-    if (player == PLAYER_DRACULA) {
-        //initialise all the trail locations
-        for (i = 0; i < TRAIL_SIZE; i++) trail[i] = UNKNOWN_LOCATION;
-        //loop till the last round
-        for (i = firstMove; i < nChar - 2; i += NUM_CHAR_ONE_ROUND) {
-        char currLocation[] = {currentView->view->pastPlays[i+1], currentView->view->pastPlays[i+2], '\0'};
-        currID = dracSpecialLocation(otherToID(currLocation), trail);
-        updatePlayerTrail(trail, currID);
-        }
-    } else {
-      for (i = 0; i < TRAIL_SIZE; i++ ) {
-        trail[i] = currentView->view->players[player]->playerTrail[i];
-      }
-    }
+    getHistory(currentView->view, player, trail);
 }
 
 //// Functions that query the map to find information about connectivity
@@ -172,10 +235,8 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 // What are my (Dracula's) possible next moves (locations)
 LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea)
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    LocationID from = getLocation(currentView->view,player);
-    return connectedLocations(currentView->view,numLocations,from,
-                         player,getRound(currentView->view),road,rail,sea);
+    return connectedLocations(currentView->view,numLocations, getLocation(currentView->view,PLAYER_DRACULA),
+                       PLAYER_DRACULA, getRound(currentView->view),road,FALSE,sea);
 }
 
 // What are the specified player's next possible moves
@@ -183,47 +244,15 @@ LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea)
 {
     //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    if (player == PLAYER_DRACULA) return whereCanIgo(currentView, numLocations, road, sea);
-    Round round = getRound(currentView->view);
-    LocationID loc = getLocation(currentView, player);
-    return connectedLocations(currentView->view,numLocations, loc,
-                         player,round,road,rail,sea);
-
+    return connectedLocations(currentView->view,numLocations, getLocation(currentView->view,player),
+                         player, getRound(currentView->view),road,rail,sea);
 }
 
-static int DracLocationKnown(GameView g) {
-  int i;
-  for (i = 0; i < PLAYER_DRACULA; i++) {
-     if (getLocation(g,i) == getLocation(g,PLAYER_DRACULA))
-       return 1;
-  }
-  return 0;
-}
-
-static int inSea(LocationID id) {
-  switch (id) {
-    case (ADRIATIC_SEA): return 1;
-    case (ATLANTIC_OCEAN): return 1;
-    case (BAY_OF_BISCAY): return 1;
-    case (BLACK_SEA): return 1;
-    case (ENGLISH_CHANNEL): return 1;
-    case (IONIAN_SEA): return 1;
-    case (IRISH_SEA): return 1;
-    case (MEDITERRANEAN_SEA): return 1;
-    case (NORTH_SEA): return 1;
-    case (TYRRHEANIAN_SEA): return 1;
-    default: return 0;
-  }
-}
-
-static void addToEncounters(encounterData encounters, DracView currentView) {
-    int x = 0;
-  for (;x <= TRAIL_SIZE + 1; x++) {
-    if (((currentView->view->roundNumber - x) % 13) == 0) {
-        encounters[x]->enCounterType = VAMPIRE;
+int countChar2(char* string) {
+    char *p;
+    int nChar = 0;
+    for (p = string; *p != '\0'; p++) {
+        nChar++;
     }
-    // to do
-  }
+    return nChar;
 }
-
-
