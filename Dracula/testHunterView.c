@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string.h>
 #include "HunterView.h"
+#include "GameView.h"
 
 int main()
 {
@@ -61,6 +62,9 @@ int main()
     PlayerMessage messages4[] = {"Hello","Rubbish","Stuff","","Mwahahah","Aha!","","","","Back I go"};
     hv = newHunterView("GGE.... SGE.... HGE.... MGE.... DS?.... "
                        "GST.... SST.... HST.... MST.... DD1....", messages4);
+    // Bug testing
+    printf("Drac Location = %d\n",whereIs(hv,PLAYER_DRACULA));
+    // Drac Location = 100 / CITY_UNKNOWN
     assert(whereIs(hv,PLAYER_DRACULA) == DOUBLE_BACK_1);
     giveMeTheTrail(hv,PLAYER_DRACULA,history);
     assert(history[0] == DOUBLE_BACK_1);
