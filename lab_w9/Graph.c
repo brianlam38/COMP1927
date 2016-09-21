@@ -100,27 +100,6 @@ void showGraph(Graph g, char **names)
 // only allow edges whose weight is less than "max"
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
-	assert(g != NULL);
-	// allocate space for visited and path
-	int *visited;
-	visited = malloc(g->nV * sizeof(int));
-	path = malloc(g->nV * sizeof(int));
-	// initialise queue
-	Queue q = newQueue();
-	// QUEUE SOURCE
-	QueueJoin(q, src);
-	visited[src] = 1;
-	// traverse graph
-	int isFound = FALSE;
-	while (!QueueIsEmpty(q) && isFound != TRUE) {
-		int y = QueueLeave(q);
-		int x = QueueLeave(q);
-		for (y = 0; y < g->nV; y++) {
-			if (!g->edges[x][y])
-		}
-	}
-
-	// NTS: Continue function will stop operations then skip to next loop iteration
 
 	// Fills in path array with a sequence of vertex numbers, giving the "shortest" path from src --> dest.
 		// (no edge in path > MAX)
@@ -135,7 +114,49 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 		// Shorter total KM of path = less connected (less options to fly around)
 		// Longer total KM of path = more connected (more options to fly around)
 
-/* BFS Algorithm
+	assert(g != NULL);
+	// allocate space for visited and path
+	int *visited;
+	visited = malloc(g->nV * sizeof(int));
+	path = malloc(g->nV * sizeof(int));
+	// initialise queue
+	Queue q = newQueue();
+	// QUEUE SOURCE
+	QueueJoin(q, src);
+	visited[src] = 1;
+	// traverse graph
+	int isFound = FALSE;
+	while (!QueueIsEmpty(q) && isFound != TRUE) {	
+		Vertex y, x = QueueLeave(q);
+		for (y = 0; y < g->nV; y++) {
+			// If vertice not connected, iterate loop
+			//if (!g->edges[x][y])
+			//	continue;
+
+			// Store verticesex x into path[0,1,2,3... so on]
+			path[y] = x;
+         	// If found, finish iterations
+         	if (y == dest) {
+         		isFound = TRUE;
+         		break;
+         	}
+         	//
+         	if (!visited[y]) {
+            	QueueJoin(q, y);
+            	visited[y] = 1;
+         	}
+      	}
+   	}
+   	// Display the path
+   	if (isFound) {
+   		Vertex v;
+    	for (v = dest; v != src; v = path[v])
+        	printf("%d-", v);
+      	printf("%d\n", src);
+   	}
+	return 0; // never find a path ... you need to fix this
+}
+//BFS Algorithm
 int isPath(Graph g, Vertex v, Vertex w)
 {
    int *visited = calloc(g->nV,sizeof(int));
@@ -152,7 +173,5 @@ int isPath(Graph g, Vertex v, Vertex w)
    }
    return FALSE;
 }
-*/
 
-	return 0; // never find a path ... you need to fix this
-}
+
