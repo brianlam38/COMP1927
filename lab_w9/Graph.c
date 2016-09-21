@@ -101,5 +101,19 @@ void showGraph(Graph g, char **names)
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
 	assert(g != NULL);
+
+	// Fills in path array with a sequence of vertex numbers, giving the "shortest" path from src --> dest.
+		// (no edge in path > MAX)
+	// Returns number of vertices stored in path array.
+		// No path = zero
+		// Path array should have enough space to hold the longest possible path
+		// (longest path may include all vertices)
+	// Considerations:
+		// Length of path = # of edges, NOT sum of edge weights
+		// Shortest path = Least # of edges
+		// MAX = Maximum KM of an edge.
+		// Shorter total KM of path = less connected (less options to fly around)
+		// Longer total KM of path = more connected (more options to fly around)
+
 	return 0; // never find a path ... you need to fix this
 }
