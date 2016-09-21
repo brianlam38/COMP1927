@@ -1,3 +1,5 @@
+// Map.h ... interface to Map data type
+
 #ifndef MAP_H
 #define MAP_H
 
