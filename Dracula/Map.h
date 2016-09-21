@@ -1,5 +1,3 @@
-// Map.h ... interface to Map data type
-
 #ifndef MAP_H
 #define MAP_H
 
@@ -23,4 +21,3 @@ int  numE(Map g, TransportID t);
 LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type);
 
 #endif
-/////////////////////////////////////////////////////////////////////

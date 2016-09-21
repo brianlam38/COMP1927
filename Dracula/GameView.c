@@ -308,4 +308,3 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     }
     return connections;
 }
-

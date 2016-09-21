@@ -92,4 +92,3 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
     return connectedLocations(currentView->view, numLocations, whereIs(currentView, player),
                               player, giveMeTheRound(currentView), road, rail, sea);
 }
-
