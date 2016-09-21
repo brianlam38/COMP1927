@@ -101,6 +101,26 @@ void showGraph(Graph g, char **names)
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
 	assert(g != NULL);
+	// allocate space for visited and path
+	int *visited;
+	visited = malloc(g->nV * sizeof(int));
+	path = malloc(g->nV * sizeof(int));
+	// initialise queue
+	Queue q = newQueue();
+	// QUEUE SOURCE
+	QueueJoin(q, src);
+	visited[src] = 1;
+	// traverse graph
+	int isFound = FALSE;
+	while (!QueueIsEmpty(q) && isFound != TRUE) {
+		int y = QueueLeave(q);
+		int x = QueueLeave(q);
+		for (y = 0; y < g->nV; y++) {
+			if (!g->edges[x][y])
+		}
+	}
+
+	// NTS: Continue function will stop operations then skip to next loop iteration
 
 	// Fills in path array with a sequence of vertex numbers, giving the "shortest" path from src --> dest.
 		// (no edge in path > MAX)
@@ -114,6 +134,25 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 		// MAX = Maximum KM of an edge.
 		// Shorter total KM of path = less connected (less options to fly around)
 		// Longer total KM of path = more connected (more options to fly around)
+
+/* BFS Algorithm
+int isPath(Graph g, Vertex v, Vertex w)
+{
+   int *visited = calloc(g->nV,sizeof(int));
+   Queue q = newQueue();
+   QueueJoin(q, v);
+   while (!QueueEmpty(q)) {
+      Vertex y, x = QueueLeave(q);
+      if (visited[x]) continue;
+      visited[x] = 1;
+      foreach (y in neighbours(x)) {
+         if (y == w) return TRUE;
+         if (!visited[y]) QueueJoin(q, y);
+      }
+   }
+   return FALSE;
+}
+*/
 
 	return 0; // never find a path ... you need to fix this
 }
