@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "Map.h"
 #include "Places.h"
+#include "commonFunctions.h"
 
 typedef struct vNode *VList;
 
