@@ -154,6 +154,9 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 		curr = prev[curr];
 		length++;
 	}
+
+	
+
 	printf("Returning length\n");
 	return length;
 }
