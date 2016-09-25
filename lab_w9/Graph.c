@@ -115,39 +115,38 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 		// Longer total KM of path = more connected (more options to fly around)
 
 	assert(g != NULL);
-	// allocate space for visited and path
-	int *visited;
-	visited = malloc(g->nV * sizeof(int));
-	path = malloc(g->nV * sizeof(int));
-	// initialise queue
-	Queue q = newQueue();
-	// QUEUE SOURCE
-	QueueJoin(q, src);
-	visited[src] = 1;
-	// traverse graph
-	int isFound = FALSE;
-	while (!QueueIsEmpty(q)) {	
-		Vertex x = QueueLeave(q);
-		if (x == dest) {
-     		break;
-     	}
-		//find neighbours 
-		for (Vertex y = 0; y < g->nV; y++) {
-         	if (!visited[y]) {
-         		path[y] = x;
-            	QueueJoin(q, y);
-            	visited[y] = 1;
-         	}
-      	}
-   	}
-   	// Display the path
-   	if (isFound) {
-   		Vertex v;
-    	for (v = dest; v != src; v = path[v])
-        	printf("%d-", v);
-      	printf("%d\n", src);
-   	}
-	return 0; // never find a path ... you need to fix this
+
+	Queue q = newQueue();							// Init queue
+	Vertex *visited = calloc(g->nV,sizeof(Vertex));	// Declare visited array
+	QueueJoin(q,src);								// Push src
+	visited[src] = TRUE;							// Mark src = visited
+
+	path[0] = src;									// Init shortest path
+	Vertex curr = 0;								// 
+	int destFound = FALSE;
+
+	while (!QueueIsEmpty(q) && destFound != TRUE) {
+		curr = QueueLeave(q);
+		for (i = 0; i < g->nV; i++){
+			if (g->edges[curr][i] < max && g->edges[curr][i] != 0 && visited[i] != TRUE) {	// adding neighbours to queue
+				path[
+				visited[i] = TRUE;
+				QueueJoin(q,i);
+			}
+			if (i = dest) {
+				destFound == TRUE;
+				break;
+			}
+		}
+	}
+
+
+	int length = 0;
+	for (i = src; i < path[dest]; i++) {
+		length++;
+	}
+
+	return length;
 }
 
 

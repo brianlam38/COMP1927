@@ -15,7 +15,7 @@ typedef struct GraphRep {
 	int  **edges; // matrix of weights (0 == no edge)
 } GraphRep;
 
-typedef struct list {
+typedef struct list {	
 	int *items;
 	int size;
 	int numItems;
@@ -117,26 +117,26 @@ void showGraph(Graph g, char **names)
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
 	assert(g != NULL);
-	Vertex curr = 0;
+	Vertex curr = 0;					// Declare curr vertex var
 
-	Queue toVisit = newQueue();
-	List seenList = makeList(g->nE);
+	Queue toVisit = newQueue();			// Declare queue ptr
+	List seenList = makeList(g->nE);	// Declare seenList ptr
 	
-	addToList(seenList, src, -1);
-	QueueJoin(toVisit,src);
+	addToList(seenList, src, -1);		// Add source to seenList
+	QueueJoin(toVisit,src);				// Add source to queue
 	int len = 0;
-	path[0] = src;
+	path[0] = src;						// First = path sources
 
 	int i = 0;
 
 	while (!QueueIsEmpty(toVisit)) {
 
-		curr = QueueLeave(toVisit);
+		curr = QueueLeave(toVisit);		// Pop curr of stack	
 		
 		for (i = 0; i < g->nV; i++) {
 			if (g->edges[curr][i] < max && g->edges[curr][i] != 0 &&
 				!inList(seenList,i)) {
-				addToList(seenList,i, curr);
+				addToList(seenList,i, curr);	// AddToList
 				if (i == dest) { 
 					path[len] = dest;
 					break;	
@@ -180,6 +180,8 @@ static int numItems(List l) {
 	return l->numItems;
 }
 */
+
+// Stores prev element + curr element in seenList
 static void addToList(List l,int x, int tag) {
 
 	if (l->numItems < l->size) {
