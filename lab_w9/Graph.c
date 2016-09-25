@@ -126,22 +126,15 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 	visited[src] = 1;
 	// traverse graph
 	int isFound = FALSE;
-	while (!QueueIsEmpty(q) && isFound != TRUE) {	
-		Vertex y, x = QueueLeave(q);
-		for (y = 0; y < g->nV; y++) {
-			// If vertice not connected, iterate loop
-			//if (!g->edges[x][y])
-			//	continue;
-
-			// Store verticesex x into path[0,1,2,3... so on]
-			path[y] = x;
-         	// If found, finish iterations
-         	if (y == dest) {
-         		isFound = TRUE;
-         		break;
-         	}
-         	//
+	while (!QueueIsEmpty(q)) {	
+		Vertex x = QueueLeave(q);
+		if (x == dest) {
+     		break;
+     	}
+		//find neighbours 
+		for (Vertex y = 0; y < g->nV; y++) {
          	if (!visited[y]) {
+         		path[y] = x;
             	QueueJoin(q, y);
             	visited[y] = 1;
          	}
@@ -156,6 +149,9 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
    	}
 	return 0; // never find a path ... you need to fix this
 }
+
+
+
 //BFS Algorithm
 int isPath(Graph g, Vertex v, Vertex w)
 {
