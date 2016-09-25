@@ -100,7 +100,6 @@ void showGraph(Graph g, char **names)
 // only allow edges whose weight is less than "max"
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
-
 	// Fills in path array with a sequence of vertex numbers, giving the "shortest" path from src --> dest.
 		// (no edge in path > MAX)
 	// Returns number of vertices stored in path array.
@@ -116,57 +115,45 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 
 	assert(g != NULL);
 
-	Queue q = newQueue();							// Init queue
-	Vertex *visited = calloc(g->nV,sizeof(Vertex));	// Declare visited array
-	QueueJoin(q,src);								// Push src
-	visited[src] = TRUE;							// Mark src = visited
+	Queue q = newQueue();
+	Vertex seen[g->nV];
+	Vertex prev[g->nV];
 
-	path[0] = src;									// Init shortest path
-	Vertex curr = 0;								// 
-	int destFound = FALSE;
+	//Vertex *visited = calloc(g->nV,sizeof(Vertex));
+	QueueJoin(q,src);
+	seen[src] = 1;	
+	prev[src] = -1;
 
-	while (!QueueIsEmpty(q) && destFound != TRUE) {
-		curr = QueueLeave(q);
-		for (i = 0; i < g->nV; i++){
-			if (g->edges[curr][i] < max && g->edges[curr][i] != 0 && visited[i] != TRUE) {	// adding neighbours to queue
-				path[
-				visited[i] = TRUE;
-				QueueJoin(q,i);
-			}
-			if (i = dest) {
-				destFound == TRUE;
-				break;
+	//BFS
+	printf("Starting BFS\n");
+	while (!QueueIsEmpty(q)) {
+		Vertex curr = QueueLeave(q);	//remove the first element in queue and store it in curr
+		if (curr == dest) {
+			break;
+		}
+		//Find neighbours and add them to the queue
+		printf("Finding neighbours\n");
+		Vertex from = curr;
+		for (Vertex to = 0; to < g->nV; to++) { 				//For each vertice in the graph	
+			printf("Adding neighbours to queue\n");
+			if (g->edges[from][to] < max && !g->edges[from][to] // adding neighbours to queue
+				&& !seen[to]) {					
+				seen[to] = 1;		//Mark neighbour as visited
+				prev[to] = from; 	//Mark the previous of the neighbour as current
+				QueueJoin(q, to);
 			}
 		}
 	}
-
-
+	//Build Path
+	printf("Building path\n");
+	Vertex curr = dest;
 	int length = 0;
-	for (i = src; i < path[dest]; i++) {
+	while (curr != -1) {
+		printf("Start build\n");
+		path[length] = curr;
+		curr = prev[curr];
 		length++;
 	}
-
+	printf("Returning length\n");
 	return length;
 }
-
-
-
-//BFS Algorithm
-int isPath(Graph g, Vertex v, Vertex w)
-{
-   int *visited = calloc(g->nV,sizeof(int));
-   Queue q = newQueue();
-   QueueJoin(q, v);
-   while (!QueueEmpty(q)) {
-      Vertex y, x = QueueLeave(q);
-      if (visited[x]) continue;
-      visited[x] = 1;
-      foreach (y in neighbours(x)) {
-         if (y == w) return TRUE;
-         if (!visited[y]) QueueJoin(q, y);
-      }
-   }
-   return FALSE;
-}
-
-
