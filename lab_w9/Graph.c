@@ -155,7 +155,19 @@ int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 		length++;
 	}
 
-	
+	printf("Start reverse\n");
+   	int i = 0;       // i will be pointing to first element
+   	int j = i - 1;   // j will Point to last Element
+
+   	int temp;
+   	while (i < j) {
+    	temp = path[i];
+    	path[i] = path[j];
+    	path[j] = temp;
+    	i++;             // increment i
+    	j--;          // decrement j
+   	}
+
 
 	printf("Returning length\n");
 	return length;
