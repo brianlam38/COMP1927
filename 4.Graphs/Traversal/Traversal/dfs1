@@ -1,0 +1,13 @@
+void dfsR(Graph g, Vertex v) {
+   visited[v] = order++;
+   Vertex w;
+   for (w = 0; w < g->nV; w++) {
+      if (!g->edges[v][w]) continue;
+      if (visited[w] == -1) dfsR(g, w);
+}  }
+
+0->1,4,5  1->0,2  2->1,3,4  3->2,4,5  4->0,2,3,5  5->0,3,4
+
+            order  visited
+init        0      [X,X,X,X,X,X]
+dfsR(g,0)   0      [0,X,X,X,X,X]
