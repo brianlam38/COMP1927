@@ -52,9 +52,47 @@ void removeE(Graph g, Edge e) {
 
 // Is Vertex x connected with Vertex y?
 bool connected(Graph g, Vertex x, Vertex y) {
-	assert(validG(g) && validV(g,x) && validV(g,y));
-	
+	assert(validG(g) && validV(g,x)
+		   && validV(g,y));
+	VList L = g->edges[x];				// Init list of neighbours of x
+	return find(L,y);					// Scan through to see if Y occurs in list
 }
+// OR FOR LINKED LIST
+bool connected(Graph g, Vertex x, Vertex y) {
+	assert(validG(g) && validV(g,x)
+		   && validV(g,y));
+	VNode * curr;
+	for (curr = g->edges[x]; curr != NULL; curr = curr->next) {
+		if (curr->v == y)
+			return 1;
+	}
+	return 0;
+}
+
+// ########################
+// Check neighbour vertices
+// ########################
+
+// What are the neighbours of vertex x?
+Vertex *neighbours(Graph g, Vertex x, int *nv) {
+	assert(validG(g) && validV(g,x) && validV(g,y));
+	VList L = g->edges[x];
+	int nn = length(L);
+	Vertex *ns = malloc(nn * sizeof(Vertex));
+	assert(ns != NULL);
+	
+	int k = 0;
+	VList * curr;
+	for (curr = L->first; curr != NULL; curr = curr->next) { // Scan through list, store value
+		ns[k++] = curr->value;								 // of neighbour into neighbours array
+	}
+	*nv = nn;		// set *nv (ptr to integer varable) = #neighbours
+	return ns;		// return ptr to neighbours array
+}
+
+
+
+
 
 
 

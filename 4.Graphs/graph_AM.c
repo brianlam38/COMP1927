@@ -110,8 +110,8 @@ Vertex *neighbours(Graph g, Vertex x, int *nv) {
 		if (g->edges[x][i])					// if vertex i = neighour, it will = 1
 			ns[k++] = i;					// add vertex i to index of neighbours
 	}
-	*nv = nn;	// set *nv (ptr to integer variable) = nn
-	return ns; 	// return ptr to start of neighbour array + *nv
+	*nv = nn;	// set *nv (ptr to integer variable) = #neighbours
+	return ns; 	// return ptr to neighbours array
 }
 
 
