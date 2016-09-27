@@ -1,4 +1,4 @@
-#Sorting Algorithms
+Sorting Algorithms
 
 #Bubble Sort
 void bubbleSort(int items[], int n) {
