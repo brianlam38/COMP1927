@@ -76,9 +76,9 @@ bool connected(Graph g, Vertex x, Vertex y) {
 // What are the neighbours of vertex x?
 Vertex *neighbours(Graph g, Vertex x, int *nv) {
 	assert(validG(g) && validV(g,x) && validV(g,y));
-	VList L = g->edges[x];
-	int nn = length(L);
-	Vertex *ns = malloc(nn * sizeof(Vertex));
+	VList L = g->edges[x];						// init list
+	int nn = length(L);							// count #neighbours
+	Vertex *ns = malloc(nn * sizeof(Vertex));	// allocate array neighbours
 	assert(ns != NULL);
 	
 	int k = 0;
@@ -89,6 +89,8 @@ Vertex *neighbours(Graph g, Vertex x, int *nv) {
 	*nv = nn;		// set *nv (ptr to integer varable) = #neighbours
 	return ns;		// return ptr to neighbours array
 }
+
+
 
 
 
