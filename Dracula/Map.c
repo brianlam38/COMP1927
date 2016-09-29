@@ -135,6 +135,7 @@ int numE(Map g, TransportID type)
 }
 
 //count the number of nearby cities of a specified location and store the nearby cities in an array without duplicates
+/*
 LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type) {
     VList curr;
     for(curr = map->connections[from]; curr != NULL; curr = curr->next) {
@@ -147,6 +148,7 @@ LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size
     }
     return nearby;
 }
+*/
 
 // Add edges to Graph representing map of Europe
 static void addConnections(Map g)

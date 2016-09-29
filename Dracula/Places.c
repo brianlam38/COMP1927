@@ -12,6 +12,8 @@ typedef struct Place {
    PlaceType  type;
 } Place;
 
+
+
 // Places should appear in alphabetic order
 // Each entry should satisfy (places[i].id == i)
 // First real place must be at index MIN_MAP_LOCATION
@@ -90,6 +92,10 @@ static Place places[] =
    {"Zagreb", "ZA", ZAGREB, LAND},
    {"Zurich", "ZU", ZURICH, LAND},
 };
+
+void idToAbbrev(LocationID p, char *abbrev) {
+        strcpy(abbrev, places[p].abbrev);
+}
 
 // given a Place number, return its name
 char *idToName(LocationID p)
