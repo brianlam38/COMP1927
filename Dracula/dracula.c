@@ -12,3 +12,5 @@ void decideDraculaMove(DracView gameState)
 	// Replace the line below by something better
 	registerBestPlay("CD","Mwuhahahaha");
 }
+
+// Hello world
