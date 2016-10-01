@@ -56,6 +56,10 @@ int hasPath(Graph g, Vertex src, Vertex dest) {
 	return isFound;
 }
 
+// ###########################################
+// BREADTH-FIRST SEARCH: FINDING SHORTEST PATH
+// ###########################################
+
 // What is the shortest path from vertex source --> Destination?
 // Recording sequence of vertices from src --> dest
 int findPath(Graph g, Vertex src, Vertex dest) {
@@ -71,7 +75,7 @@ int findPath(Graph g, Vertex src, Vertex dest) {
 		for (y = 0; y < nV(g); y++) {
 			if (!hasEdge(g,x,y))
 				continue;
-			path[y] = x;	// Remembering value of prev vertex
+			path[y] = x;		// Remembering value of prev vertex
 			if (y == dest)
 				isFound = 1;
 				break;
@@ -80,6 +84,15 @@ int findPath(Graph g, Vertex src, Vertex dest) {
 				visited[y] = 1;
 		}
 	}
+	if (isFound) {
+		Vertex v;
+		for (v = dest; v != src; v = path[v])	// Display path from dest -> src (reverse)
+			printf("%d-",v);
+		printf("%d\n",src);
+	}
+	free(visited);
+	free(path);
+	return isFound;		// returns if dest = found AND records path
 }
 
 
