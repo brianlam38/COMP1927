@@ -35,7 +35,7 @@ int hasPath(Graph g, Vertex src, Vertex dest) {
 	int *visited = calloc(nV(g) * sizeof(int));
 	Queue q = newQueue();
 	QueueJoin(q,src);
-	visited[]
+	// Mark source as visited
 	int isFound = 0;
 
 	while (!QueueIsEmpty(q) && !isFound) {
