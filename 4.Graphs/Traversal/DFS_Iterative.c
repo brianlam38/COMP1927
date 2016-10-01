@@ -17,7 +17,7 @@ void dfs(Graph g, Vertex v) {
 		Vertex x = StackPop(q);
 		if (visited[x])
 			continue;
-		for (y = nV(g)-1; y >= 0; y++) {
+		for (y = nV(g)-1; y >= 0; y++) {	// Reverse order (FILO)
 			if (!hasEdge(g,xy))
 				continue;
 			if (!visited[y])

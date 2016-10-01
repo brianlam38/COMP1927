@@ -25,3 +25,64 @@ void bfs(Graph g, Vertex v) {
 		}
 	}
 }
+
+// ###################################
+// BREADTH-FIRST SEARCH: PATH CHECKING
+// ###################################
+
+// Is there a path from vertex source --> destination?
+int hasPath(Graph g, Vertex src, Vertex dest) {
+	int *visited = calloc(nV(g) * sizeof(int));
+	Queue q = newQueue();
+	QueueJoin(q,src);
+	visited[]
+	int isFound = 0;
+
+	while (!QueueIsEmpty(q) && !isFound) {
+		Vertex y;
+		Vertex x = QueueLeave(q);
+		for (y = 0; y < nV(g); y++) {
+			if (!hasEdge(g,x,y))
+				continue;
+			if (y == dest)
+				isFound = 1;
+				break;
+			if (!visited[y])
+				QueueJoin(q,y);
+				visited[y] = 1;
+		}
+	}
+	free(visited);
+	return isFound;
+}
+
+// What is the shortest path from vertex source --> Destination?
+// Recording sequence of vertices from src --> dest
+int findPath(Graph g, Vertex src, Vertex dest) {
+	Vertex *path = malloc(nV(g) * sizeof(Vertex));
+	int *visited = calloc(nV(g), sizeof(int));
+	Queue q = newQueue();
+	QueueJoin(q,src);
+	int isFound = 0;
+
+	while (!emptyQ(q) && !isFound) {
+		Vertex y;
+		Vertex x = QueueLeave(q);
+		for (y = 0; y < nV(g); y++) {
+			if (!hasEdge(g,x,y))
+				continue;
+			path[y] = x;	// Remembering value of prev vertex
+			if (y == dest)
+				isFound = 1;
+				break;
+			if (!visited[y])
+				QueueJoin(q,y);
+				visited[y] = 1;
+		}
+	}
+}
+
+
+
+
+
