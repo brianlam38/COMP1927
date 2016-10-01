@@ -10,19 +10,17 @@ void dfs(Graph g, Vertex v) {
 	visited = calloc(nV(g),sizeof(int));
 	Stack q = newStack();
 	StackPush(q,v);
-	visited[x] = order++;
+	visited[v] = order++;
 
 	while (!StackIsEmpty(q)) {
 		Vertex y;
 		Vertex x = StackPop(q);
-		if (visited[x])
-			continue;
-		for (y = nV(g)-1; y >= 0; y++) {	// Reverse order (FILO)
-			if (!hasEdge(g,xy))
+		for (y = nV(g)-1; y >= 0; y--) {	// Reverse order (FILO)
+			if (!hasEdge(g,x,y))
 				continue;
 			if (!visited[y])
 				StackPush(q,y);
-				visited[x] = order++;
+				visited[y] = order++;
 		}
 	}
 }

@@ -3,7 +3,9 @@ foreach (y in neighbours(x)) {
 	...
 }
 
-for adjacency matrix
+// ################
+// ADJACENCY MATRIX
+// ################
 
 for (y = 0; y < g->nV; y++) {
 	if (g->edges[x][y] == 0) continue;
@@ -11,7 +13,9 @@ for (y = 0; y < g->nV; y++) {
 	...
 }
 
-for adjacency list
+// ##############
+// ADJACENCY LIST
+// ##############
 
 for (cur = g->edges[x]; cur != NULL; cur = cur->next) {
 	y = cur->v;

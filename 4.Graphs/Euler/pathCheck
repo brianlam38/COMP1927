@@ -1,0 +1,11 @@
+// check whether a given path is a Euler path
+
+int isEulerPath(Graph g, Edge e[], int nE)
+{
+	// assume valid g, e, nE
+
+	// includes all edges
+	// is actually a path
+	// includes edges exactly once
+	return 1;
+}

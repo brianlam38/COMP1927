@@ -7,6 +7,8 @@ while (still some vertices in ToVisit) {
         if (Y not in Visited && Y not in ToVisit) ToVisit += Y
 }   }
 
+
+
 a->b,c  b->a,c,d  c->a,b,d  d->b,c,e  e->d
 
 isPath(a,e)

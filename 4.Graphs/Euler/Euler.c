@@ -2,9 +2,10 @@
 // EULER PATH AND TOUR CHECKING
 // ############################
 
-// Check whether graph has an Euler path
+// Check whether graph has an Euler path.
 // Euler path = connected + v,w has odd degree
 // (graph is assumed to be connected)
+// Complexity = Linear O(v)
 int hasEulerPath(Graph g, Vertex v, Vertex w) {
 	int t = degree(g,v)
 	int z = degree(g,w);

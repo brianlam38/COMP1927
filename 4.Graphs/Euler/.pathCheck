@@ -1,0 +1,21 @@
+// check whether a given path is a Euler path
+
+int isEulerPath(Graph g, Edge e[], int nE)
+{
+	assert(g != NULL);
+	// includes all edges
+	if (g->nE != nE) return 0;
+	// is actually a path
+	for (i = 0; i < nE-1; i++) {
+		if (e[i].w != e[i+1].v)
+			return 0;
+	}
+	// includes edges exactly once
+	for (i = 0; i < nE; i++) {
+		for (j = i+1; j < nE; j++) {
+			if (e[i].v==e[j].v && e[i].w==e[j].w)
+				return 0;
+		}
+	}
+	return 1;
+}

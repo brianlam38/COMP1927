@@ -1,0 +1,18 @@
+Possible Set representations:
+
+* array (sorted/unsorted) (grow/shrink using realloc)
+* linked list (sorted/unsorted) (grow/shrink as usual)
+* bitmap  (fixed size = V bits = ceil(V/8) bytes)
+
+Costs           Space     AddEdge   Edge      Outbound  Inbound
+                                    Exists?   Edges     Edges
+
+Unsorted Array  V+E       1/d(v)    d(v)      d(v)      E
+ 
+Sorted Array    V+E       d(v)      log(d(v)) d(v)      Vlog(d(v))
+
+Unsorted List   V+E       1         d(v)      d(v)      E
+
+Sorted List     V+E       d(v)      d(v)      d(v)      Vd(v)
+
+Bitmap          V^2       1         1         V         V
