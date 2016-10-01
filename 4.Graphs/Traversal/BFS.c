@@ -25,38 +25,3 @@ void bfs(Graph g, Vertex v) {
 		}
 	}
 }
-
-
-// ######################
-// GRAPH ADJACENCY MATRIX
-// ######################
-
-Graph newGraph(int nV) {
-	int i, j;
-	Edge e** = malloc(nV * sizeof(int*));
-	assert(e != NULL);
-
-	for (i = 0; i < nV; i++) {
-		e[i] = malloc(nV * sizeof(int));
-		assert(e[i] != NULL);
-		for (j = 0; j < nV; j++) {
-			e[i][j] = 0;
-		}
-	}
-	Graph g = malloc(sizeof(GraphRep));
-	assert(g != NULL);
-	int nE;
-	g->nV = nV;
-	g->nE = 0;
-	g->edges = e;
-
-	return g;
-}
-
-
-
-
-
-
-
-
