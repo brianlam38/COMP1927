@@ -10,17 +10,18 @@ void bfs(Graph g, Vertex v) {
 	visited = calloc(nV(g), sizeof(int));	// allocate visited array + set to 0
 	Queue q = newQueue();					// create queue
 	QueueJoin(q,v);							// add source to queue
-	while (!QueueIsEmpty(g)) {				// while queue is not empty
-		Vertex y;
-		Vertex x = QueueLeave(q);			// pop 1st elt off head of queue
-		if (visited[x])						// checked if visited
+	visited[x] = order++;					// mark source as visited
+	while (!QueueIsEmpty(g)) {
+		Vertex y;							// declare neighbour vertex
+		Vertex x = QueueLeave(q);			// pop vertex off queue
+		if (visited[x])						// check if vertex is visited
 			continue;
-		visited[x] = order++;				// if not visited, mark as visited
-		for (y = 0; y < nV(g); y++) {		// look at all nieghbours (ascending order)
-			if (!hasEdge(g,x,y))				// check if neighbour
+		for (y = 0; y < nV(g); y++) {		// look at neighbours (ascending order)
+			if (!hasEdge(g,x,y))				// check if connected
 				continue;
-			if (!visited[y])					// check if visited
-				QueueJoin(q,y);
+			if (!visited[y])					// check if neighbour is visited
+				QueueJoin(q,y);					// add neighbour to queue
+				visited[x] = order++;			// mark vertice as visited
 		}
 	}
 }
