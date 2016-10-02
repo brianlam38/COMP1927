@@ -62,6 +62,14 @@ void decideHunterMove(HunterView gameState)
     int locID;
     char *move;
 
+    /* CURRENT DRYRUN LOGS
+    
+    (1) Round 0 placement = successful
+    (2) Round 1 = Researching (incorrect logic)
+    (3) Round 2 = Converge on Godalming (fn not implemented)
+
+    */
+
     printf("The current round is: %d\n", round);
     // Round 0 placement
     if (round == 0) {
@@ -71,14 +79,13 @@ void decideHunterMove(HunterView gameState)
         else { locID = M_START; }
         move = idToAbbrev(locID);
         registerBestPlay(move,"ROUND 0 PLACEMENT");
-    // First 5 turns, converge on Godalming
+    // First 6 turns, converge on Godalming
     } else if (round < 6 && dTrail[0] == CITY_UNKNOWN) {
         locID = convergeOnLeader(gameState);
         move = idToAbbrev(locID);
-        registerBestPlay(move,"Converge on GODALMING");        
-    }
-    // Dracula trail is found
-    if (dTrail[0] != CITY_UNKNOWN) {
+        registerBestPlay(move,"Converge on GODALMING");
+    // After initial 6 turns      
+    } else if (round >= 6  && dTrail[0] != CITY_UNKNOWN) {
         if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
             locID = hTrail[0];
             move = idToAbbrev(locID);
