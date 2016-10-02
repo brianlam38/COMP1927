@@ -80,8 +80,9 @@ LocationID *whereCanIgo(HunterView currentView, int *numLocations,
                         int road, int rail, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
     PlayerID player = whoAmI(currentView);    // get the current player
-    return connectedLocations(currentView->view, numLocations, whereIs(currentView, PLAYER_DRACULA),
-                              player, giveMeTheRound(currentView), road, rail, sea);
+    return connectedLocations(currentView->view, numLocations,
+                              whereIs(currentView, PLAYER_DRACULA), player,
+                              giveMeTheRound(currentView), road, rail, sea);
 }
 
 // What are the specified player's next possible moves
@@ -89,6 +90,7 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return connectedLocations(currentView->view, numLocations, whereIs(currentView, player),
-                              player, giveMeTheRound(currentView), road, rail, sea);
+    return connectedLocations(currentView->view, numLocations,
+                              whereIs(currentView, player), player,
+                              giveMeTheRound(currentView), road, rail, sea);
 }

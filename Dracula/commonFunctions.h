@@ -1,3 +1,5 @@
+//////////////////////// commonFunctions.h ///////////////////////////////////
+
 // commonFunctions.h
 // Interface for commonFuntions.c
 
@@ -40,9 +42,20 @@ struct gameView {
     PlayerID currentPlayer;                // ID of current player
     PlayerMessage *messages;               // messages provided by players
     playerInfo *players[NUM_PLAYERS];      // array of player info
-    
+
 };
 
+typedef struct QueueRep *Queue;
+
+typedef struct QueueNode {
+    LocationID value;
+    struct QueueNode *next;
+} QueueNode;
+
+typedef struct QueueRep {
+    QueueNode *head;  // ptr to first node
+    QueueNode *tail;  // ptr to last node
+} QueueRep;
 
 //max number of event encountered each play
 #define NUM_EVENT_ENCOUNTER 3
@@ -55,14 +68,16 @@ struct gameView {
 // traverse the map and return an array of nearby cities of "from" with type "type"
 // *nearby and *size is the original array and size of the array
 // the function updates the *nearby array and size of the array
-LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type);
+LocationID *NearbyCities(Map map, LocationID from,
+                         LocationID *nearby, int *size, int type);
 
 
 // check an object is in the array
 int inArray(int *array, int object, int size);
 
 
-// given a Place abbreviation, return its ID number (with other "locations" included)
+// given a Place abbreviation, return its ID number
+// (with other "locations" included)
 LocationID otherToID(char *abbrev);
 
 
@@ -70,35 +85,52 @@ LocationID otherToID(char *abbrev);
 int countChar(char* string);
 
 
+// get the abbreviation fr
+void strToAbbrev(char *play, char abbrev[]);
+
+
 // return the health of a hunter in a particula play
 // pastPlays    : the string of that particula play
 // health       : health from last round
 // prevLocation : previous location of the hunter
 // currLocation : current location of the hunter
-int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation, LocationID currLocation);
-
-
-// Update the trail with newLocation inserted
-// trail : trail of a player in last 6 truns
-// newLocation : the newest location to be the part of trail
-void updatePlayerTrail(LocationID trail[TRAIL_SIZE], LocationID newLocation);
-
-
-// return the actual location ID of Dracula if his move is a hide or double back
-// currID : ID of current location
-// trail  : tral of Dracula
-LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
+int hunterTurnHealth(char *pastPlays, int health,
+                     LocationID prevLocation, LocationID currLocation);
 
 
 // initialise a given trail to UNKNOWN_LOCATION
 void initialiseTrail(LocationID trail[TRAIL_SIZE]);
 
 
-// check and update the number of traps and number of immature vampires in a given location
+// Update the trail with newLocation inserted
+// trail : trail of a player in last 6 truns
+// newLocation : the newest location to be the part of trail
+void updatePlayerTrail(LocationID trail[TRAIL_SIZE],
+                       char *newLocation, PlayerID player);
+
+
+// return the actual location ID of Dracula if
+//  his move is a hide or double back
+// currID : ID of current location
+// trail  : tral of Dracula
+LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
+
+
+// check and update the number of traps and
+//   number of immature vampires in a given location
 // trail : trail of a player
 // c     : the char of an event encountered in a play
-// where : location that you are interested in knowing the number of traps and immature vampires
-void numEncounter(LocationID trail[TRAIL_SIZE], char c, LocationID where, int *numTraps, int *numVamps);
+// where : location that you are interested in knowing
+//         the number of traps and immature vampires
+void numEncounter(LocationID trail[TRAIL_SIZE], char c,
+                  LocationID where, int *numTraps, int *numVamps);
 
+
+Queue newQueue(); // create new empty queue
+void dropQueue(Queue); // free memory used by queue
+void showQueue(Queue); // display as 3 > 5 > 4 > ...
+void QueueJoin(Queue,LocationID location); // add item on queue
+LocationID QueueLeave(Queue); // remove item from queue
+int QueueIsEmpty(Queue); // check for no items
 
 #endif /* commonFunctions_h */
