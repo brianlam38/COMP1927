@@ -42,7 +42,7 @@ void decideHunterMove(HunterView gameState)
 
 void vanHelsingMove(HunterView h) {
   
-  registerBestPlay("CD","Camping for days");
+  registerBestPlay("CD","HELSING - Camping for days");
   
   LocationID vanTrail[TRAIL_SIZE];
   giveMeTheTrail(h,PLAYER_VAN_HELSING,vanTrail);
@@ -50,28 +50,28 @@ void vanHelsingMove(HunterView h) {
   
   if ((whereIs(h,PLAYER_DRACULA) == TELEPORT || 
       whereIs(h,PLAYER_DRACULA) == CASTLE_DRACULA) && vanHealth > 2) {
-     registerBestPlay("CD","Camping for days");
+     registerBestPlay("CD","HELSING - Camping for days");
   } else if (vanHealth < 6) {
      submitID(vanTrail[0]);
   } else if (vanTrail[0] != CASTLE_DRACULA) {
-    registerBestPlay("CD","Camping for days");
+    registerBestPlay("CD","HELSING - Camping for days");
   } else if (vanTrail[1] == KLAUSENBURG) {
-    registerBestPlay("GA","GALATZ patrol"); 
+    registerBestPlay("GA","HELSING - GALATZ patrol"); 
   } else if (vanTrail[1] == GALATZ) {
-   	registerBestPlay("KL","KLAUSENBURG patrol"); 
+   	registerBestPlay("KL","HELSING - KLAUSENBURG patrol"); 
   }
-  
+  // If drac = van at most recent move, stay in same location
   LocationID dracTrail[TRAIL_SIZE];
   giveMeTheTrail(h,PLAYER_DRACULA,dracTrail);
   if (dracTrail[0] == vanTrail[0] && dracTrail[0] <= 70 && dracTrail[0] >= 0) {
-    submitID(vanTrail[0]);		
+    submitID(vanTrail[0]);
   	return;
   }
-  
+  // If drac is currently at C?, previously CD and Van at KL/GA --> Go GA/KL
   if (dracTrail[1] == CASTLE_DRACULA && dracTrail[0] == CITY_UNKNOWN) {
     if (vanHealth > 2) { 
-      if (vanTrail[0] == KLAUSENBURG) registerBestPlay("GA","Dracula's at GA");
-      else registerBestPlay("KL","Dracula's at KL");
+      if (vanTrail[0] == KLAUSENBURG) registerBestPlay("GA","HELSING - Dracula's at GA");
+      else registerBestPlay("KL","HELSING - Dracula's at KL");
     }
   }
   
@@ -111,12 +111,13 @@ void lordGodalmingMove(HunterView h) {
     	submitID(playerTrail[0]);
   
 }
-
+// Takes in ID, copies ID Abbrev into array, then declares Abbrev AI move
 static void submitID(LocationID dest) {
 	char currPlace[3];
   idToAbbrev(dest,currPlace);
   registerBestPlay(currPlace,"Hello");
 }
+
 //Returns the next move in order to reach the 'dest'
 //LocationID bestWayToGo(LocationID dest,player) {
   //Graph traversal needed
