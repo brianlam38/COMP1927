@@ -31,7 +31,6 @@ void lordGodalmingMove(HunterView h); //generic player we can specialise him lat
 //void minaHarkerMove(HunterView h);
 //void DrSewardMove(HunterView h);
 
-
 void decideHunterMove(HunterView gameState)
 {
     int player = whoAmI(gameState);
@@ -39,9 +38,11 @@ void decideHunterMove(HunterView gameState)
   	else lordGodalmingMove(gameState);
 }
 
-
+// #################
+// VAN HELSING MOVES
+// #################
 void vanHelsingMove(HunterView h) {
-  
+  // Default VAN move
   registerBestPlay("CD","HELSING - Camping for days");
   
   LocationID vanTrail[TRAIL_SIZE];
@@ -67,7 +68,7 @@ void vanHelsingMove(HunterView h) {
     submitID(vanTrail[0]);
   	return;
   }
-  // If drac is currently at C?, previously CD and Van at KL/GA --> Go GA/KL
+  // If drac is currently at C?, previously CD and VAN at KL/GA --> Go GA/KL
   if (dracTrail[1] == CASTLE_DRACULA && dracTrail[0] == CITY_UNKNOWN) {
     if (vanHealth > 2) { 
       if (vanTrail[0] == KLAUSENBURG) registerBestPlay("GA","HELSING - Dracula's at GA");
@@ -76,6 +77,9 @@ void vanHelsingMove(HunterView h) {
   }
   
 }
+// ####################
+// LORD GODALMING MOVES
+// ####################
 void lordGodalmingMove(HunterView h) {
   
   int player = whoAmI(h);
