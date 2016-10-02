@@ -32,7 +32,6 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 #define V_START 66 // Van Helsing = Varna      (right)
 #define M_START 27 // Mina Harker = Galway     (top)
 
-//static void submitID(LocationID dest);
 static int convergeOnDrac(HunterView h);
 static int convergeOnLeader(HunterView h);
 
@@ -41,9 +40,12 @@ static int convergeOnLeader(HunterView h);
 /*
     Current Strategy:
         (1) Godalming starts in the centre of the map. Remaining players spread out LEFT, RIGHT, TOP.
-        (2) Remaining players converge on Godalming, the leader.
+        (2) Remaining players converge on Godalming, the leader for the first 6 turns.
         (3) If trail is picked up, all hunters converge on Drac
-        (4) If 6 rounds pass without picking up
+        (4) If 6 rounds pass and no trail is picked up, all hunters research.
+        (5) Converge on Drac.
+        (6) If dracTrail is lost, all hunters research immediately and converge on Drac.
+        (7) Repeat step #6
 */
 
 void decideHunterMove(HunterView gameState)
@@ -80,7 +82,7 @@ void decideHunterMove(HunterView gameState)
         if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
             locID = hTrail[0];
             move = idToAbbrev(locID);
-            registerBestPlay(move,"Rest at DRAC");    
+            registerBestPlay(move,"Attack DRAC");    
         } else {                                 // Converge on drac
             locID = convergeOnDrac(gameState);
             move = idToAbbrev(locID);
@@ -90,33 +92,32 @@ void decideHunterMove(HunterView gameState)
     } else {
         locID = hTrail[0];
         move = idToAbbrev(locID);
-        registerBestPlay(move,"Resting");
+        registerBestPlay(move,"RESEARCHING");
     }                  
 }
 
-// Returns LocationID of whereToGoNext
+// Returns LocationID of whereToGoNext to hunt drac
 int convergeOnDrac(HunterView h) {
-    /*
-    LocationID dTrail[TRAIL_SIZE];
-    giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
 
-    int loc0 = whereIs(h,PLAYER_LORD_GOLDAMING);
-    int loc1 = whereIs(h,PLAYER_DR_SEWARD);
-    int loc2 = whereIs(h,PLAYER_VAN_HELSING);
-    int loc3 = whereIs(h,PLAYER_MINA_HARKER);
-    */
+    // Use pathLength() to determine #turns away Dracula is
+    // Use BFS to determine which cities he may currently be in
+    // Close him off?
+
     return 0;
 }
 
-// BFS on shortest path to leader
-int convergeOnLeader(LocationID src, LocationID dest) {
+// Returns LocationID of whereToGoNext for initial 5 turns
+int convergeOnLeader(HunterView h) {
 
+    // For the first 5 turns OR until drac trail is found,
+    // converge towards Godalming.
 
-    return path;
+    return 0;
 }
 
-// BFS to find length of shortest path
+// BFS to find length of shortest path (# of turns to dest)
 int pathLength(LocationID src, LocationID dest) {
+
     Map map = newMap();
 
     LocationID *path = malloc(map->nV * sizeof(LocationID));
@@ -125,14 +126,14 @@ int pathLength(LocationID src, LocationID dest) {
     QueueJoin(q,src);
     int isFound = 0;
 
-    while (!emptyQ(q) && !isFound) {
-        LocationID y;
+    while (!QueueIsEmpty(q) && !isFound) {
         LocationID x = QueueLeave(q);
+        visited[x] = 1;
         VList curr;
-        for (y = 0; y < nV(g); y++) {
-            if (!hasEdge(g,x,y))
-                continue;
-            path[y] = x;        // Remembering value of prev vertex
+        LocationID y;
+        for (curr = map->connections[x]; curr != NULL; curr = curr->next) {
+            y = curr->v;
+            path[y] = x;
             if (y == dest)
                 isFound = 1;
                 break;
@@ -141,11 +142,11 @@ int pathLength(LocationID src, LocationID dest) {
                 visited[y] = 1;
         }
     }
+    int length = 0;
     if (isFound) {
         LocationID v;
-        for (v = dest; v != src; v = path[v])   // Display path from dest -> src (reverse)
-            length++
+        for (v = dest; v != src; v = path[v])
+            length++;
     }
-
     return length;
 }
