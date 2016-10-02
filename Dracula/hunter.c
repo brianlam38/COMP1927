@@ -25,15 +25,18 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 #include "Game.h"
 #include "HunterView.h"
 #include "Places.h"
+#include "commonFunctions.h"
 
 #define G_START 60 // Godalming = Stratsbourg  (centre)
 #define S_START 37 // Seward = Lisbon          (left)
 #define V_START 66 // Van Helsing = Varna      (right)
 #define M_START 27 // Mina Harker = Galway     (top)
 
-static void submitID(LocationID dest);
+//static void submitID(LocationID dest);
+static int convergeOnDrac(HunterView h);
+static int convergeOnLeader(HunterView h);
 
-static int leader = PLAYER_LORD_GODALMING; // Global leader variable
+//static int leader = PLAYER_LORD_GODALMING; // Global leader variable
 
 /*
     Current Strategy:
@@ -63,29 +66,32 @@ void decideHunterMove(HunterView gameState)
         if (player == PLAYER_LORD_GODALMING) { locID = G_START; }
         else if (player == PLAYER_DR_SEWARD) { locID = S_START; }
         else if (player == PLAYER_VAN_HELSING) { locID = V_START; }
-        else if (player == PLAYER_MINA_HARKER) { locID = M_START; }
+        else { locID = M_START; }
         move = idToAbbrev(locID);
         registerBestPlay(move,"ROUND 0 PLACEMENT");
+    // First 5 turns, converge on Godalming
+    } else if (round < 6 && dTrail[0] == CITY_UNKNOWN) {
+        locID = convergeOnLeader(gameState);
+        move = idToAbbrev(locID);
+        registerBestPlay(move,"Converge on GODALMING");        
     }
-    // Plays if drac trail is KNOWN
+    // Dracula trail is found
     if (dTrail[0] != CITY_UNKNOWN) {
-        if (dTrail[0] = hTrail[0]) {            // Stay in city if drac is here
+        if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
             locID = hTrail[0];
             move = idToAbbrev(locID);
-            registerBestPlay(move,"Rest at DRAC");     
-        } else {                                // Converge on drac
-            locID = convergeOnDrac(h);
+            registerBestPlay(move,"Rest at DRAC");    
+        } else {                                 // Converge on drac
+            locID = convergeOnDrac(gameState);
             move = idToAbbrev(locID);
             registerBestPlay(move,"Converge on DRAC");
         }
-    // Plays if drac trail is UNKNOWN
-    } else if (round < 6) {                     // Converge on godalming at the start
-        locID = convergeOnLeader(h);
+    // Dracula trail not found, all hunters research
+    } else {
+        locID = hTrail[0];
         move = idToAbbrev(locID);
-        registerBestPlay(move,"Converge on GODALMING");
-    } else if (round % 6 = 0) {                 // Rest every 6 rounds, to reveal drac loc
-        registerBestPlay(hTrail[0],"Resting");
-    }                              
+        registerBestPlay(move,"Resting");
+    }                  
 }
 
 // Returns LocationID of whereToGoNext
@@ -102,8 +108,44 @@ int convergeOnDrac(HunterView h) {
     return 0;
 }
 
-// Returns LocationID of whereToGoNext to find leader
-int convergeOnLeader(HunterView h) {
+// BFS on shortest path to leader
+int convergeOnLeader(LocationID src, LocationID dest) {
 
-    return 0;
+
+    return path;
+}
+
+// BFS to find length of shortest path
+int pathLength(LocationID src, LocationID dest) {
+    Map map = newMap();
+
+    LocationID *path = malloc(map->nV * sizeof(LocationID));
+    LocationID *visited = calloc(map->nV, sizeof(LocationID));
+    Queue q = newQueue();
+    QueueJoin(q,src);
+    int isFound = 0;
+
+    while (!emptyQ(q) && !isFound) {
+        LocationID y;
+        LocationID x = QueueLeave(q);
+        VList curr;
+        for (y = 0; y < nV(g); y++) {
+            if (!hasEdge(g,x,y))
+                continue;
+            path[y] = x;        // Remembering value of prev vertex
+            if (y == dest)
+                isFound = 1;
+                break;
+            if (!visited[y])
+                QueueJoin(q,y);
+                visited[y] = 1;
+        }
+    }
+    if (isFound) {
+        LocationID v;
+        for (v = dest; v != src; v = path[v])   // Display path from dest -> src (reverse)
+            length++
+    }
+
+    return length;
 }
