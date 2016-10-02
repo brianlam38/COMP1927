@@ -25,132 +25,85 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 #include "Game.h"
 #include "HunterView.h"
 #include "Places.h"
+
+#define G_START 60 // Godalming = Stratsbourg  (centre)
+#define S_START 37 // Seward = Lisbon          (left)
+#define V_START 66 // Van Helsing = Varna      (right)
+#define M_START 27 // Mina Harker = Galway     (top)
+
 static void submitID(LocationID dest);
-void vanHelsingMove(HunterView h); //our camper
-void lordGodalmingMove(HunterView h); //generic player we can specialise him later
-//void minaHarkerMove(HunterView h);
-//void DrSewardMove(HunterView h);
+
+static int leader = PLAYER_LORD_GODALMING; // Global leader variable
+
+/*
+    Current Strategy:
+        (1) Godalming starts in the centre of the map. Remaining players spread out LEFT, RIGHT, TOP.
+        (2) Remaining players converge on Godalming, the leader.
+        (3) If trail is picked up, all hunters converge on Drac
+        (4) If 6 rounds pass without picking up
+*/
 
 void decideHunterMove(HunterView gameState)
-{
-    int player = whoAmI(gameState);
-  	if (player == PLAYER_VAN_HELSING) vanHelsingMove(gameState);
-  	else lordGodalmingMove(gameState);
-}
+{  
+    int player = whoAmI(gameState);         // store curr player
+    int round = giveMeTheRound(gameState);  // store curr round
 
-// #################
-// VAN HELSING MOVES
-// #################
-void vanHelsingMove(HunterView h) {
-  // Default VAN move
-  registerBestPlay("CD","HELSING - Camping for days");
-  
-  LocationID vanTrail[TRAIL_SIZE];
-  giveMeTheTrail(h,PLAYER_VAN_HELSING,vanTrail);
-  int vanHealth = howHealthyIs(h,PLAYER_VAN_HELSING);
-  // If DRAC at CD --> VAN move/stay CD
-  if ((whereIs(h,PLAYER_DRACULA) == TELEPORT || 
-      whereIs(h,PLAYER_DRACULA) == CASTLE_DRACULA) && vanHealth > 2) {
-     registerBestPlay("CD","HELSING - Camping for days");
-  } else if (vanHealth < 6) {
-     submitID(vanTrail[0]);
-  // If VAN not at CD --> move to CD
-  } else if (vanTrail[0] != CASTLE_DRACULA) {
-    registerBestPlay("CD","HELSING - Camping for days");
-  // If VAN prev move == KL --> Move to GA
-  } else if (vanTrail[1] == KLAUSENBURG) {
-    registerBestPlay("GA","HELSING - GALATZ patrol"); 
-  } else if (vanTrail[1] == GALATZ) {
-   	registerBestPlay("KL","HELSING - KLAUSENBURG patrol"); 
-  }
-  // If drac = van at most recent move, stay in same location
-  LocationID dracTrail[TRAIL_SIZE];
-  giveMeTheTrail(h,PLAYER_DRACULA,dracTrail);
-  if (dracTrail[0] == vanTrail[0] && dracTrail[0] <= 70 && dracTrail[0] >= 0) {
-    submitID(vanTrail[0]);
-  	return;
-  }
-  // If drac is currently at C?, previously CD and VAN at KL/GA --> Go GA/KL
-  if (dracTrail[1] == CASTLE_DRACULA && dracTrail[0] == CITY_UNKNOWN) {
-    if (vanHealth > 2) { 
-      if (vanTrail[0] == KLAUSENBURG) registerBestPlay("GA","HELSING - Dracula's at GA");
-      else registerBestPlay("KL","HELSING - Dracula's at KL");
+    LocationID dTrail[TRAIL_SIZE];          // get drac trail
+    giveMeTheTrail(gameState,PLAYER_DRACULA,dTrail);
+
+    LocationID hTrail[TRAIL_SIZE];          // get current hunter trail
+    giveMeTheTrail(gameState,player,hTrail);
+
+    int locID;
+    char *move;
+
+    printf("The current round is: %d\n", round);
+    // Round 0 placement
+    if (round == 0) {
+        if (player == PLAYER_LORD_GODALMING) { locID = G_START; }
+        else if (player == PLAYER_DR_SEWARD) { locID = S_START; }
+        else if (player == PLAYER_VAN_HELSING) { locID = V_START; }
+        else if (player == PLAYER_MINA_HARKER) { locID = M_START; }
+        move = idToAbbrev(locID);
+        registerBestPlay(move,"ROUND 0 PLACEMENT");
     }
-  }
-  
-}
-// ####################
-// LORD GODALMING MOVES
-// ####################
-void lordGodalmingMove(HunterView h) {
-  
-  int player = whoAmI(h);
-  if (whereIs(h,player) == UNKNOWN_LOCATION) {
-	registerBestPlay("ST","First Move"); 
-	return;
-  }
-
-  LocationID otherPlayers[3]; //Where are the other players
-  int i = 0;
-  for (i = 0;i < 3; i++) {
-    otherPlayers[i] = whereIs(h,((player+i)%4));
-  }
-
-
-  int numPlaces;
-  LocationID *placesToGo = whereCanIgo(h,&numPlaces,1,1,0);
-  LocationID playerTrail[TRAIL_SIZE];
-  giveMeTheTrail(h,player,playerTrail);
-
-  if (howHealthyIs(h,player) < 2) {
-    submitID(playerTrail[0]); return;
-  }
-  for (i = 0; i < numPlaces; i++) {
-   	if (placesToGo[i] != whereIs(h,player) &&
-        placesToGo[i] != otherPlayers[0]   &&
-        placesToGo[i] != otherPlayers[1]   &&
-        placesToGo[i] != otherPlayers[2]) {
-      		submitID(placesToGo[i]); break;
-    	}
-  }    
-  if (whereIs(h,PLAYER_DRACULA) == whereIs(h,player))
-    	submitID(playerTrail[0]);
-  
-}
-// Takes in ID, copies ID Abbrev into array, then declares Abbrev AI move
-static void submitID(LocationID dest) {
-	char currPlace[3];
-  idToAbbrev(dest,currPlace);
-  registerBestPlay(currPlace,"Hello");
-}
-
-//Returns the next move in order to reach the 'dest'
-//LocationID bestWayToGo(LocationID dest,player) {
-  //Graph traversal needed
-  //probably just make a new function in Map.c
-//}
-
-/*
-void minaHarkerMove(HunterView h) {
-  
-}
-void DrSewardMove(HunterView h) {
-  
-}
-*/
-
-// Take in ID and places return place Abbrev
-// Need to change above functions to take input p
-/*
-char LocationIDToAbbrev(Place p, LocationID loc) {
-  	int i;
-  	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {	// Search places array for loc ID.
-      	if (p[i]->id == loc) {								// If matched, return abbrev
-        	return p[i]->*abbrev;
+    // Plays if drac trail is KNOWN
+    if (dTrail[0] != CITY_UNKNOWN) {
+        if (dTrail[0] = hTrail[0]) {            // Stay in city if drac is here
+            locID = hTrail[0];
+            move = idToAbbrev(locID);
+            registerBestPlay(move,"Rest at DRAC");     
+        } else {                                // Converge on drac
+            locID = convergeOnDrac(h);
+            move = idToAbbrev(locID);
+            registerBestPlay(move,"Converge on DRAC");
         }
-    }
-  	return "NONE";
+    // Plays if drac trail is UNKNOWN
+    } else if (round < 6) {                     // Converge on godalming at the start
+        locID = convergeOnLeader(h);
+        move = idToAbbrev(locID);
+        registerBestPlay(move,"Converge on GODALMING");
+    } else if (round % 6 = 0) {                 // Rest every 6 rounds, to reveal drac loc
+        registerBestPlay(hTrail[0],"Resting");
+    }                              
 }
 
-*/
+// Returns LocationID of whereToGoNext
+int convergeOnDrac(HunterView h) {
+    /*
+    LocationID dTrail[TRAIL_SIZE];
+    giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
 
+    int loc0 = whereIs(h,PLAYER_LORD_GOLDAMING);
+    int loc1 = whereIs(h,PLAYER_DR_SEWARD);
+    int loc2 = whereIs(h,PLAYER_VAN_HELSING);
+    int loc3 = whereIs(h,PLAYER_MINA_HARKER);
+    */
+    return 0;
+}
+
+// Returns LocationID of whereToGoNext to find leader
+int convergeOnLeader(HunterView h) {
+
+    return 0;
+}
