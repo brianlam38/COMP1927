@@ -13,7 +13,7 @@ void giveMeTheTrail(HunterView currentView, PlayerID player,
 LocationID *whereCanIgo(HunterView currentView, int *numLocations,
                         int road, int rail, int sea);
 LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
-                           PlayerID player, int road, int rail, int sea);
+                           playerID player, int road, int rail, int sea);
 
 */
 

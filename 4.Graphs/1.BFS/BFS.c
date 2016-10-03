@@ -37,7 +37,6 @@ int hasPath(Graph g, Vertex src, Vertex dest) {
 	QueueJoin(q,src);
 	// Mark source as visited
 	int isFound = 0;
-
 	while (!QueueIsEmpty(q) && !isFound) {
 		Vertex y;
 		Vertex x = QueueLeave(q);
