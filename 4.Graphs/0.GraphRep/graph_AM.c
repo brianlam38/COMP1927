@@ -8,7 +8,7 @@ Graph newGraph(int nV) {
 	assert(nV > 0);
 
 	int i, j;
-	int **e = malloc(nV * sizeof(int*));	// Allocate "column" (ptr to array)
+	int **e = malloc(nV * sizeof(int*));	// Allocate "column" (ptr to array of ptrs)
 	assert(e != NULL);
 	for (i = 0; i < nV; i++) {
 		e[i] = malloc(nV * sizeof(int));	// Allocate "rows"
