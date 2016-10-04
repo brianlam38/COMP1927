@@ -32,6 +32,8 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 #define V_START 66 // Van Helsing = Varna      (right)
 #define M_START 27 // Mina Harker = Galway     (top)
 
+//static LocationID *whereToGo(int player,int *numLocations, int from, int stationsAllowed);
+//static LocationID howToGetTo(LocationID dest, LocationID from, int player, Round round, int *pathLength);
 static int convergeOnDrac(HunterView h);
 static int convergeOnLeader(HunterView h);
 
@@ -157,3 +159,106 @@ int pathLength(LocationID src, LocationID dest) {
     }
     return length;
 }
+/*
+static LocationID howToGetTo(LocationID dest, LocationID from, int player, Round round, int *pathLength) {
+
+  
+  LocationID seenList[NUM_MAP_LOCATIONS] = {0};
+  LocationID prevList[NUM_MAP_LOCATIONS] = {0};
+  LocationID stepList[NUM_MAP_LOCATIONS] = {0}; //keeps track of how many steps AI can go by rail
+                         //Since the number of stations allowed keeps changing
+  Queue toVisit = newQueue();
+
+  seenList[from] = 1;
+  prevList[from] = -1;
+  stepList[from] = (round+player)%4;
+  QueueJoin(toVisit,from);
+  int i;
+  
+    while(!QueueIsEmpty(toVisit) && !seenList[dest]) {
+    
+      if (from == dest) {*pathLength = 0; return from;}
+      
+        LocationID curr = QueueLeave(toVisit);
+//      printf("Curr = %d\n",curr);
+        int numLocations = 0;
+        LocationID *connections = whereToGo(player,&numLocations,curr,stepList[curr]); 
+    
+        for (i = 0; i < numLocations; i++) {
+//      if (curr == from)printf("Addresses Include: %d\n",connections[i]);
+            if (!seenList[connections[i]]) {
+                seenList[connections[i]] = 1;
+                prevList[connections[i]] = curr;
+            stepList[connections[i]] = (stepList[curr] + 1)%4;  
+
+                if (seenList[dest]) break;
+                QueueJoin(toVisit,connections[i]);
+            }
+        }
+        free(connections);
+//      if (seenList[dest]) break;
+    }
+    dropQueue(toVisit);
+    LocationID curr = dest;
+    *pathLength = 1;
+    while (prevList[curr] != from || prevList[curr] != -1) {
+        curr = prevList[curr];
+        (*pathLength)++;
+    }
+    return curr;
+  
+}
+
+static LocationID *whereToGo(int player,int *numLocations, int from, int stationsAllowed) {
+
+    if (from == UNKNOWN_LOCATION) return NULL;
+    *numLocations = 1;        //initialise the array size
+    LocationID *connections = malloc((*numLocations) * sizeof(LocationID));
+
+    connections[0] = from;    //initialise the array
+    Map map = newMap();       //get the game map
+    int i;
+    
+    //find the nearby cities of type ROAD
+    connections = NearbyCities(map, from, connections, numLocations, ROAD);
+    
+    
+    //find the nearby cities of type BOAT
+    connections = NearbyCities(map, from, connections, numLocations, BOAT);
+  
+    if (stationsAllowed == 0) return connections;
+
+    int nearbyStations = 0;
+    LocationID *railConnections = malloc(sizeof(LocationID));
+    railConnections = NearbyCities(map,from,railConnections,&nearbyStations,RAIL);
+
+    if (stationsAllowed > 1) {
+        int priStationsFound = nearbyStations;
+        for (i = 0; i < priStationsFound; i++) {
+            railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);
+            
+        }
+
+        if (stationsAllowed == 3) {
+            int triStationsFound = nearbyStations;
+            for (i = priStationsFound; i < triStationsFound; i++) {
+                railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);              
+            }
+        }
+    }
+
+    for (i = 0; i < nearbyStations; i++) {
+
+        if(!inArray(connections, railConnections[i], *numLocations)) {
+
+                (*numLocations)++;
+                connections = realloc(connections,(*numLocations)*sizeof(LocationID));
+                connections[*numLocations-1] = railConnections[i];
+
+            }
+    }
+
+    free(railConnections);
+    return connections;
+}
+*/

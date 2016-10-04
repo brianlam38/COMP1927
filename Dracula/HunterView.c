@@ -1,3 +1,5 @@
+/////////////////////////// HunterView.c ///////////////////////////////////////////
+
 // HunterView.c ... HunterView ADT implementation
 
 #include <stdlib.h>
@@ -79,9 +81,10 @@ void giveMeTheTrail(HunterView currentView, PlayerID player,
 LocationID *whereCanIgo(HunterView currentView, int *numLocations,
                         int road, int rail, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
-    PlayerID player = whoAmI(currentView);    // get the current player
+    PlayerID player = whoAmI(currentView);
+    LocationID from = whereIs(currentView,player);    // get the current player
     return connectedLocations(currentView->view, numLocations,
-                              whereIs(currentView, PLAYER_DRACULA), player,
+                              from, player,
                               giveMeTheRound(currentView), road, rail, sea);
 }
 
@@ -94,3 +97,5 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                               whereIs(currentView, player), player,
                               giveMeTheRound(currentView), road, rail, sea);
 }
+
+//////////////////////////////// end of HunterView.c ///////////////////////////////////////////
