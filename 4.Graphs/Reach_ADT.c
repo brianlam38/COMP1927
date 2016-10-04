@@ -4,11 +4,12 @@
 
 int reachable(Graph g, Vertex src, Vertex dest) {	// Check reachability
 	if (g->tc == NULL) makeClosure(g);
-	return g->tc[src][dest];
+	return g->tc[src][dest];						// Do lookup on matrix O(1)
 }
 
 void makeClosure(Graph g) {
-	int i, s, t, v = g->nV;
+	int i, s, t;
+	int V = g->nV;
 	int **tc = makeMatrix(V, V, 0);					// Set up matrix, initialise values 0
 
 	for (s = 0; s < V; s++) {						// Copy adj matrix values to tc matrix
