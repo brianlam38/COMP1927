@@ -11,7 +11,6 @@
 #include "Globals.h"
 #include "GameView.h"
 
-
 // struct definition of Map
 typedef struct vNode *VList;
 
@@ -63,6 +62,16 @@ typedef struct QueueRep {
 #define CHARS_PER_ROUND     40
 //number of chars per turn in pastPlays
 #define CHARS_PER_TURN      8
+//indicate it's a dracView
+#define DRAC_VIEW           -1
+//indicate it's a hunterView
+#define HUNTER_VIEW         -2
+
+//types of special moves in Dracula's trail
+#define NO_SPECIAL_MOVE     0
+#define HAS_HIDE            -1
+#define HAS_DOUBLE_BACK     -2
+#define BOTH_HIDE_AND_DB    -3
 
 
 // traverse the map and return an array of nearby cities of "from" with type "type"
@@ -97,7 +106,6 @@ void strToAbbrev(char *play, char abbrev[]);
 int hunterTurnHealth(char *pastPlays, int health,
                      LocationID prevLocation, LocationID currLocation);
 
-
 // initialise a given trail to UNKNOWN_LOCATION
 void initialiseTrail(LocationID trail[TRAIL_SIZE]);
 
@@ -125,6 +133,7 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
+int findPathLength(Map map, LocationID src, LocationID dest, int *path);
 
 Queue newQueue(); // create new empty queue
 void dropQueue(Queue); // free memory used by queue
@@ -132,5 +141,14 @@ void showQueue(Queue); // display as 3 > 5 > 4 > ...
 void QueueJoin(Queue,LocationID location); // add item on queue
 LocationID QueueLeave(Queue); // remove item from queue
 int QueueIsEmpty(Queue); // check for no items
+
+
+// check if there's a double-back or hide in Dracula's trail
+// view : DRAC_VIEW or HUNTER_VIEW is passing in?
+// return NO_SPECIAL_MOVE  if there are no special moves in Dracula's trail, 
+//        HAS_HIDE         if there is a hide in Dracula's trail, 
+//        HAS_DOUBLE_BACK  if there is a double-back in Dracula's trail, 
+//        BOTH_HIDE_AND_DB if there are both double-back and hide in Dracula's trail
+int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view);
 
 #endif /* commonFunctions_h */

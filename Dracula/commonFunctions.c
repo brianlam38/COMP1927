@@ -275,3 +275,97 @@ int QueueIsEmpty(Queue Q)
 {
     return (Q->head == NULL);
 }
+
+
+int findPathLength(Map map, LocationID src, LocationID dest, int *path)
+{
+        if (src == dest) {
+            path[0] =src;
+            return 0;
+        }
+    int *visited = calloc(map->nV,sizeof(int));
+    LocationID *tmppath = calloc(map->nV,sizeof(LocationID));
+    Queue q = newQueue();
+    QueueJoin(q,src);
+    int isFound = 0;
+    int length = 0;
+    while (!QueueIsEmpty(q) && !isFound) {
+        LocationID x = QueueLeave(q);
+        visited[x] = 1;
+                VList curr;
+                LocationID y;
+        for (curr = map->connections[x]; curr != NULL; curr = curr->next) {
+                    y = curr->v;
+          if (visited[y]) continue;
+            tmppath[y] = x;
+            if (y == dest) {
+                isFound = 1;
+                break;
+            }
+            if (!visited[y]) {
+                QueueJoin(q,y);
+                visited[y] = 1;
+            }
+        }
+    }
+    if (isFound) {
+      LocationID v;
+      for (v = dest; v != src; v = tmppath[v]) {
+                length++;
+            }
+    }
+    return length;
+}
+
+// check if there's a double-back or hide in Dracula's trail
+int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view) {
+  int i, j;
+  int hide = 0;
+  int douB = 0;  
+  if (view == DRAC_VIEW) {
+    for (i = 0; i < TRAIL_SIZE - 1; i++) {
+        if (trail[i] == trail[i + 1]) {
+        if (idToType(trail[i]) == SEA) {
+          douB++;
+        } else {        
+            hide++;
+        }
+        }
+    }
+    if (hide > 1) {
+        return BOTH_HIDE_AND_DB;
+    } else {
+        for (i = 0; i < TRAIL_SIZE; i++) {
+            for (j = 0; j < TRAIL_SIZE; j++ ) {
+            if ((i != j) && (i != j+1) && (i != j-1)) {
+            if (trail[i] == trail[j]) {
+                            douB++;
+            }
+          }
+        }
+      }
+    }
+  } else {
+    for (i = 0; i < TRAIL_SIZE - 1; i++) {
+      if (trail[i] == HIDE) {
+        hide++;
+      }
+    }
+    for (j = 1; j < TRAIL_SIZE; j++) {
+      for (i = 0; i < TRAIL_SIZE - j; i++) {
+        if (trail[i] == (HIDE + j)) {
+          douB++;
+        }
+      }
+    }
+  }
+  if ((hide == 1) && (douB == 1)) {
+    return BOTH_HIDE_AND_DB;
+  } else if (hide == 1) {
+    return HAS_HIDE;
+  } else if (douB == 1) {
+    return HAS_DOUBLE_BACK;
+  } else {
+    return NO_SPECIAL_MOVE;
+  }
+}
