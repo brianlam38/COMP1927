@@ -8,7 +8,7 @@
 #include "Globals.h"
 
 //count the number of nearby cities of a specified location and
-// store the nearby cities in an array
+// store the nearby cities in an array + returns array
 LocationID *NearbyCities(Map map, LocationID from,
                          LocationID *nearby, int *size, int type) {
     VList curr;

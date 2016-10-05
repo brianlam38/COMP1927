@@ -112,13 +112,13 @@ void decideHunterMove(HunterView gameState)
 // Returns LocationID of whereToGoNext to hunt drac
 int convergeOnDrac(HunterView h) {
 
-    int player = whoAmI(h);   
-    LocationID dTrail[TRAIL_SIZE];          // get drac trail
+    int player = whoAmI(h);                                 // get player
+    LocationID dTrail[TRAIL_SIZE];                          // get drac trail
     giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
     int i;
   
-    for (i = 0; i < TRAIL_SIZE; i++) {
-      if (dTrail[i] >= 0 && dTrail[0] <= MAX_MAP_LOCATION) 
+    for (i = 0; i < TRAIL_SIZE; i++) {                      // Iterate through trail #
+      if (dTrail[i] >= 0 && dTrail[0] <= MAX_MAP_LOCATION)    // Trail found, exit loop
             break;      
     }
     if (dTrail[i] >= 0 && dTrail[0] <= MAX_MAP_LOCATION)
@@ -138,21 +138,19 @@ int convergeOnLeader(HunterView h) {
 
     int i = 0;
     //int j = 0;
-    int player = whoAmI(h);
-    LocationID curr = whereIs(h,player);
-  
+    int player = whoAmI(h);                 // get player ID
+    LocationID curr = whereIs(h,player);    // get location of player
   
     if (player != PLAYER_LORD_GODALMING) {
-      LocationID dest = howToGetTo(h,whereIs(h,PLAYER_LORD_GODALMING),
-                                  curr,player,&i,1,1);
-        if (!visitedDest(h,dest)) return dest;
+        LocationID dest = howToGetTo(h,whereIs(h,PLAYER_LORD_GODALMING),    // if player !Godalming
+                                                    curr,player,&i,1,1);    // find how to reach Godall
+        if (!visitedDest(h,dest)) return dest;                              // if location not visited, return dest
     }
 
-  LocationID dest = searchNearby(h,player);
+    LocationID dest = searchNearby(h,player);
     if (dest == -1) return curr;
     else return dest;
     //returns -1 if unable to find somewhere to go
-
     //Random trawling to places unvisited, if there is nothing to do        
 
     // For the first 5 turns OR until drac trail is found,
@@ -194,13 +192,13 @@ LocationID searchNearby(HunterView h, int player) {
   //returns an unvisited place not next to STRATSBOURG otherwise
   return inCase;
 }
-            
-            
+
+// Determines if location has been visited
 int visitedDest(HunterView h, LocationID place) {
-    
-  LocationID hTrail[TRAIL_SIZE];
-  giveMeTheTrail(h,whoAmI(h),hTrail);
-  int i,j;
+  
+    LocationID hTrail[TRAIL_SIZE];
+    giveMeTheTrail(h,whoAmI(h),hTrail);
+    int i,j;
   
     for (i = 0; i < 4; i++) {
         if (place == whereIs(h,i)) return 1;    
@@ -208,8 +206,7 @@ int visitedDest(HunterView h, LocationID place) {
             if (place == hTrail[j]) return 1;
         }
     }
-  return 0;
-        
+    return 0;      
 }
 
 /*              
@@ -221,57 +218,61 @@ static int researchedBefore(HunterView h, LocationID *htrail) {
                  
 }
 */
+
+// ID to Abbrev translator + makes best play
 static void submitID(LocationID dest, char *message) {
-  char currPlace[3];
-  idToAbbrev(dest,currPlace);
-  registerBestPlay(currPlace,message);
+    char currPlace[3];
+    idToAbbrev(dest,currPlace);
+    registerBestPlay(currPlace,message);
 }
 
-static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from, int player, int *pathLength, int sea, int train) {
+// How to get to a specific location
+static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from,
+                             int player, int *pathLength, int sea, int train) {
 
-  Round round = giveMeTheRound(h);
-  LocationID seenList[NUM_MAP_LOCATIONS] = {0};
-  LocationID prevList[NUM_MAP_LOCATIONS] = {0};
-  LocationID stepList[NUM_MAP_LOCATIONS] = {0}; //keeps track of how many steps AI can go by rail
-               //Since the number of stations allowed keeps changing
-  Queue toVisit = newQueue();
+    Round round = giveMeTheRound(h);
+    LocationID seenList[NUM_MAP_LOCATIONS] = {0};
+    LocationID prevList[NUM_MAP_LOCATIONS] = {0};
+    LocationID stepList[NUM_MAP_LOCATIONS] = {0}; //keeps track of how many steps AI can go by rail
+                                                  //Since the number of stations allowed keeps changing
+    Queue toVisit = newQueue();
 
-  seenList[from] = 1;
-  prevList[from] = -1;
-  stepList[from] = (round+player)%4;
-  QueueJoin(toVisit,from);
-  int i;
+    seenList[from] = 1;
+    prevList[from] = -1;
+    stepList[from] = (round+player)%4;
+    QueueJoin(toVisit,from);
+    int i;
   
-  while(!QueueIsEmpty(toVisit) && !seenList[dest]) {
+    while(!QueueIsEmpty(toVisit) && !seenList[dest]) {  // while queue !empty & dest !reached
   
-    LocationID curr = QueueLeave(toVisit);
+    LocationID curr = QueueLeave(toVisit);              // add curr to queue
 //    printf("Curr = %d\n",curr);
-        int numLocations = 0;
-      LocationID *connections = whereToGo(player,&numLocations,curr,sea,stepList[curr]); 
+    int numLocations = 0;
+    LocationID *connections = whereToGo(player,&numLocations,
+                                        curr,sea,stepList[curr]); 
     
-    for (i = 0; i < numLocations; i++) {
+        for (i = 0; i < numLocations; i++) {            // loop through adj cities (next moves)
 //    if (curr == from)printf("Addresses Include: %d\n",connections[i]);
-          if (!seenList[connections[i]]) {
-            seenList[connections[i]] = 1;
-            prevList[connections[i]] = curr;
-      stepList[connections[i]] = (stepList[curr] + 1)%4;  
-
-        if (seenList[dest]) break;
-        QueueJoin(toVisit,connections[i]);
-          }
-      }
-    free(connections);
+            if (!seenList[connections[i]]) {                // if location has not been seen:
+                seenList[connections[i]] = 1;                   // Mark location as seen = 1
+                prevList[connections[i]] = curr;                // Store location in prevList
+                stepList[connections[i]] = (stepList[curr] + 1)%4;  
+            }
+            if (seenList[dest]) break;                      // if dest is found, break loop
+            QueueJoin(toVisit,connections[i]);              // add connection to queue
+        }
+        free(connections);
 //    if (seenList[dest]) break;
-  }
-  dropQueue(toVisit);
-  LocationID curr = dest;
-  while (prevList[curr] != from) {
-    curr = prevList[curr];
-  }
-  return curr;
-  
+    }
+    dropQueue(toVisit);
+    LocationID curr = dest;
+    while (prevList[curr] != from) {    // Traversing back
+        curr = prevList[curr];
+    }
+    return curr;
 }
 
+// Which adjacent cities can the Hunter go next?
 static LocationID *whereToGo(int player,int *numLocations, int from, int sea, int stationsAllowed) {
 
     if (from == UNKNOWN_LOCATION) return NULL;
@@ -288,39 +289,36 @@ static LocationID *whereToGo(int player,int *numLocations, int from, int sea, in
     
     //find the nearby cities of type BOAT
     connections = NearbyCities(map, from, connections, numLocations, BOAT);
-  
+
+    //find rail connections
     if (stationsAllowed == 0) return connections;
 
     int nearbyStations = 0;
     LocationID *railConnections = malloc(sizeof(LocationID));
-  railConnections = NearbyCities(map,from,railConnections,&nearbyStations,RAIL);
+    railConnections = NearbyCities(map,from,railConnections,&nearbyStations,RAIL);
 
-  if (stationsAllowed > 1) {
-    int priStationsFound = nearbyStations;
-      for (i = 0; i < priStationsFound; i++) {
-        railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);
-      
-      }
-
-      if (stationsAllowed == 3) {
-          int triStationsFound = nearbyStations;
-          for (i = priStationsFound; i < triStationsFound; i++) {
-          railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);              
-          }
-      }
+    if (stationsAllowed > 1) {
+        int priStationsFound = nearbyStations;
+        for (i = 0; i < priStationsFound; i++) {
+            railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);
+        }
     }
-
+    if (stationsAllowed == 3) {
+        int triStationsFound = nearbyStations;
+        for (i = priStationsFound; i < triStationsFound; i++) {
+        railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);              
+        }
+    }
     for (i = 0; i < nearbyStations; i++) {
-
-    if(!inArray(connections, railConnections[i], *numLocations)) {
-
+        if(!inArray(connections, railConnections[i], *numLocations)) {
             (*numLocations)++;
             connections = realloc(connections,(*numLocations)*sizeof(LocationID));
-        connections[*numLocations-1] = railConnections[i];
-
-          }
+            connections[*numLocations-1] = railConnections[i];
+        }
     }
-
-  free(railConnections);
+    free(railConnections);
     return connections;
 }
+
+
+
