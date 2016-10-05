@@ -161,26 +161,26 @@ LocationID optimalStartLocation(DracView gameState) {
 	return location;
 }
 
-// char *optimalLocation(DracView gameState, LocationID *adjLocations, int numLoc,
-// 											PlayerID player) {
-// 	int otherHunters;
-//   char *location;
-// 	int length = 0;
-// 	int x;
-// 	for (x = 0 ; x < numLoc ; x++) {
-// 				int lengthToNearest = -1;
-// 				for (otherHunters = 0; otherHunters < 4; otherHunters++) {
-// 					if ((findPathLength(adjLocations[x], whereIs(gameState,
-// 							otherHunters)) <= lengthToNearest) && (player != otherHunters) ||
-// 							lengthToNearest = -1){
-// 								lengthToNearest = findPathLength(adjLocations[x],
-// 									whereIs(gameState, otherHunters));
-// 					}
-// 				}
-// 				if (length <= lengthToNearest) {
-// 					length = lengthToNearest;
-// 					location = idToName(adjLocations[x]);
-// 				}
-// 	}
-// 	return location;
-// }
+char *optimalLocation(DracView gameState, LocationID *adjLocations, int numLoc,
+											PlayerID player) {
+	int otherHunters;
+  char *location;
+	int length = 0;
+	int x;
+	for (x = 0 ; x < numLoc ; x++) {
+				int lengthToNearest = -1;
+				for (otherHunters = 0; otherHunters < 4; otherHunters++) {
+					if (((findPathLength(adjLocations[x], whereIs(gameState,
+							otherHunters)) <= lengthToNearest) && (player != otherHunters)) ||
+							lengthToNearest == -1){
+								lengthToNearest = findPathLength(adjLocations[x],
+									whereIs(gameState, otherHunters));
+					}
+				}
+				if (length <= lengthToNearest) {
+					length = lengthToNearest;
+					location = idToName(adjLocations[x]);
+				}
+	}
+	return location;
+}

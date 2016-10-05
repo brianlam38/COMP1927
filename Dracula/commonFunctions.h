@@ -56,6 +56,19 @@ typedef struct QueueRep {
     QueueNode *tail;  // ptr to last node
 } QueueRep;
 
+typedef struct PQueueRep *PQueue;
+
+typedef struct PQueueNode {
+    LocationID value;
+  int distance;
+    struct PQueueNode *next;
+} PQueueNode;
+
+typedef struct PQueueRep {
+    PQueueNode *head;  // ptr to first node
+    PQueueNode *tail;  // ptr to last node
+} PQueueRep;
+
 //max number of event encountered each play
 #define NUM_EVENT_ENCOUNTER 3
 //number of chars per round in pastPlays
@@ -133,7 +146,7 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
-int findPathLength(Map map, LocationID src, LocationID dest, int *path);
+int findPathLength(LocationID src, LocationID dest);
 
 Queue newQueue(); // create new empty queue
 void dropQueue(Queue); // free memory used by queue
@@ -142,6 +155,12 @@ void QueueJoin(Queue,LocationID location); // add item on queue
 LocationID QueueLeave(Queue); // remove item from queue
 int QueueIsEmpty(Queue); // check for no items
 
+PQueue newPQueue(); // create new empty queue
+void dropPQueue(PQueue); // free memory used by queue
+void showPQueue(PQueue); // display as 3 > 5 > 4 > ...
+void PQueueJoin(PQueue,LocationID location); // add item on queue
+LocationID PQueueLeave(PQueue); // remove item from queue
+int PQueueIsEmpty(PQueue); // check for no items
 
 // check if there's a double-back or hide in Dracula's trail
 // view : DRAC_VIEW or HUNTER_VIEW is passing in?

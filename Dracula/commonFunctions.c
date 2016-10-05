@@ -276,13 +276,15 @@ int QueueIsEmpty(Queue Q)
     return (Q->head == NULL);
 }
 
+// ###########################
+// FUNCTIONS UNIQUE TO DRACULA
+// ###########################
 
-int findPathLength(Map map, LocationID src, LocationID dest, int *path)
+// Dracula version
+int findPathLength( LocationID src, LocationID dest)
 {
-        if (src == dest) {
-            path[0] =src;
-            return 0;
-        }
+    Map map = newMap();
+        if (src == dest) return 0;
     int *visited = calloc(map->nV,sizeof(int));
     LocationID *tmppath = calloc(map->nV,sizeof(LocationID));
     Queue q = newQueue();
@@ -368,4 +370,98 @@ int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view) {
   } else {
     return NO_SPECIAL_MOVE;
   }
+}
+
+// create new empty Queue
+PQueue newPQueue()
+{
+    PQueue pq;
+    pq = malloc(sizeof(PQueueRep));
+    assert(pq != NULL);
+    pq->head = NULL;
+    pq->tail = NULL;
+    return pq;
+}
+
+// free memory used by Queue
+void dropPQueue(PQueue PQ)
+{
+    PQueueNode *curr, *next;
+    assert(PQ != NULL);
+    // free list nodes
+    curr = PQ->head;
+    while (curr != NULL) {
+        next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    // free queue rep
+    free(PQ);
+}
+
+// display as 3 > 5 > 4 > ...
+void showPQueue(PQueue PQ)
+{
+    PQueueNode *curr;
+    assert(PQ != NULL);
+    // free list nodes
+    curr = PQ->head;
+    while (curr != NULL) {
+        printf("location: %d",curr->value);
+    printf("distance from: %d",curr->distance);
+        if (curr->next != NULL)
+            printf(">");
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+// add LocationID at end of Queue
+// void QueuePJoin(PQueue PQ, LocationID it, int distance)
+// {
+//  assert(PQ != NULL);
+//  PQueueNode *new = malloc(sizeof(PQueueNode));
+//  assert(new != NULL);
+//  new->value = it;
+//   new->distance = distance;
+//  new->next = NULL;
+//  if (PQ->head == NULL) {
+//      PQ->head = new;
+//    PQ->tail = new;
+//     return;
+//   }
+//
+//   if (distance <= PQ->head->->distance) {
+//     new->next = PQ->head;
+//     PQ->head = new;
+//   } else {
+//     PQueueNode *curr = PQ->head;
+//     curr->next = NULL;
+//     while (curr->next != NULL && distance > curr->next->distance) {
+//       curr = curr->next;
+//     }
+//   }
+//
+//   new->next = curr;
+//   PQ->head = new;
+// }
+
+// remove LocationID from front of Queue
+LocationID PQueueLeave(PQueue PQ)
+{
+    assert(PQ != NULL);
+    assert(PQ->head != NULL);
+    LocationID it = PQ->head->value;
+    PQueueNode *old = PQ->head;
+    PQ->head = old->next;
+    if (PQ->head == NULL)
+        PQ->tail = NULL;
+    //free(old);
+    return it;
+}
+
+// check for no LocationIDs
+int PQueueIsEmpty(PQueue PQ)
+{
+    return (PQ->head == NULL);
 }
