@@ -93,8 +93,8 @@ static Place places[] =
    {"Zurich", "ZU", ZURICH, LAND},
 };
 
-char *idToAbbrev(LocationID p) {
-   return places[p].abbrev;
+void idToAbbrev(LocationID p, char *abbrev) {
+   strcpy(abbrev, places[p].abbrev);
 }
 
 // given a Place number, return its name
