@@ -91,9 +91,45 @@ void decideHunterMove(HunterView gameState)
             default:
                 submitID(M_START, "MINA START");
         }
-    // First 6 turns, converge on Godalming
-    } else if (round < 6 && (dTrail[0] == CITY_UNKNOWN || dTrail[0] == SEA_UNKNOWN)) {
-        submitID(convergeOnLeader(gameState), "Found Dracula!");
+    /*  ORIGINAL CODE
+
+        } else if (round < 6 && (dTrail[0] == CITY_UNKNOWN || dTrail[0] == SEA_UNKNOWN)) {
+            submitID(convergeOnLeader(gameState), "Converging on Leader");
+
+        ISSUE:
+        Currently, there is no logic in (rounds < 6) for hunters picking up drac's trail
+        when they are still within the condition. Build logic for this.
+
+        Sample pseudocode within (else if (round < 6) for loop):
+        if dracula trail != CITY_UNKNOWN or SEA_UNKNOWN
+            then convergeOnDrac
+    */
+    // First 6 turns, converge on GODALMING
+    } else if (round < 6) {
+        int i;
+        int isFound = 0;
+        for (i = 0; i < (TRAIL_SIZE - 1); i++) {                            // loop through trail
+            if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)
+                continue;
+            else                                                            // if anything other than
+                isFound = 1;                                                // CT/SEA_UNKNOWN, isFound = 1
+                break;                                                      // break out of loop, prevent re-assigning as 0
+        }
+        if (isFound == 0)                                                   // if drac not found, converge on lead
+            submitID(convergeOnLeader(gameState), "Converging on LEADER");
+        else                                                                // else converge on drac
+            submitID(convergeOnDrac(gameState), "Converging on DRAC");
+    /* After initial 6 turns
+    } else if (round >= 6) {
+        if (dTrail[0] == hTrail[0]) {
+            submitID(hTrail[0], "Dracula's here");
+        } else {
+            int i;
+            for (i = 0; i < (TRAIL_SIZE - 1); i++)
+                if (dTrail[i] != CITY_UNKNOWN && dTrail[i] != SEA_UNKNOWN)
+                    submitID(convergeOnDrac(gameState),"Converging on Dracula");            
+        }*/
+
     // After initial 6 turns      
     } else if (round >= 6 && dTrail[0] != CITY_UNKNOWN && dTrail[0] != SEA_UNKNOWN) {
         if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
@@ -213,11 +249,12 @@ LocationID convergeOnLeader(HunterView h) {
 LocationID searchNearby(HunterView h, int player) {
 
     int numPlaces = 0;
-    int i = 0;
+    int i = 0; //int j = 0;   // uninitialised
     Round round = giveMeTheRound(h);
     //Don't want to wander around the sea
     LocationID *placesToGo = whereCanIgo(h,&numPlaces,1,0,1);  // stores next possible location to go
     LocationID inCase = -1;                                    // value for no location found
+
   
     for (i = 0; i < numPlaces; i++) {                          // loop through possible places
         int visited = visitedDest(h,placesToGo[i],4);
@@ -258,7 +295,7 @@ int visitedDest(HunterView h, LocationID place, int pos) {
   
     int i;
 
-    for (i = 0; i < pos; i++) { //return if in last 3 locations
+    for (i = 0; i < pos; i++) { //return if in last 'pos' locations
         if (place == h1Trail[i]) return 1;
         if (place == h2Trail[i]) return 1;
         if (place == h3Trail[i]) return 1;
@@ -354,33 +391,33 @@ static LocationID *whereToGo(int player,int *numLocations, int from, int sea, in
     //find rail connections
     if (stationsAllowed == 0) return connections;
 
-    int nearbyStations = 0;
-    LocationID *railConnections = malloc(sizeof(LocationID));
-    railConnections = NearbyCities(map,from,railConnections,&nearbyStations,RAIL);
+        int nearbyStations = 0;
+        LocationID *railConnections = malloc(sizeof(LocationID));
+        railConnections = NearbyCities(map,from,railConnections,&nearbyStations,RAIL);
 
-    int priStationsFound = nearbyStations;
-    if (stationsAllowed > 1) {
-        for (i = 0; i < priStationsFound; i++) {
-            railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);
+        int priStationsFound = nearbyStations;
+        if (stationsAllowed > 1) {
+            for (i = 0; i < priStationsFound; i++) {
+                railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);
+            }
         }
-    }
-    if (stationsAllowed == 3) {
-        int triStationsFound = nearbyStations;
-        for (i = priStationsFound; i < triStationsFound; i++) {
-        railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);              
+        if (stationsAllowed == 3) {
+            int triStationsFound = nearbyStations;
+            for (i = priStationsFound; i < triStationsFound; i++) {
+                railConnections = NearbyCities(map,railConnections[i],railConnections,&nearbyStations,RAIL);              
+            }
         }
-    }
-    for (i = 0; i < nearbyStations; i++) {
-        if(!inArray(connections, railConnections[i], *numLocations)) {
-            (*numLocations)++;
-            connections = realloc(connections,(*numLocations)*sizeof(LocationID));
-            connections[*numLocations-1] = railConnections[i];
+        for (i = 0; i < nearbyStations; i++) {
+            if(!inArray(connections, railConnections[i], *numLocations)) {
+                (*numLocations)++;
+                connections = realloc(connections,(*numLocations)*sizeof(LocationID));
+                connections[*numLocations-1] = railConnections[i];
+            }
         }
-    }
-    free(railConnections);
-    return connections;
+        free(railConnections);
+        return connections;
 }
-
+// Not sure how useful this function is yet
 char hMessage(HunterView h) {
 
     // Figure out how to chain together multiple statements,
@@ -389,11 +426,10 @@ char hMessage(HunterView h) {
     char *messageStorage = calloc(MESSAGE_SIZE, sizeof(char));  // allocate message array
     Round round = giveMeTheRound(h);
     
-    if (round == 0) { strcpy(messageStorage,"HUNTER START"); }
+    if (round == 0) { strcpy(messageStorage,"HUNTER START"); }  // sample message
 
     return *messageStorage;                                     // return message
 }
-
 
 
 
