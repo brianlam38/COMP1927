@@ -170,4 +170,7 @@ int PQueueIsEmpty(PQueue); // check for no items
 //        BOTH_HIDE_AND_DB if there are both double-back and hide in Dracula's trail
 int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view);
 
+LocationID howToGetTo(LocationID dest, LocationID from, int round,
+                             int player, int *pathLength, int sea, int train);
+
 #endif /* commonFunctions_h */

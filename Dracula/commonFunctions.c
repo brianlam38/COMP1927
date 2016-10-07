@@ -9,6 +9,9 @@
 
 //count the number of nearby cities of a specified location and
 // store the nearby cities in an array + returns array
+
+
+
 LocationID *NearbyCities(Map map, LocationID from,
                          LocationID *nearby, int *size, int type) {
     VList curr;
@@ -465,3 +468,65 @@ int PQueueIsEmpty(PQueue PQ)
 {
     return (PQ->head == NULL);
 }
+
+
+
+
+
+
+
+LocationID howToGetTo(LocationID dest, LocationID from, int round,
+                             int player, int *pathLength, int sea, int train) {
+
+    LocationID seenList[NUM_MAP_LOCATIONS] = {0};
+    LocationID prevList[NUM_MAP_LOCATIONS] = {0};
+//    LocationID stepList[NUM_MAP_LOCATIONS] = {0}; 
+    Queue toVisit = newQueue();
+    Map map = newMap();
+    int steps = (round+player)%4;   
+
+    seenList[from] = 1 + train - train;
+    prevList[from] = -1;
+
+ //   if (train)                                    // move by train
+//        stepList[from] = (round+player)%4;
+    QueueJoin(toVisit,from);
+    VList i;
+  
+    while(!QueueIsEmpty(toVisit) && !seenList[dest]) {      // while queue !empty & dest !reached
+  
+        LocationID curr = QueueLeave(toVisit);
+//    printf("Curr = %d\n",curr);
+
+        for (i = map->connections[curr]; i != NULL; i=i->next) {                // loop through adj cities (next moves)
+
+            if ((i->type == BOAT && sea) || (i->type == RAIL && train && steps != 0) || i->type == ROAD) {
+                if (!seenList[i->v]) {                // if location has not been seen:
+                    seenList[i->v] = 1;                   // Mark location as seen = 1
+                    prevList[i->v] = curr;                // Store location in prevList
+ //                 if (train)                                       
+ //                     stepList[i->v] = (stepList[curr] + 1)%4;  
+                }
+                if (seenList[dest]) break;                      // if dest is found, break loop
+                QueueJoin(toVisit,i->v);              // add connection to queue
+            }
+        }
+    }
+    dropQueue(toVisit);
+    LocationID curr = dest;
+    while (prevList[curr] != from) {    // Traversing back
+        curr = prevList[curr];
+    }
+
+    return curr;
+}
+
+
+
+
+
+
+
+
+
+

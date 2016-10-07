@@ -29,6 +29,8 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 #include "Places.h"
 #include "commonFunctions.h"
 
+#include <time.h>
+
 #define G_START 60 // Godalming = Stratsbourg  (centre)
 #define S_START 37 // Seward = Lisbon          (left)
 #define V_START 66 // Van Helsing = Varna      (right)
@@ -36,14 +38,12 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
 
 static void submitID(LocationID dest, char *message);
 static LocationID *whereToGo(int player,int *numLocations, int from,int sea, int stationsAllowed);
-static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from, int player, int *findPathLength, int sea,int rail);
+//static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from, int player, int *findPathLength, int sea,int rail);
 static int convergeOnDrac(HunterView h);
 static int convergeOnLeader(HunterView h);
 //static int researchedBefore(HunterView h, LocationID *htrail);
 static int visitedDest(HunterView h, LocationID place, int pos);
 static LocationID searchNearby(HunterView h, int player);
-
-//static int leader = PLAYER_LORD_GODALMING; // Global leader variable
 
 /*
     Current Strategy:
@@ -69,9 +69,9 @@ void decideHunterMove(HunterView gameState)
 
     /* CURRENT DRYRUN LOGS
     
-    (1) Round 0 placement = successful
-    (2) Round 1 = Researching (incorrect logic)
-    (3) Round 2 = Converge on Godalming (fn not implemented)
+    (1)
+    (2)
+    (3)
 
     */
 
@@ -91,27 +91,14 @@ void decideHunterMove(HunterView gameState)
             default:
                 submitID(M_START, "MINA START");
         }
-    /*  ORIGINAL CODE
-
-        } else if (round < 6 && (dTrail[0] == CITY_UNKNOWN || dTrail[0] == SEA_UNKNOWN)) {
-            submitID(convergeOnLeader(gameState), "Converging on Leader");
-
-        ISSUE:
-        Currently, there is no logic in (rounds < 6) for hunters picking up drac's trail
-        when they are still within the condition. Build logic for this.
-
-        Sample pseudocode within (else if (round < 6) for loop):
-        if dracula trail != CITY_UNKNOWN or SEA_UNKNOWN
-            then convergeOnDrac
-    */
     // First 6 turns, converge on GODALMING
     } else if (round < 6) {
         int i;
         int isFound = 0;
-        for (i = 0; i < (TRAIL_SIZE - 1); i++) {                            // loop through trail
-            if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)
+        for (i = 0; i < TRAIL_SIZE; i++) {                      // loop through trail
+            if (dTrail[i] >= MAX_MAP_LOCATION) //includes unknown city, sea, Double back and hide
                 continue;
-            else                                                            // if anything other than
+            else                                                       // if anything other than
                 isFound = 1;                                                // CT/SEA_UNKNOWN, isFound = 1
                 break;                                                      // break out of loop, prevent re-assigning as 0
         }
@@ -119,34 +106,32 @@ void decideHunterMove(HunterView gameState)
             submitID(convergeOnLeader(gameState), "Converging on LEADER");
         else                                                                // else converge on drac
             submitID(convergeOnDrac(gameState), "Converging on DRAC");
-    /* After initial 6 turns
+    /* After initial 6 turns */
     } else if (round >= 6) {
         if (dTrail[0] == hTrail[0]) {
-            submitID(hTrail[0], "Dracula's here");
+            submitID(hTrail[0], "Dracula is here, I am staying!");
         } else {
             int i;
-            for (i = 0; i < (TRAIL_SIZE - 1); i++)
-                if (dTrail[i] != CITY_UNKNOWN && dTrail[i] != SEA_UNKNOWN)
-                    submitID(convergeOnDrac(gameState),"Converging on Dracula");            
-        }*/
-
-    // After initial 6 turns      
-    } else if (round >= 6 && dTrail[0] != CITY_UNKNOWN && dTrail[0] != SEA_UNKNOWN) {
-        if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
-            submitID(hTrail[0], "Dracula's here");
-        } else {                                 // Converge on drac
-            submitID(convergeOnDrac(gameState),"Converging on Dracula");
+            int isFound = 0;
+            for (i = 0; i < TRAIL_SIZE; i++) {
+                if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)
+                    continue;   
+                else
+                    isFound = 1;
+                    break;
+            }
+            if (isFound == 0)
+                submitID(hTrail[0], "Researching!");
+            else
+                submitID(convergeOnDrac(gameState), "Converging on DRAC");                
         }
-    } else if (round >= 6 && dTrail[5] != CITY_UNKNOWN && dTrail[5] != SEA_UNKNOWN) {
-      submitID(convergeOnDrac(gameState), "Converge on him!");      
-    // Dracula trail not found, all hunters research
-    } else {
-        submitID(hTrail[0], "Researching/Resting rn");
-    }                  
+    }               
 }
-
 // Returns LocationID of whereToGoNext to hunt drac
 LocationID convergeOnDrac(HunterView h) {
+
+    clock_t start = clock();
+        printf("Converge on Dracula at %d function! start = %lu\n",whereIs(h,PLAYER_DRACULA),start);
 
     int player = whoAmI(h); // get player
     //Round round = giveMeTheRound(h);                      // unused var ATM
@@ -160,15 +145,12 @@ LocationID convergeOnDrac(HunterView h) {
     }
     if (dTrail[i] >= 0 && dTrail[i] <= MAX_MAP_LOCATION) {
         int myNums = 0;
-        LocationID dest = howToGetTo(h,dTrail[i],whereIs(h,player),player,&myNums,1,1); //using temp, since we don't actually need the length
-
+        LocationID dest = howToGetTo(dTrail[i],whereIs(h,player),giveMeTheRound(h),player,&myNums,1,1); //using temp, since we don't actually need the length
+    printf("The howToGetTo took %lu time\n",clock()-start);
         if (dest == dTrail[i] && i == 0) return dest; //We found Dracula!
-        
+
         else if (dest == dTrail[i]) {                 //If dracula was here (place already visited)                            
-            myNums = 0;
-            LocationID *myChoices = whereCanIgo(h,&myNums,1,1,0);
-            if (inArray(myChoices, dest, myNums)) { //If player is next to dest, look around it (no need to go to it)
-              
+
                 int dracNums = 0;
                 LocationID *myChoices = whereCanIgo(h,&myNums,1,1,0); //assumes drac doesn't travel by sea
                 LocationID *dracsChoices = whereToGo(PLAYER_DRACULA,&dracNums,dTrail[i],0,0);
@@ -176,8 +158,8 @@ LocationID convergeOnDrac(HunterView h) {
               
                 int max = (myNums <= dracNums) ? myNums : dracNums; //max is the lowest of the two nums
 
-                for (i = 6; i > 2; i++) { //check visited until trail[0,1,2]
-                    for (j = 0; j < max; j--) {
+                for (i = 6; i > 2; i--) { //check visited until trail[0,1,2]
+                    for (j = 0; j < max; j++) {
                         if (dracsChoices[j] == dest) continue; //not wasting time on something I know
                         if (inArray(myChoices,dracsChoices[j],myNums) && !visitedDest(h, dracsChoices[j], j)) {
                             foundPlace = 1; break;
@@ -185,21 +167,20 @@ LocationID convergeOnDrac(HunterView h) {
                     }
                     if (foundPlace) break;
                 }
+        printf("The multiple loops took %lu time\n",clock()-start);
                 foundPlace = (foundPlace) ? dracsChoices[j] : dest;
                 //If a place is found return that, else return dest
                 free (dracsChoices);
                 free(myChoices);
                 return foundPlace;
-              
-            } else {
-              free(myChoices);
-              return dest;
-            }
-        }
+
+        } else {
+        return dest;
+    }
       
       
     }
-      
+    printf("Time till I gave up %lu\n",clock()-start);  
     //This function will return the same place the hunter is, if the hunter is already there
     //To actually find Drac, add stuff to the function, so the hunters search around 'dest'
     
@@ -207,14 +188,18 @@ LocationID convergeOnDrac(HunterView h) {
     // Use BFS to determine which cities he may currently be in (within the #turns/degrees
     // Close him off?
 
-    return searchNearby(h, player); //just in case this function was called in the wrong
-                                  //situation, it calls searchNearby()
+    int res = searchNearby(h, player);
+    if (res == -1) return whereIs(h,player); //just in case this function was called in the wrong
+    return res;                              //situation, it calls searchNearby()
 }
 
 // Returns LocationID of whereToGoNext for initial 5 turns
 LocationID convergeOnLeader(HunterView h) {
     assert(giveMeTheRound(h) < 6);
 
+    clock_t start = clock();
+
+    printf("Converge on leader function! start = %lu\n",start);
     int i = 0;
     //int j = 0;     // unused variable
     int player = whoAmI(h);                          // get player ID
@@ -232,8 +217,9 @@ LocationID convergeOnLeader(HunterView h) {
     }
 
     if (player != PLAYER_LORD_GODALMING) {
-        LocationID dest = howToGetTo(h,whereIs(h,PLAYER_LORD_GODALMING),    /* NON GODALMING */
-                                                    curr,player,&i,1,1);    // find how to reach Godall
+        LocationID dest = howToGetTo(whereIs(h,PLAYER_LORD_GODALMING),curr,
+                        giveMeTheRound(h),player,&i,1,1);
+    printf("Time taken for howToGetTo %d is %lu\n",whereIs(h,PLAYER_LORD_GODALMING),clock()-start);    // find how to reach Godall
         if (!visitedDest(h,dest,5)) return dest;                            // if location not visited, return dest
     }
 
@@ -248,6 +234,8 @@ LocationID convergeOnLeader(HunterView h) {
 // Search nearby for unvisited locations (ADJ TO STRASBOURG), returns -1 if nowhere to go         
 LocationID searchNearby(HunterView h, int player) {
 
+    clock_t start = clock();     
+        printf("Search Nearby function! start = %lu\n",start);
     int numPlaces = 0;
     int i = 0; //int j = 0;   // uninitialised
     Round round = giveMeTheRound(h);
@@ -258,13 +246,15 @@ LocationID searchNearby(HunterView h, int player) {
   
     for (i = 0; i < numPlaces; i++) {                          // loop through possible places
         int visited = visitedDest(h,placesToGo[i],4);
-        if (!visited && player != PLAYER_LORD_GODALMING)       // if not visited and !Godalming
-            return placesToGo[i];                                   // return location
+        if (!visited && player != PLAYER_LORD_GODALMING) {       // if not visited and !Godalming
+            printf("Time taken iN RETURN 1 = %lu\n",(clock()/CLOCKS_PER_SEC));
+        return placesToGo[i];
+    }                                   // return location
         else if (!visited) {                                   // if not visited and am Godalming    
             inCase = placesToGo[i];                                 // patrol around STRASBOURG
             int size = 0;
             LocationID *placesNearDest = whereToGo(player,&size,placesToGo[i],0,(round+1)%4);
-            if (inArray(placesNearDest,STRASBOURG,size)) return placesToGo[i];
+            if (inArray(placesNearDest,STRASBOURG,size)) {printf("Time taken on return = %lu\n",(clock()-start)/CLOCKS_PER_SEC);  return placesToGo[i];}
             free(placesNearDest);
         }            
     }
@@ -274,6 +264,7 @@ LocationID searchNearby(HunterView h, int player) {
   
     //returns -1 if unable to find anywhere unvisited
     //returns an unvisited place not next to STRATSBOURG otherwise
+    printf("Time taken in Case = %lu\n",(clock()-start));
     return inCase;
 }
 
@@ -322,8 +313,11 @@ static void submitID(LocationID dest, char *message) {
 }
 
 // How to get to a specific location
-static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from,
+/*static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from,
                              int player, int *pathLength, int sea, int train) {
+
+    clock_t start = clock();
+    printf("How to get to function! start = %lu\n",start);
 
     Round round = giveMeTheRound(h);
     LocationID seenList[NUM_MAP_LOCATIONS] = {0};
@@ -366,9 +360,10 @@ static LocationID howToGetTo(HunterView h, LocationID dest, LocationID from,
     while (prevList[curr] != from) {    // Traversing back
         curr = prevList[curr];
     }
+    printf("Time taken for howToGetTo = %lu\n",clock()-start);
     return curr;
 }
-
+*/
 // Which adjacent cities can the Hunter go next?
 static LocationID *whereToGo(int player,int *numLocations, int from, int sea, int stationsAllowed) {
 
@@ -430,6 +425,3 @@ char hMessage(HunterView h) {
 
     return *messageStorage;                                     // return message
 }
-
-
-
