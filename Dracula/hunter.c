@@ -67,16 +67,8 @@ void decideHunterMove(HunterView gameState)
     LocationID hTrail[TRAIL_SIZE];          // get current hunter trail
     giveMeTheTrail(gameState,player,hTrail);
 
-    /* CURRENT DRYRUN LOGS
-    
-    (1)
-    (2)
-    (3)
-
-    */
-
     printf("The current round is: %d\n", round);
-    // Round 0 placement
+    /* Round 0 placement */
     if (round == 0) {
         switch(player) {
             case PLAYER_LORD_GODALMING:
@@ -91,22 +83,22 @@ void decideHunterMove(HunterView gameState)
             default:
                 submitID(M_START, "MINA START");
         }
-    // First 6 turns, converge on GODALMING
+    /* First 5 turns */
     } else if (round < 6) {
         int i;
         int isFound = 0;
-        for (i = 0; i < TRAIL_SIZE; i++) {                      // loop through trail
-            if (dTrail[i] >= MAX_MAP_LOCATION) //includes unknown city, sea, Double back and hide
+        for (i = 0; i < TRAIL_SIZE; i++) {     // loop through trail
+            if (dTrail[i] >= MAX_MAP_LOCATION) // includes unknown city, sea, Double back and hide
                 continue;
-            else                                                       // if anything other than
-                isFound = 1;                                                // CT/SEA_UNKNOWN, isFound = 1
-                break;                                                      // break out of loop, prevent re-assigning as 0
+            else                               // if anything other than
+                isFound = 1;                   // CT/SEA_UNKNOWN, isFound = 1
+                break;                         // break out of loop, prevent re-assigning as 0
         }
-        if (isFound == 0)                                                   // if drac not found, converge on lead
+        if (isFound == 0)                      // if drac not found, converge on lead
             submitID(convergeOnLeader(gameState), "Converging on LEADER");
-        else                                                                // else converge on drac
+        else                                   // else converge on drac
             submitID(convergeOnDrac(gameState), "Converging on DRAC");
-    /* After initial 6 turns */
+    /* After initial 5 turns */
     } else if (round >= 6) {
         if (dTrail[0] == hTrail[0]) {
             submitID(hTrail[0], "Dracula is here, I am staying!");
@@ -114,7 +106,7 @@ void decideHunterMove(HunterView gameState)
             int i;
             int isFound = 0;
             for (i = 0; i < TRAIL_SIZE; i++) {
-                if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)
+                if (dTrail[i] >= MAX_MAP_LOCATION)
                     continue;   
                 else
                     isFound = 1;
@@ -147,38 +139,36 @@ LocationID convergeOnDrac(HunterView h) {
         int myNums = 0;
         LocationID dest = howToGetTo(dTrail[i],whereIs(h,player),giveMeTheRound(h),player,&myNums,1,1); //using temp, since we don't actually need the length
     printf("The howToGetTo took %lu time\n",clock()-start);
-        if (dest == dTrail[i] && i == 0) return dest; //We found Dracula!
-
+        if (dest == dTrail[i] && i == 0)
+            return dest; //We found Dracula!
         else if (dest == dTrail[i]) {                 //If dracula was here (place already visited)                            
-
-                int dracNums = 0;
-                LocationID *myChoices = whereCanIgo(h,&myNums,1,1,0); //assumes drac doesn't travel by sea
-                LocationID *dracsChoices = whereToGo(PLAYER_DRACULA,&dracNums,dTrail[i],0,0);
-                int foundPlace = 0; 
+            int dracNums = 0;
+            LocationID *myChoices = whereCanIgo(h,&myNums,1,1,0); //assumes drac doesn't travel by sea
+            LocationID *dracsChoices = whereToGo(PLAYER_DRACULA,&dracNums,dTrail[i],0,0);
+            int foundPlace = 0; 
               
-                int max = (myNums <= dracNums) ? myNums : dracNums; //max is the lowest of the two nums
+            int max = (myNums <= dracNums) ? myNums : dracNums; //max is the lowest of the two nums
 
-                for (i = 6; i > 2; i--) { //check visited until trail[0,1,2]
-                    for (j = 0; j < max; j++) {
-                        if (dracsChoices[j] == dest) continue; //not wasting time on something I know
-                        if (inArray(myChoices,dracsChoices[j],myNums) && !visitedDest(h, dracsChoices[j], j)) {
-                            foundPlace = 1; break;
-                        }
+            for (i = 6; i > 2; i--) { //check visited until trail[0,1,2]
+                for (j = 0; j < max; j++) {
+                    if (dracsChoices[j] == dest)
+                        continue; //not wasting time on something I know
+                    if (inArray(myChoices,dracsChoices[j],myNums) && !visitedDest(h, dracsChoices[j], j)) {
+                        foundPlace = 1; break;
                     }
-                    if (foundPlace) break;
                 }
-        printf("The multiple loops took %lu time\n",clock()-start);
-                foundPlace = (foundPlace) ? dracsChoices[j] : dest;
-                //If a place is found return that, else return dest
-                free (dracsChoices);
-                free(myChoices);
-                return foundPlace;
-
+                if (foundPlace) break;
+            }
+    printf("The multiple loops took %lu time\n",clock()-start);
+            foundPlace = (foundPlace) ? dracsChoices[j] : dest;
+            //If a place is found return that, else return dest
+            free (dracsChoices);
+            free(myChoices);
+            return foundPlace;
         } else {
-        return dest;
+            return dest;
     }
-      
-      
+         
     }
     printf("Time till I gave up %lu\n",clock()-start);  
     //This function will return the same place the hunter is, if the hunter is already there
@@ -411,17 +401,4 @@ static LocationID *whereToGo(int player,int *numLocations, int from, int sea, in
         }
         free(railConnections);
         return connections;
-}
-// Not sure how useful this function is yet
-char hMessage(HunterView h) {
-
-    // Figure out how to chain together multiple statements,
-    // for more informative messages?
-
-    char *messageStorage = calloc(MESSAGE_SIZE, sizeof(char));  // allocate message array
-    Round round = giveMeTheRound(h);
-    
-    if (round == 0) { strcpy(messageStorage,"HUNTER START"); }  // sample message
-
-    return *messageStorage;                                     // return message
 }
