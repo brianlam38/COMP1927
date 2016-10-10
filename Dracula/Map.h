@@ -21,5 +21,6 @@ void showMap(Map g);
 int  numV(Map g);
 int  numE(Map g, TransportID t);
 LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type);
+Map newRailMap();
 
 #endif

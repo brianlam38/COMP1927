@@ -31,11 +31,12 @@ char *convertToDbOrHide (char *locAbbrev, DracView currentView);
 
 void decideDraculaMove(DracView gameState)
 {
-	 char *location;
-	 LocationID loc;
-	 LocationID trail[TRAIL_SIZE];
-	 giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
-			int y;
+	char *location;
+	LocationID loc;
+	LocationID trail[TRAIL_SIZE];
+	giveMeTheTrail(gameState, PLAYER_DRACULA, trail);
+
+	int y;
 	for (y = 0 ; y < TRAIL_SIZE ; y++) {
 		 printf("trail[%d] = %s\n", y, idToName(trail[y]));
 	}

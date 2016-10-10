@@ -9,9 +9,6 @@
 
 //count the number of nearby cities of a specified location and
 // store the nearby cities in an array + returns array
-
-
-
 LocationID *NearbyCities(Map map, LocationID from,
                          LocationID *nearby, int *size, int type) {
     VList curr;
@@ -36,6 +33,16 @@ int inArray(int *array, int object, int size) {
         if (array[i] == object) return 1;
     }
     return 0;
+}
+
+//check if an element is in the given array
+int inArrayForDrac(int *array, int object, int size) {
+    int i;
+    for(i = 0; i < size; i++) {
+        if (array[i] == object) return i;
+    }
+    printf("hello\n");
+    return -1;
 }
 
 //given an "other" location abbreviation, return its ID number
@@ -173,6 +180,9 @@ LocationID dracSpecialLocation(LocationID currID,
         break;
         case DOUBLE_BACK_5:
         currID = trail[5];
+        break;
+        case TELEPORT:
+        currID = CASTLE_DRACULA;
         break;
         default:
         break;
@@ -327,46 +337,15 @@ int findPathLength( LocationID src, LocationID dest)
 
 // check if there's a double-back or hide in Dracula's trail
 int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view) {
-  int i, j;
   int hide = 0;
-  int douB = 0;  
-  if (view == DRAC_VIEW) {
-    for (i = 0; i < TRAIL_SIZE - 1; i++) {
-        if (trail[i] == trail[i + 1]) {
-        if (idToType(trail[i]) == SEA) {
-          douB++;
-        } else {        
-            hide++;
-        }
-        }
-    }
-    if (hide > 1) {
-        return BOTH_HIDE_AND_DB;
-    } else {
-        for (i = 0; i < TRAIL_SIZE; i++) {
-            for (j = 0; j < TRAIL_SIZE; j++ ) {
-            if ((i != j) && (i != j+1) && (i != j-1)) {
-            if (trail[i] == trail[j]) {
-                            douB++;
-            }
-          }
-        }
-      }
-    }
-  } else {
-    for (i = 0; i < TRAIL_SIZE - 1; i++) {
-      if (trail[i] == HIDE) {
-        hide++;
-      }
-    }
-    for (j = 1; j < TRAIL_SIZE; j++) {
-      for (i = 0; i < TRAIL_SIZE - j; i++) {
-        if (trail[i] == (HIDE + j)) {
-          douB++;
-        }
-      }
-    }
+  int douB = 0;
+  int x;
+  for (x = 0; x < TRAIL_SIZE; x++) {
+    if (trail[x] == 102) hide++;
+    if (trail[x] == 103 || trail[x] == 104 || trail[x] == 105 ||
+        trail[x] == 106 || trail[x] == 107) douB++;
   }
+  
   if ((hide == 1) && (douB == 1)) {
     return BOTH_HIDE_AND_DB;
   } else if (hide == 1) {
@@ -423,34 +402,31 @@ void showPQueue(PQueue PQ)
 }
 
 // add LocationID at end of Queue
-// void QueuePJoin(PQueue PQ, LocationID it, int distance)
-// {
-//  assert(PQ != NULL);
-//  PQueueNode *new = malloc(sizeof(PQueueNode));
-//  assert(new != NULL);
-//  new->value = it;
-//   new->distance = distance;
-//  new->next = NULL;
-//  if (PQ->head == NULL) {
-//      PQ->head = new;
-//    PQ->tail = new;
-//     return;
-//   }
-//
-//   if (distance <= PQ->head->->distance) {
-//     new->next = PQ->head;
-//     PQ->head = new;
-//   } else {
-//     PQueueNode *curr = PQ->head;
-//     curr->next = NULL;
-//     while (curr->next != NULL && distance > curr->next->distance) {
-//       curr = curr->next;
-//     }
-//   }
-//
-//   new->next = curr;
-//   PQ->head = new;
-// }
+void PQueueJoin(PQueue PQ, LocationID it, int distance)
+{
+ assert(PQ != NULL);
+ PQueueNode *new = malloc(sizeof(PQueueNode));
+ assert(new != NULL);
+ new->value = it;
+  new->distance = distance;
+ new->next = NULL;
+ if (PQ->head == NULL) {
+     PQ->head = new;
+   PQ->tail = new;
+    return;
+  }
+  PQueueNode *curr = PQ->head;
+  if (distance <= PQ->head->distance) {
+    new->next = PQ->head;
+    PQ->head = new;
+  } else {
+    while (curr->next != NULL && distance > curr->next->distance) {
+      curr = curr->next;
+    }
+  }
+  new->next = curr;
+  PQ->head = new;
+}
 
 // remove LocationID from front of Queue
 LocationID PQueueLeave(PQueue PQ)
@@ -471,10 +447,6 @@ int PQueueIsEmpty(PQueue PQ)
 {
     return (PQ->head == NULL);
 }
-
-
-
-
 
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train) {
@@ -524,6 +496,21 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
     return curr;
 }
 
+
+
+// shift the array to the left
+void shiftLeft(LocationID *array, int start, int end) {
+    int i;
+    for (i = start; i < end; i++)
+        array[i] = array[i + 1];
+}
+
+// shift the array to the right
+void shiftRight(LocationID *array, int start, int end) {
+    int i;
+    for (i = end; i > start; i--)
+        array[i] = array[i - 1];
+}
 
 
 

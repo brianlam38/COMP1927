@@ -135,7 +135,6 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
                     LocationID trail[TRAIL_SIZE]) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-
     int i;
     //index place of first move of player in pastPlays
     int firstMove = player * CHARS_PER_TURN;
@@ -152,6 +151,7 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
         //put original locations in the trail if the player is a hunter
         getHistory(currentView->view, player, trail);
     }
+
     return;
 }
 
@@ -166,13 +166,14 @@ void giveMeTheTrail2(DracView currentView, PlayerID player,
 
 //// Functions that query the map to find information about connectivity
 // What are my (Dracula's) possible next moves (locations)
-LocationID *whereCanIgo(DracView currentView, int *numLocations,
-                        int road, int sea) {
+LocationID *whereCanIgo(DracView currentView, int *numLocations, int road,
+                        int sea) {
     assert(currentView != NULL && currentView->view != NULL);
     LocationID *adjLoc = connectedLocations(currentView->view, numLocations,
                               whereIs(currentView, PLAYER_DRACULA),
                               PLAYER_DRACULA, giveMeTheRound(currentView),
                               road, FALSE, sea);
+
     LocationID trail[TRAIL_SIZE];
     LocationID trail2[TRAIL_SIZE];
     int i, index;
@@ -198,7 +199,7 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations,
         assert(adjLoc != NULL);
     } else if (hasDBOrHI(trail2, DRAC_VIEW) == HAS_DOUBLE_BACK) {
         for (i = 2; i < TRAIL_SIZE; i++) {
-            index = inArray(adjLoc, trail[i], *numLocations);
+            index = inArrayForDrac(adjLoc, trail[i], *numLocations);
             if ((index != -1) && (adjLoc[index] != trail[1])) {
                 shiftLeft(adjLoc, index, *numLocations - 1);
                 (*numLocations)--;
@@ -208,7 +209,7 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations,
         }
     } else if (hasDBOrHI(trail2, DRAC_VIEW) == BOTH_HIDE_AND_DB) {
         for (i = 0; i < TRAIL_SIZE; i++) {
-            index = inArray(adjLoc, trail[i], *numLocations);
+            index = inArrayForDrac(adjLoc, trail[i], *numLocations);
             if (index != -1) {
                 shiftLeft(adjLoc, index, *numLocations - 1);
                 (*numLocations)--;

@@ -98,6 +98,8 @@ LocationID *NearbyCities(Map map, LocationID from,
 // return the index of first occurance of the object
 int inArray(int *array, int object, int size);
 
+//check if an element is in the given array
+int inArrayForDrac(int *array, int object, int size);
 
 // shift the array to the left
 // start: the starting index of array to shift
