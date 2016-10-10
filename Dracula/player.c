@@ -47,15 +47,14 @@ int main(int argc, char *argv[])
 {
 #ifdef I_AM_DRACULA
    DracView gameState;
-  //  char *plays = "GZA.... SED.... HZU.... MZU....";
-   char *plays = "GBU.... SBU.... HBU.... MBU.... DCF.V..";
+   char *plays = "GST.... SLS.... HVR.... MGW.... DED.V.. GZU.... SSN.... HSO.... MDU.... DHIT... GMU.... SSR.... HVA.... MIR.... DNS.... GZA.... STO.... HSJ.... MSW.... DAMT... GVI.... SMR.... HJM.... MLO.... DCOT... GPR.... SZU.... HSZ.... MPL.... DD2T... GPR.... SZU.... HSZ.... MPL.... DBUT.V. GPR.... SZU.... HSZ.... MPL.... DLET.M. GPR.... SZU.... HSZ.... MPL.... DNAT... GPR.... SZU.... HSZ.... MPL.... DBB..M. GPR.... SZU.... HSZ.... MPL.... DSNT.M. GPR.... SZU.... HSZ.... MPL.... DMAT.M. GPR.... SST.... HZA.... MEC.... DALT.M. GPR.... SST.... HZA.... MEC.... DGR.VM. GPR.... SPA.... HMU.... MLE.... DHIT.M. GPR.... SPA.... HMU.... MLE.... DD3T... GPR.... SPA.... HMU.... MLE.... DMS..M. GPR.... SPA.... HMU.... MLE.... DBAT.M. GPR.... SPA.... HMU.... MLE.... DSRT.M. GPR.... SPA.... HMU.... MLE.... DMAT.V. GPR.... SPA.... HMU.... MLE.... DGRT.M. GPR.... SPA.... HMU.... MLE.... DHIT.M. GPR.... SMR.... HZU.... MEC.... DD3T... GPR.... SMR.... HZU.... MEC.... DSNT.M. GPR.... SMR.... HZU.... MEC.... DBB..M. GPR.... SMR.... HZU.... MEC.... DBOT.M. GPR.... SMR.... HZU.... MEC.... DNA.VM. GPR.... SMR.... HZU.... MEC.... DCFT.M. GPR.... SMR.... HZU.... MEC.... DGET.M. GPR.... STO.... HMR.... MAO.... DSTT.M. GPR.... STO.... HMR.... MAO.... DCOT... GPR.... SSR.... HPA.... MBB.... DAMT.M. GPR.... SSR.... HPA.... MBB.... DNS..V. GPR.... SBO.... HNA.... MNA.... DEDT.M. GPR.... SBO.... HNA.... MNA.... DMNT.M. GPR.... SNA.... HPA.... MPA.... DD2T.M. GPR.... SNA.... HPA.... MPA.... DHIT.M. GPR.... SNA.... HPA.... MPA.... DTPT.M. GPR.... SNA.... HPA.... MPA.... DGAT... GPR.... SNA.... HPA.... MPA.... DCN.VM. GPR.... SNA.... HPA.... MPA.... DBS..M. GPR.... SNA.... HPA.... MPA.... DVRT.M. GPR.... SNA.... HPA.... MPA.... DD2..M. GPR.... SNA.... HPA.... MPA.... ";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newDracView(plays,msgs);
    decideDraculaMove(gameState);
    disposeDracView(gameState);
 #else
    HunterView gameState;
-   char *plays = "GED.... SGE.... HZU.... MCA.... DCF.V.. GMN.... SCFVD.. HGE.... MLS.... DBOT... GLO.... SMR.... HCF.... MMA.... DTOT... GPL....";
+   char *plays = "GZA.... SED.... HZU....";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
    decideHunterMove(gameState);

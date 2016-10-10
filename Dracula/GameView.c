@@ -16,7 +16,7 @@
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
-    int i;
+    // int i;
     int nChar = countChar(pastPlays);
 
     GameView currView = malloc(sizeof(struct gameView));
@@ -31,17 +31,17 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
 
     PlayerID player = currView->currentPlayer;
     //if it is not before the first play (ie, messages is not empty)
-    if (((nChar + 1)/CHARS_PER_TURN) != 0) {
-        currView->messages = calloc(((nChar + 1)/CHARS_PER_TURN) ,
-                                    sizeof(char[MESSAGE_SIZE]));
-        assert(currView->messages != NULL);
-        for (i = 0; i < currView->roundNumber * NUM_PLAYERS + player; i++) {
-            strcpy(currView->messages[i], messages[i]);
-        }
-    } else {
-        //initialise messages to NULL if it's empty
-        currView->messages = NULL;
-    }
+    // if (((nChar + 1)/CHARS_PER_TURN) != 0) {
+    //     currView->messages = calloc(((nChar + 1)/CHARS_PER_TURN) ,
+    //                                 sizeof(char[MESSAGE_SIZE]));
+    //     assert(currView->messages != NULL);
+    //     for (i = 0; i < currView->roundNumber * NUM_PLAYERS + player; i++) {
+    //         strcpy(currView->messages[i], messages[i]);
+    //     }
+    // } else {
+    //     //initialise messages to NULL if it's empty
+    //     currView->messages = NULL;
+    // }
 
     //fill in info for each player
     for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
@@ -63,8 +63,8 @@ void disposeGameView(GameView toBeDeleted) {
         free(toBeDeleted->players[player]);
         toBeDeleted->players[player] = NULL;
     }
-    if (toBeDeleted->messages != NULL) free(toBeDeleted->messages);
-    toBeDeleted->messages = NULL;
+    // if (toBeDeleted->messages != NULL) free(toBeDeleted->messages);
+    // toBeDeleted->messages = NULL;
     if (toBeDeleted->pastPlays != NULL) free(toBeDeleted->pastPlays);
     toBeDeleted->pastPlays = NULL;
     free(toBeDeleted);
@@ -246,6 +246,21 @@ LocationID getLocation(GameView currentView, PlayerID player) {
 
     getHistory(currentView, player,
                currentView->players[player]->playerTrail);
+
+	if (getHealth(currentView,player) == 9 && getRound(currentView) > 1 && player != PLAYER_DRACULA) {
+    	LocationID curr = getCurrentPlayer(currentView);
+    	int offset = 0;
+
+    	if (curr > player)
+			offset = -(curr-player)*CHARS_PER_TURN;
+    	else
+			offset = -(5-player+curr)*CHARS_PER_TURN;
+
+    	offset += nChar+1;
+    	int health = hunterTurnHealth(&currentView->pastPlays[offset],1,
+		currentView->players[player]->playerTrail[1],currentView->players[player]->playerTrail[0]);
+		if (health <= 0) return ST_JOSEPH_AND_ST_MARYS;
+	}
     return currentView->players[player]->playerTrail[0];
 }
 
@@ -377,3 +392,5 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     }
     return connections;
 }
+
+////////////////////////////////////// end of GameView.c ////////////////////////////////////

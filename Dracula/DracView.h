@@ -100,7 +100,8 @@ void whatsThere(DracView currentView, LocationID where,
 void giveMeTheTrail(DracView currentView, PlayerID player,
                         LocationID trail[TRAIL_SIZE]);
 
-
+void giveMeTheTrail2(DracView currentView, PlayerID player,
+                      LocationID trail[TRAIL_SIZE]);
 //// Functions that query the map to find information about connectivity
 
 // whereCanIgo() returns an array of LocationIDs giving

@@ -17,13 +17,13 @@ hunterPlayer.o : player.c Game.h HunterView.h hunter.h
 	$(CC) $(CFLAGS) -c player.c -o hunterPlayer.o
 
 
-dracula.o : dracula.c Game.h DracView.h commonFunctions.c
-hunter.o : hunter.c Game.h HunterView.h commonFunctions.c
+dracula.o : dracula.c Game.h DracView.h
+hunter.o : hunter.c Game.h HunterView.h
 Places.o : Places.c Places.h
 Map.o : Map.c Map.h Places.h
-GameView.o : GameView.c GameView.h Globals.h commonFunctions.c
-HunterView.o : HunterView.c HunterView.h Globals.h commonFunctions.c
-DracView.o : DracView.c DracView.h Globals.h commonFunctions.c
+GameView.o : GameView.c GameView.h Globals.h
+HunterView.o : HunterView.c HunterView.h Globals.h
+DracView.o : DracView.c DracView.h Globals.h
 commonFunctions.o : commonFunctions.c commonFunctions.h
 
 clean : rm -f $(BINS) *.o core

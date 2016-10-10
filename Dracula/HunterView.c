@@ -1,4 +1,4 @@
-/////////////////////////// HunterView.c ///////////////////////////////////////////
+//////////////////////////// HunterView.c ///////////////////////////////////////////
 
 // HunterView.c ... HunterView ADT implementation
 
@@ -61,9 +61,8 @@ int howHealthyIs(HunterView currentView, PlayerID player) {
 LocationID whereIs(HunterView currentView, PlayerID player) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return currentView->view->players[player]->playerCurrLocation;
+    return getLocation(currentView->view,player);
 }
-
 //// Functions that return information about the history of the game
 
 // Fills the trail array with the location ids of the last 6 turns

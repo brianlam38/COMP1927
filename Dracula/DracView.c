@@ -23,11 +23,9 @@ struct dracView {
 DracView newDracView(char *pastPlays, PlayerMessage messages[]) {
     int i;
     LocationID trail[TRAIL_SIZE];
-
     DracView dracView = malloc(sizeof(struct dracView));
     assert(dracView != NULL);
     dracView->view = newGameView(pastPlays, messages);
-
     for (i = 0; i < TRAIL_SIZE ; i++) {
         dracView->trail[i] = malloc(sizeof(encounterData));
         assert(dracView->trail[i] != NULL);
@@ -38,7 +36,6 @@ DracView newDracView(char *pastPlays, PlayerMessage messages[]) {
         whatsThere(dracView, trail[i], &dracView->trail[i]->numTraps,
                    &dracView->trail[i]->numVamps);
     }
-
     return dracView;
 }
 
@@ -102,8 +99,7 @@ void lastMove(DracView currentView, PlayerID player,
 void whatsThere(DracView currentView, LocationID where,
                 int *numTraps, int *numVamps) {
     assert(currentView != NULL && currentView->view != NULL);
-    assert(validPlace(where) || where == NOWHERE);
-
+    assert(validPlace(where) || where == NOWHERE || where == TELEPORT);
     int i;
     //index place of first move of Dracula in pastPlays
     int firstMove = PLAYER_DRACULA * CHARS_PER_TURN;
@@ -111,7 +107,6 @@ void whatsThere(DracView currentView, LocationID where,
     LocationID trail[TRAIL_SIZE];
     *numTraps = 0;        //initialise to 0 before counting
     *numVamps = 0;        //initialise to 0 before counting
-
     if (where == NOWHERE || idToType(where) == SEA) {
         return;
     } else {
@@ -128,6 +123,7 @@ void whatsThere(DracView currentView, LocationID where,
                              where, numTraps, numVamps);
             }
         }
+
     }
     return;
 }
@@ -159,17 +155,118 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
     return;
 }
 
-//// Functions that query the map to find information about connectivity
+void giveMeTheTrail2(DracView currentView, PlayerID player,
+                    LocationID trail[TRAIL_SIZE]) {
+    assert(currentView != NULL && currentView->view != NULL);
+    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
+    //index place of first move of player in pastPlays
+    getHistory(currentView->view, player, trail);
+    return;
+}
 
+//// Functions that query the map to find information about connectivity
 // What are my (Dracula's) possible next moves (locations)
 LocationID *whereCanIgo(DracView currentView, int *numLocations,
                         int road, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
-    return connectedLocations(currentView->view, numLocations,
+    LocationID *adjLoc = connectedLocations(currentView->view, numLocations,
                               whereIs(currentView, PLAYER_DRACULA),
                               PLAYER_DRACULA, giveMeTheRound(currentView),
                               road, FALSE, sea);
+    LocationID trail[TRAIL_SIZE];
+    LocationID trail2[TRAIL_SIZE];
+    int i, index;
+    giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
+    giveMeTheTrail2(currentView, PLAYER_DRACULA, trail2);
+    shiftRight(trail, 0, TRAIL_SIZE - 1);
+    trail[0] = UNKNOWN_LOCATION;
+    if (trail[1] == NORTH_SEA || trail[1] == ENGLISH_CHANNEL ||
+        trail[1] == IRISH_SEA || trail[1] == ATLANTIC_OCEAN ||
+        trail[1] == ATLANTIC_OCEAN || trail[1] == BAY_OF_BISCAY ||
+        trail[1] == MEDITERRANEAN_SEA || trail[1] == TYRRHENIAN_SEA ||
+        trail[1] == 	IONIAN_SEA || trail[1] == ADRIATIC_SEA ||
+        trail[1] == 	BLACK_SEA) {
+        shiftLeft(adjLoc, 0, *numLocations - 1);
+        (*numLocations)--;
+        adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+        assert(adjLoc != NULL);
+    }
+    if (hasDBOrHI(trail2, DRAC_VIEW) == HAS_HIDE) {
+        shiftLeft(adjLoc, 0, *numLocations - 1);
+        (*numLocations)--;
+        adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+        assert(adjLoc != NULL);
+    } else if (hasDBOrHI(trail2, DRAC_VIEW) == HAS_DOUBLE_BACK) {
+        for (i = 2; i < TRAIL_SIZE; i++) {
+            index = inArray(adjLoc, trail[i], *numLocations);
+            if ((index != -1) && (adjLoc[index] != trail[1])) {
+                shiftLeft(adjLoc, index, *numLocations - 1);
+                (*numLocations)--;
+                adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                assert(adjLoc != NULL);
+            }
+        }
+    } else if (hasDBOrHI(trail2, DRAC_VIEW) == BOTH_HIDE_AND_DB) {
+        for (i = 0; i < TRAIL_SIZE; i++) {
+            index = inArray(adjLoc, trail[i], *numLocations);
+            if (index != -1) {
+                shiftLeft(adjLoc, index, *numLocations - 1);
+                (*numLocations)--;
+                adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                assert(adjLoc != NULL);
+            }
+        }
+    }
+    return adjLoc;
 }
+// What are my (Dracula's) possible next moves (locations)
+/*LocationID *whereCanIgo(DracView currentView, int *numLocations,
+                        int road, int sea) {
+
+    assert(currentView != NULL && currentView->view != NULL);
+    printf("where is dracula %d\n", whereIs(currentView, PLAYER_DRACULA));
+    LocationID *adjLocations = connectedLocations(currentView->view, numLocations,
+                              whereIs(currentView, PLAYER_DRACULA),
+                              PLAYER_DRACULA, giveMeTheRound(currentView),
+                              road, FALSE, sea);
+                              int x;
+                                for (x = 0 ; x < *numLocations ; x++) {
+                                    printf("%d\n",adjLocations[x]);
+                                }*/
+    //
+    // LocationID trail[TRAIL_SIZE];
+    // giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
+    // if (hasDBOrHI(trail, -1)) {
+    //   int overLap = 0;
+    //   int x;
+    //   int y;
+    //   for (x = 0 ; x < *numLocations ; x++) {
+    //     for (y = 0 ; y < TRAIL_SIZE ; y++) {
+    //       if (trail[y] == adjLocations[x]) overLap++;
+    //     }
+    //   }
+    //   *numLocations -= overLap;
+    //   int repeatedLocations = 0;
+    //   for (x = 0; x < TRAIL_SIZE - 2; x++) {
+    //       if (trail[x] == trail[x + 1] && trail[x] != -1) {
+    //         repeatedLocations++;
+    //       }
+    //   }
+    //   *numLocations += repeatedLocations;
+    //   LocationID *newAdjLocations = malloc((*numLocations) *sizeof(LocationID));
+    //   int z = 0;
+    //   for (x = 0 ; x < *numLocations ; x++) {
+    //     int check = 0;
+    //     for (y = 0 ; y < TRAIL_SIZE ; y++) {
+    //       if (trail[y] == adjLocations[x]) check++;
+    //       if (check == 0 ) newAdjLocations[z++] = adjLocations[x];
+    //
+    //     }
+    //   }
+    //   return newAdjLocations;
+    // } else {
+    // }
+//}
 
 // What are the specified player's next possible moves
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,

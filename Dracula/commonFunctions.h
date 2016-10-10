@@ -39,7 +39,7 @@ struct gameView {
     int gameScore;                         // current game score
     Round roundNumber;                     // current round number
     PlayerID currentPlayer;                // ID of current player
-    PlayerMessage *messages;               // messages provided by players
+    // PlayerMessage *messages;               // messages provided by players
     playerInfo *players[NUM_PLAYERS];      // array of player info
 
 };
@@ -94,8 +94,19 @@ LocationID *NearbyCities(Map map, LocationID from,
                          LocationID *nearby, int *size, int type);
 
 
-// check an object is in the array
+// check if an object is in the array
+// return the index of first occurance of the object
 int inArray(int *array, int object, int size);
+
+
+// shift the array to the left
+// start: the starting index of array to shift
+// end  : the ending index of array to shift
+void shiftLeft(LocationID *array, int start, int end);
+
+
+// shift the array to the right
+void shiftRight(LocationID *array, int start, int end);
 
 
 // given a Place abbreviation, return its ID number
@@ -148,6 +159,9 @@ void numEncounter(LocationID trail[TRAIL_SIZE], char c,
 
 int findPathLength(LocationID src, LocationID dest);
 
+LocationID howToGetTo(LocationID dest, LocationID from, int round,
+                             int player, int *pathLength, int sea, int train);
+
 Queue newQueue(); // create new empty queue
 void dropQueue(Queue); // free memory used by queue
 void showQueue(Queue); // display as 3 > 5 > 4 > ...
@@ -158,19 +172,16 @@ int QueueIsEmpty(Queue); // check for no items
 PQueue newPQueue(); // create new empty queue
 void dropPQueue(PQueue); // free memory used by queue
 void showPQueue(PQueue); // display as 3 > 5 > 4 > ...
-void PQueueJoin(PQueue,LocationID location); // add item on queue
+void PQueueJoin(PQueue, LocationID it, LocationID location); // add item on queue
 LocationID PQueueLeave(PQueue); // remove item from queue
 int PQueueIsEmpty(PQueue); // check for no items
 
 // check if there's a double-back or hide in Dracula's trail
 // view : DRAC_VIEW or HUNTER_VIEW is passing in?
-// return NO_SPECIAL_MOVE  if there are no special moves in Dracula's trail, 
-//        HAS_HIDE         if there is a hide in Dracula's trail, 
-//        HAS_DOUBLE_BACK  if there is a double-back in Dracula's trail, 
+// return NO_SPECIAL_MOVE  if there are no special moves in Dracula's trail,
+//        HAS_HIDE         if there is a hide in Dracula's trail,
+//        HAS_DOUBLE_BACK  if there is a double-back in Dracula's trail,
 //        BOTH_HIDE_AND_DB if there are both double-back and hide in Dracula's trail
 int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view);
-
-LocationID howToGetTo(LocationID dest, LocationID from, int round,
-                             int player, int *pathLength, int sea, int train);
 
 #endif /* commonFunctions_h */

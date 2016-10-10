@@ -94,17 +94,11 @@ int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation,
 
     // check if the previous and the current location is the same
     //  they gain health from rest if the same
-    if (currLocation == prevLocation) {
-        health += LIFE_GAIN_REST;
-        if (health > GAME_START_HUNTER_LIFE_POINTS) {
-            health = GAME_START_HUNTER_LIFE_POINTS;
-        }
-    }
 
     p += 3;
     // loop each time a hunter has encountered an event and
     //  update the health when they lost life
-    for (i = 0; i < NUM_EVENT_ENCOUNTER; i++) {
+    for (i = 0; i <= NUM_EVENT_ENCOUNTER; i++) {
         switch(*p) {
             case 'T' :
             health -= LIFE_LOSS_TRAP_ENCOUNTER;
@@ -116,6 +110,15 @@ int hunterTurnHealth(char *pastPlays, int health, LocationID prevLocation,
             break;
         }
         p++;
+    }
+
+    if (health <= 0) return 0;
+
+    if (currLocation == prevLocation) {
+        health += LIFE_GAIN_REST;
+        if (health > GAME_START_HUNTER_LIFE_POINTS) {
+            health = GAME_START_HUNTER_LIFE_POINTS;
+        }
     }
     assert(health <= GAME_START_HUNTER_LIFE_POINTS);
     return health;
@@ -170,6 +173,9 @@ LocationID dracSpecialLocation(LocationID currID,
         break;
         case DOUBLE_BACK_5:
         currID = trail[5];
+        break;
+        case TELEPORT:
+        currID = CASTLE_DRACULA;
         break;
         default:
         break;
@@ -326,13 +332,13 @@ int findPathLength( LocationID src, LocationID dest)
 int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view) {
   int i, j;
   int hide = 0;
-  int douB = 0;  
+  int douB = 0;
   if (view == DRAC_VIEW) {
     for (i = 0; i < TRAIL_SIZE - 1; i++) {
         if (trail[i] == trail[i + 1]) {
         if (idToType(trail[i]) == SEA) {
           douB++;
-        } else {        
+        } else {
             hide++;
         }
         }
@@ -420,35 +426,31 @@ void showPQueue(PQueue PQ)
 }
 
 // add LocationID at end of Queue
-// void QueuePJoin(PQueue PQ, LocationID it, int distance)
-// {
-//  assert(PQ != NULL);
-//  PQueueNode *new = malloc(sizeof(PQueueNode));
-//  assert(new != NULL);
-//  new->value = it;
-//   new->distance = distance;
-//  new->next = NULL;
-//  if (PQ->head == NULL) {
-//      PQ->head = new;
-//    PQ->tail = new;
-//     return;
-//   }
-//
-//   if (distance <= PQ->head->->distance) {
-//     new->next = PQ->head;
-//     PQ->head = new;
-//   } else {
-//     PQueueNode *curr = PQ->head;
-//     curr->next = NULL;
-//     while (curr->next != NULL && distance > curr->next->distance) {
-//       curr = curr->next;
-//     }
-//   }
-//
-//   new->next = curr;
-//   PQ->head = new;
-// }
-
+void PQueueJoin(PQueue PQ, LocationID it, int distance)
+{
+ assert(PQ != NULL);
+ PQueueNode *new = malloc(sizeof(PQueueNode));
+ assert(new != NULL);
+ new->value = it;
+  new->distance = distance;
+ new->next = NULL;
+ if (PQ->head == NULL) {
+     PQ->head = new;
+   PQ->tail = new;
+    return;
+  }
+  PQueueNode *curr = PQ->head;
+  if (distance <= PQ->head->distance) {
+    new->next = PQ->head;
+    PQ->head = new;
+  } else {
+    while (curr->next != NULL && distance > curr->next->distance) {
+      curr = curr->next;
+    }
+  }
+  new->next = curr;
+  PQ->head = new;
+}
 // remove LocationID from front of Queue
 LocationID PQueueLeave(PQueue PQ)
 {
@@ -478,12 +480,14 @@ int PQueueIsEmpty(PQueue PQ)
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train) {
 
+    if (dest == from) return dest;
+
     LocationID seenList[NUM_MAP_LOCATIONS] = {0};
     LocationID prevList[NUM_MAP_LOCATIONS] = {0};
-//    LocationID stepList[NUM_MAP_LOCATIONS] = {0}; 
+//    LocationID stepList[NUM_MAP_LOCATIONS] = {0};
     Queue toVisit = newQueue();
     Map map = newMap();
-    int steps = (round+player)%4;   
+    int steps = (round+player)%4;
 
     seenList[from] = 1 + train - train;
     prevList[from] = -1;
@@ -492,25 +496,25 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
 //        stepList[from] = (round+player)%4;
     QueueJoin(toVisit,from);
     VList i;
-  
+
     while(!QueueIsEmpty(toVisit) && !seenList[dest]) {      // while queue !empty & dest !reached
-  
+
         LocationID curr = QueueLeave(toVisit);
 //    printf("Curr = %d\n",curr);
 
         for (i = map->connections[curr]; i != NULL; i=i->next) {                // loop through adj cities (next moves)
 
-            if ((i->type == BOAT && sea) || (i->type == RAIL && train && steps != 0) || i->type == ROAD) {
-                if (!seenList[i->v]) {                // if location has not been seen:
-                    seenList[i->v] = 1;                   // Mark location as seen = 1
-                    prevList[i->v] = curr;                // Store location in prevList
- //                 if (train)                                       
- //                     stepList[i->v] = (stepList[curr] + 1)%4;  
-                }
-                if (seenList[dest]) break;                      // if dest is found, break loop
-                QueueJoin(toVisit,i->v);              // add connection to queue
-            }
-        }
+			if ((i->type == BOAT && sea) || (i->type == RAIL && train && steps != 0) || i->type == ROAD) {
+        	    if (!seenList[i->v]) {                // if location has not been seen:
+        	        seenList[i->v] = 1;                   // Mark location as seen = 1
+        	        prevList[i->v] = curr;                // Store location in prevList
+ //       	        if (train)
+ //       	            stepList[i->v] = (stepList[curr] + 1)%4;
+        	    }
+        	    if (seenList[dest]) break;                      // if dest is found, break loop
+        	    QueueJoin(toVisit,i->v);              // add connection to queue
+        	}
+		}
     }
     dropQueue(toVisit);
     LocationID curr = dest;
@@ -522,11 +526,16 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
 }
 
 
+// shift the array to the left
+void shiftLeft(LocationID *array, int start, int end) {
+    int i;
+    for (i = start; i < end; i++)
+        array[i] = array[i + 1];
+}
 
-
-
-
-
-
-
-
+// shift the array to the right
+void shiftRight(LocationID *array, int start, int end) {
+    int i;
+    for (i = end; i > start; i--)
+        array[i] = array[i - 1];
+}
