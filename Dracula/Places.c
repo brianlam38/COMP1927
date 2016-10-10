@@ -1,143 +1,144 @@
-// Places.c ... implementation of Places
+// Places.h ... interface to Places
+// You should not change this
+// (expect to add additional typedefs or #defines)
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include "Places.h"
+#ifndef PLACES_H
+#define PLACES_H
 
-typedef struct Place {
-   char      *name;
-   char      *abbrev;
-   LocationID id;
-   PlaceType  type;
-} Place;
+// Types of places
+typedef int PlaceType;
 
+#define UNKNOWN                  0
+#define LAND                     1
+#define SEA                      2
 
-// Places should appear in alphabetic order
-// Each entry should satisfy (places[i].id == i)
-// First real place must be at index MIN_MAP_LOCATION
-// Last real place must be at index MAX_MAP_LOCATION
-static Place places[] =
-{
-   {"Adriatic Sea", "AS", ADRIATIC_SEA, SEA},
-   {"Alicante", "AL", ALICANTE, LAND},
-   {"Amsterdam", "AM", AMSTERDAM, LAND},
-   {"Athens", "AT", ATHENS, LAND},
-   {"Atlantic Ocean", "AO", ATLANTIC_OCEAN, SEA},
-   {"Barcelona", "BA", BARCELONA, LAND},
-   {"Bari", "BI", BARI, LAND},
-   {"Bay of Biscay", "BB", BAY_OF_BISCAY, SEA},
-   {"Belgrade", "BE", BELGRADE, LAND},
-   {"Berlin", "BR", BERLIN, LAND},
-   {"Black Sea", "BS", BLACK_SEA, SEA},
-   {"Bordeaux", "BO", BORDEAUX, LAND},
-   {"Brussels", "BU", BRUSSELS, LAND},
-   {"Bucharest", "BC", BUCHAREST, LAND},
-   {"Budapest", "BD", BUDAPEST, LAND},
-   {"Cadiz", "CA", CADIZ, LAND},
-   {"Cagliari", "CG", CAGLIARI, LAND},
-   {"Castle Dracula", "CD", CASTLE_DRACULA, LAND},
-   {"Clermont-Ferrand", "CF", CLERMONT_FERRAND, LAND},
-   {"Cologne", "CO", COLOGNE, LAND},
-   {"Constanta", "CN", CONSTANTA, LAND},
-   {"Dublin", "DU", DUBLIN, LAND},
-   {"Edinburgh", "ED", EDINBURGH, LAND},
-   {"English Channel", "EC", ENGLISH_CHANNEL, SEA},
-   {"Florence", "FL", FLORENCE, LAND},
-   {"Frankfurt", "FR", FRANKFURT, LAND},
-   {"Galatz", "GA", GALATZ, LAND},
-   {"Galway", "GW", GALWAY, LAND},
-   {"Geneva", "GE", GENEVA, LAND},
-   {"Genoa", "GO", GENOA, LAND},
-   {"Granada", "GR", GRANADA, LAND},
-   {"Hamburg", "HA", HAMBURG, LAND},
-   {"Ionian Sea", "IO", IONIAN_SEA, SEA},
-   {"Irish Sea", "IR", IRISH_SEA, SEA},
-   {"Klausenburg", "KL", KLAUSENBURG, LAND},
-   {"Le Havre", "LE", LE_HAVRE, LAND},
-   {"Leipzig", "LI", LEIPZIG, LAND},
-   {"Lisbon", "LS", LISBON, LAND},
-   {"Liverpool", "LV", LIVERPOOL, LAND},
-   {"London", "LO", LONDON, LAND},
-   {"Madrid", "MA", MADRID, LAND},
-   {"Manchester", "MN", MANCHESTER, LAND},
-   {"Marseilles", "MR", MARSEILLES, LAND},
-   {"Mediterranean Sea", "MS", MEDITERRANEAN_SEA, SEA},
-   {"Milan", "MI", MILAN, LAND},
-   {"Munich", "MU", MUNICH, LAND},
-   {"Nantes", "NA", NANTES, LAND},
-   {"Naples", "NP", NAPLES, LAND},
-   {"North Sea", "NS", NORTH_SEA, SEA},
-   {"Nuremburg", "NU", NUREMBURG, LAND},
-   {"Paris", "PA", PARIS, LAND},
-   {"Plymouth", "PL", PLYMOUTH, LAND},
-   {"Prague", "PR", PRAGUE, LAND},
-   {"Rome", "RO", ROME, LAND},
-   {"Salonica", "SA", SALONICA, LAND},
-   {"Santander", "SN", SANTANDER, LAND},
-   {"Saragossa", "SR", SARAGOSSA, LAND},
-   {"Sarajevo", "SJ", SARAJEVO, LAND},
-   {"Sofia", "SO", SOFIA, LAND},
-   {"St Joseph and St Marys", "JM", ST_JOSEPH_AND_ST_MARYS, LAND},
-   {"Strasbourg", "ST", STRASBOURG, LAND},
-   {"Swansea", "SW", SWANSEA, LAND},
-   {"Szeged", "SZ", SZEGED, LAND},
-   {"Toulouse", "TO", TOULOUSE, LAND},
-   {"Tyrrhenian Sea", "TS", TYRRHENIAN_SEA, SEA},
-   {"Valona", "VA", VALONA, LAND},
-   {"Varna", "VR", VARNA, LAND},
-   {"Venice", "VE", VENICE, LAND},
-   {"Vienna", "VI", VIENNA, LAND},
-   {"Zagreb", "ZA", ZAGREB, LAND},
-   {"Zurich", "ZU", ZURICH, LAND},
-};
+// Types of connections between places
+typedef int TransportID;
 
-void idToAbbrev(LocationID p, char *abbrev) {
-        strcpy(abbrev, places[p].abbrev);
-}
+#define NONE                     0
+#define ROAD                     1
+#define RAIL                     2
+#define BOAT                     3
+#define ANY                      4
+   
+#define RAIL_0        5
+#define RAIL_1        6
+#define RAIL_2        7
+#define RAIL_3        8
+
+#define MIN_TRANSPORT            ROAD
+#define MAX_TRANSPORT            BOAT
+
+// Places
+typedef int LocationID;
+
+#define ADRIATIC_SEA             0
+#define ALICANTE                 1
+#define AMSTERDAM                2
+#define ATHENS                   3
+#define ATLANTIC_OCEAN           4
+#define BARCELONA                5
+#define BARI                     6
+#define BAY_OF_BISCAY            7
+#define BELGRADE                 8
+#define BERLIN                   9
+#define BLACK_SEA               10
+#define BORDEAUX                11
+#define BRUSSELS                12
+#define BUCHAREST               13
+#define BUDAPEST                14
+#define CADIZ                   15
+#define CAGLIARI                16
+#define CASTLE_DRACULA          17
+#define CLERMONT_FERRAND        18
+#define COLOGNE                 19
+#define CONSTANTA               20
+#define DUBLIN                  21
+#define EDINBURGH               22
+#define ENGLISH_CHANNEL         23
+#define FLORENCE                24
+#define FRANKFURT               25
+#define GALATZ                  26
+#define GALWAY                  27
+#define GENEVA                  28
+#define GENOA                   29
+#define GRANADA                 30
+#define HAMBURG                 31
+#define IONIAN_SEA              32
+#define IRISH_SEA               33
+#define KLAUSENBURG             34
+#define LE_HAVRE                35
+#define LEIPZIG                 36
+#define LISBON                  37
+#define LIVERPOOL               38
+#define LONDON                  39
+#define MADRID                  40
+#define MANCHESTER              41
+#define MARSEILLES              42
+#define MEDITERRANEAN_SEA       43
+#define MILAN                   44
+#define MUNICH                  45
+#define NANTES                  46
+#define NAPLES                  47
+#define NORTH_SEA               48
+#define NUREMBURG               49
+#define PARIS                   50
+#define PLYMOUTH                51
+#define PRAGUE                  52
+#define ROME                    53
+#define SALONICA                54
+#define SANTANDER               55
+#define SARAGOSSA               56
+#define SARAJEVO                57
+#define SOFIA                   58
+#define ST_JOSEPH_AND_ST_MARYS  59
+#define STRASBOURG              60
+#define SWANSEA                 61
+#define SZEGED                  62
+#define TOULOUSE                63
+#define TYRRHENIAN_SEA          64
+#define VALONA                  65
+#define VARNA                   66
+#define VENICE                  67
+#define VIENNA                  68
+#define ZAGREB                  69
+#define ZURICH                  70
+
+#define MIN_MAP_LOCATION         0
+#define MAX_MAP_LOCATION        70
+#define NUM_MAP_LOCATIONS       71
+
+// Other "locations"
+#define CITY_UNKNOWN            100
+#define SEA_UNKNOWN             101
+#define HIDE                    102
+#define DOUBLE_BACK_1           103
+#define DOUBLE_BACK_2           104
+#define DOUBLE_BACK_3           105
+#define DOUBLE_BACK_4           106
+#define DOUBLE_BACK_5           107
+#define TELEPORT                108
+#define UNKNOWN_LOCATION        -1
+#define NOWHERE                 UNKNOWN_LOCATION
+
 
 // given a Place number, return its name
-char *idToName(LocationID p)
-{
-   // assert(validPlace(p));
-   return places[p].name;
-}
+char *idToName(int place);
 
 // given a Place number, return its type
-int idToType(LocationID p)
-{
-   assert(validPlace(p));
-   return places[p].type;
-}
+int idToType(int place);
 
 // given a Place name, return its ID number
-// binary search
-int nameToID(char *name)
-{
-   int lo = MIN_MAP_LOCATION, hi = MAX_MAP_LOCATION;
-   while (lo <= hi) {
-      int mid = (hi+lo)/2;
-      int ord = strcmp(name,places[mid].name);
-      if (ord < 0)
-         hi = mid-1;
-      else if (ord > 0)
-         lo = mid+1;
-      else
-         return places[mid].id;
-   }
-   return NOWHERE;
-}
+int nameToID(char *name);
 
-// given a Place abbreviation (2 char), return its ID number
-int abbrevToID(char *abbrev)
-{
-   // an attempt to optimise a linear search
-   Place *p;
-   Place *first = &places[MIN_MAP_LOCATION];
-   Place *last = &places[MAX_MAP_LOCATION];
-   for (p = first; p <= last; p++) {
-      char *c = p->abbrev;
-      if (c[0] == abbrev[0] && c[1] == abbrev[1] && c[2] == '\0') return p->id;
-   }
-   return NOWHERE;
-}
+// given a Place abbreviation, return its ID number
+int abbrevToID(char *abbrev);
+
+void idToAbbrev(LocationID p, char *abbrev);
+
+#define isLand(place)  (idToType(place) == LAND)
+#define isSea(place)  (idToType(place) == SEA)
+
+#define validPlace(pid) (pid >= MIN_MAP_LOCATION && pid <= MAX_MAP_LOCATION)
+
+#endif

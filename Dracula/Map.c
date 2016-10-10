@@ -1,3 +1,5 @@
+
+//////////////////////////////// code for Map.c ///////////////////////////////////////////////////////////////////
 // Map.c ... implementation of Map type
 // (a specialised version of the Map ADT)
 // You can change this as much as you want
@@ -7,6 +9,7 @@
 #include <stdlib.h>
 #include "Map.h"
 #include "Places.h"
+
 
 typedef struct vNode *VList;
 
@@ -22,10 +25,29 @@ struct MapRep {
    VList connections[NUM_MAP_LOCATIONS]; // array of lists
 };
 
-static void addConnections(Map);
-
+static void addRailConnections(Map, int stations);
+static void addOtherConnections(Map);
 // Create a new empty graph (for a map)
 // #Vertices always same as NUM_PLACES
+
+
+Map newRailMap() {
+
+   int i;
+   Map g = malloc(sizeof(struct MapRep));
+   assert(g != NULL);
+   g->nV = NUM_MAP_LOCATIONS;
+   
+   for (i = 0; i < g->nV; i++){
+      g->connections[i] = NULL;
+   }
+   g->nE = 0;
+
+   addRailConnections(g,3);
+   addOtherConnections(g);
+   return g;
+}
+
 Map newMap()
 {
    int i;
@@ -36,7 +58,8 @@ Map newMap()
       g->connections[i] = NULL;
    }
    g->nE = 0;
-   addConnections(g);
+   addRailConnections(g,1);
+   addOtherConnections(g);
    return g;
 }
 
@@ -72,8 +95,14 @@ static VList insertVList(VList L, LocationID v, TransportID type)
 static int inVList(VList L, LocationID v, TransportID type)
 {
    VList cur;
-   for (cur = L; cur != NULL; cur = cur->next) {
-      if (cur->v == v && cur->type == type) return 1;
+   if (type != ANY) {
+      for (cur = L; cur != NULL; cur = cur->next) {
+         if (cur->v == v && cur->type == type) return 1;
+      }
+   } else {
+      for (cur = L; cur != NULL; cur = cur->next) {
+         if (cur->v == v) return 1;
+      }
    }
    return 0;
 }
@@ -104,6 +133,9 @@ void showMap(Map g)
          case ROAD: printf("by road\n"); break;
          case RAIL: printf("by rail\n"); break;
          case BOAT: printf("by boat\n"); break;
+       case RAIL_1: printf("by rail\n"); break;
+       case RAIL_2: printf("by rail_2\n"); break;
+       case RAIL_3: printf("by rail_3\n"); break;
          default:   printf("by ????\n"); break;
          }
          n = n->next;
@@ -134,8 +166,12 @@ int numE(Map g, TransportID type)
     return nE;
 }
 
-//count the number of nearby cities of a specified location and store the nearby cities in an array without duplicates
+//LocationID fastestRoute(int from,int dest,int stationsAllowed) {
+
+//}
+
 /*
+//count the number of nearby cities of a specified location and store the nearby cities in an array without duplicates
 LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size, int type) {
     VList curr;
     for(curr = map->connections[from]; curr != NULL; curr = curr->next) {
@@ -149,9 +185,10 @@ LocationID *NearbyCities(Map map, LocationID from, LocationID *nearby, int *size
     return nearby;
 }
 */
-
 // Add edges to Graph representing map of Europe
-static void addConnections(Map g)
+
+
+static void addOtherConnections(Map g)
 {
    //### ROAD Connections ###
 
@@ -271,52 +308,6 @@ static void addConnections(Map g)
    addLink(g, SZEGED, ZAGREB, ROAD);
    addLink(g, VIENNA, ZAGREB, ROAD);
 
-   //### RAIL Connections ###
-
-   addLink(g, ALICANTE, BARCELONA, RAIL);
-   addLink(g, ALICANTE, MADRID, RAIL);
-   addLink(g, BARCELONA, SARAGOSSA, RAIL);
-   addLink(g, BARI, NAPLES, RAIL);
-   addLink(g, BELGRADE, SOFIA, RAIL);
-   addLink(g, BELGRADE, SZEGED, RAIL);
-   addLink(g, BERLIN, HAMBURG, RAIL);
-   addLink(g, BERLIN, LEIPZIG, RAIL);
-   addLink(g, BERLIN, PRAGUE, RAIL);
-   addLink(g, BORDEAUX, PARIS, RAIL);
-   addLink(g, BORDEAUX, SARAGOSSA, RAIL);
-   addLink(g, BRUSSELS, COLOGNE, RAIL);
-   addLink(g, BRUSSELS, PARIS, RAIL);
-   addLink(g, BUCHAREST, CONSTANTA, RAIL);
-   addLink(g, BUCHAREST, GALATZ, RAIL);
-   addLink(g, BUCHAREST, SZEGED, RAIL);
-   addLink(g, BUDAPEST, SZEGED, RAIL);
-   addLink(g, BUDAPEST, VIENNA, RAIL);
-   addLink(g, COLOGNE, FRANKFURT, RAIL);
-   addLink(g, EDINBURGH, MANCHESTER, RAIL);
-   addLink(g, FLORENCE, MILAN, RAIL);
-   addLink(g, FLORENCE, ROME, RAIL);
-   addLink(g, FRANKFURT, LEIPZIG, RAIL);
-   addLink(g, FRANKFURT, STRASBOURG, RAIL);
-   addLink(g, GENEVA, MILAN, RAIL);
-   addLink(g, GENOA, MILAN, RAIL);
-   addLink(g, LEIPZIG, NUREMBURG, RAIL);
-   addLink(g, LE_HAVRE, PARIS, RAIL);
-   addLink(g, LISBON, MADRID, RAIL);
-   addLink(g, LIVERPOOL, MANCHESTER, RAIL);
-   addLink(g, LONDON, MANCHESTER, RAIL);
-   addLink(g, LONDON, SWANSEA, RAIL);
-   addLink(g, MADRID, SANTANDER, RAIL);
-   addLink(g, MADRID, SARAGOSSA, RAIL);
-   addLink(g, MARSEILLES, PARIS, RAIL);
-   addLink(g, MILAN, ZURICH, RAIL);
-   addLink(g, MUNICH, NUREMBURG, RAIL);
-   addLink(g, NAPLES, ROME, RAIL);
-   addLink(g, PRAGUE, VIENNA, RAIL);
-   addLink(g, SALONICA, SOFIA, RAIL);
-   addLink(g, SOFIA, VARNA, RAIL);
-   addLink(g, STRASBOURG, ZURICH, RAIL);
-   addLink(g, VENICE, VIENNA, RAIL);
-
    //### BOAT Connections ###
 
    addLink(g, ADRIATIC_SEA, BARI, BOAT);
@@ -360,3 +351,117 @@ static void addConnections(Map g)
    addLink(g, NAPLES, TYRRHENIAN_SEA, BOAT);
    addLink(g, ROME, TYRRHENIAN_SEA, BOAT);
 }
+
+
+static void addRailConnections(Map g, int stations) {
+   //### RAIL Connections ###
+   
+   addLink(g, ALICANTE, BARCELONA, RAIL_1);
+   addLink(g, ALICANTE, MADRID, RAIL_1);
+   addLink(g, BARCELONA, SARAGOSSA, RAIL_1);
+   addLink(g, BARI, NAPLES, RAIL_1);
+   addLink(g, BELGRADE, SOFIA, RAIL_1);
+   addLink(g, BELGRADE, SZEGED, RAIL_1);
+   addLink(g, BERLIN, HAMBURG, RAIL_1);
+   addLink(g, BERLIN, LEIPZIG, RAIL_1);
+   addLink(g, BERLIN, PRAGUE, RAIL_1);
+   addLink(g, BORDEAUX, PARIS, RAIL_1);
+   addLink(g, BORDEAUX, SARAGOSSA, RAIL_1);
+   addLink(g, BRUSSELS, COLOGNE, RAIL_1);
+   addLink(g, BRUSSELS, PARIS, RAIL_1);
+   addLink(g, BUCHAREST, CONSTANTA, RAIL_1);
+   addLink(g, BUCHAREST, GALATZ, RAIL_1);
+   addLink(g, BUCHAREST, SZEGED, RAIL_1);
+   addLink(g, BUDAPEST, SZEGED, RAIL_1);
+   addLink(g, BUDAPEST, VIENNA, RAIL_1);
+   addLink(g, COLOGNE, FRANKFURT, RAIL_1);
+   addLink(g, EDINBURGH, MANCHESTER, RAIL_1);
+   addLink(g, FLORENCE, MILAN, RAIL_1);
+   addLink(g, FLORENCE, ROME, RAIL_1);
+   addLink(g, FRANKFURT, LEIPZIG, RAIL_1);
+   addLink(g, FRANKFURT, STRASBOURG, RAIL_1);
+   addLink(g, GENEVA, MILAN, RAIL_1);
+   addLink(g, GENOA, MILAN, RAIL_1);
+   addLink(g, LEIPZIG, NUREMBURG, RAIL_1);
+   addLink(g, LE_HAVRE, PARIS, RAIL_1);
+   addLink(g, LISBON, MADRID, RAIL_1);
+   addLink(g, LIVERPOOL, MANCHESTER, RAIL_1);
+   addLink(g, LONDON, MANCHESTER, RAIL_1);
+   addLink(g, LONDON, SWANSEA, RAIL_1);
+   addLink(g, MADRID, SANTANDER, RAIL_1);
+   addLink(g, MADRID, SARAGOSSA, RAIL_1);
+   addLink(g, MARSEILLES, PARIS, RAIL_1);
+   addLink(g, MILAN, ZURICH, RAIL_1);
+   addLink(g, MUNICH, NUREMBURG, RAIL_1);
+   addLink(g, NAPLES, ROME, RAIL_1);
+   addLink(g, PRAGUE, VIENNA, RAIL_1);
+   addLink(g, SALONICA, SOFIA, RAIL_1);
+   addLink(g, SOFIA, VARNA, RAIL_1);
+   addLink(g, STRASBOURG, ZURICH, RAIL_1);
+   addLink(g, VENICE, VIENNA, RAIL_1);
+
+   
+   if (stations > 1) {
+      int i;
+      VList curr, copy, j, newList = NULL;
+      for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+         newList = NULL; j = NULL;
+         for (curr = g->connections[i]; curr != NULL; curr = curr->next) {
+            for (copy = g->connections[curr->v]; copy != NULL; copy = copy->next) {
+               if (!inVList(g->connections[i], copy->v, ANY) && !inVList(newList,copy->v,ANY) 
+                                     && copy->type != RAIL_2 && copy->type != RAIL_3) {
+
+                  if (newList == NULL) {
+                     newList = insertVList(g->connections[i], copy->v, RAIL_2);
+                     j = newList;
+
+                  } else {
+
+                     j->next = insertVList(g->connections[i], copy->v, RAIL_2);
+                     j = j->next;   
+
+                  }
+               }           
+            }
+         }
+         g->connections[i] = newList;
+      }
+
+      for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+
+         newList = NULL; j = NULL;
+         for (curr=g->connections[i]; curr != NULL; curr = curr->next) {
+            for (copy = g->connections[curr->v]; copy != NULL; copy = copy->next) {
+               if (!inVList(g->connections[i], copy->v, ANY) && !inVList(newList,copy->v,ANY) 
+                                     && copy->type != RAIL_2 && copy->type != RAIL_3) {
+
+                  if (newList == NULL) {
+                     newList = insertVList(g->connections[i], copy->v, RAIL_3);
+                     j = newList;
+
+                  } else {
+
+                     j->next = insertVList(g->connections[i], copy->v, RAIL_3);
+                     j = j->next;   
+
+                  }
+               }           
+            }
+         }
+         g->connections[i] = newList;
+      }
+/* 
+      for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+         for (curr=g->connections[i]; curr != NULL; curr = curr->next) {
+            for (copy = g->connections[curr->v]; copy != NULL; copy = copy->next) {
+               if (!inVList(g->connections[i], copy->v, ANY))
+               g->connections[i] = insertVList(g->connections[i], copy->v, RAIL_3); 
+            }
+         }
+      
+      }
+*/
+   }  
+}
+///////////////////////////////////////////////////////////////////////////////////
+
