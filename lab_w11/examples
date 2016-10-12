@@ -1,0 +1,792 @@
+
+Test: ./tlab 100 A L
+#nodes = 100,  depth = 100,  #compares = 4950,  #rotates = 0
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 100,  #compares = 13621,  #rotates = 0
+
+> 
+
+Test: ./tlab 200 A L
+#nodes = 200,  depth = 200,  #compares = 19900,  #rotates = 0
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 200,  #compares = 53053,  #rotates = 0
+
+> 
+
+Test: ./tlab 400 A L
+#nodes = 400,  depth = 400,  #compares = 79800,  #rotates = 0
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 400,  #compares = 215889,  #rotates = 0
+
+> 
+
+Test: ./tlab 100 D L
+#nodes = 100,  depth = 100,  #compares = 4950,  #rotates = 0
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 100,  #compares = 10651,  #rotates = 0
+
+> 
+
+Test: ./tlab 200 D L
+#nodes = 200,  depth = 200,  #compares = 19900,  #rotates = 0
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 200,  #compares = 40516,  #rotates = 0
+
+> 
+
+Test: ./tlab 400 D L
+#nodes = 400,  depth = 400,  #compares = 79800,  #rotates = 0
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 400,  #compares = 164019,  #rotates = 0
+
+> 
+
+Test: ./tlab 100 P L
+#nodes = 100,  depth = 7,  #compares = 480,  #rotates = 0
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1289,  #rotates = 0
+
+> 
+
+Test: ./tlab 200 P L
+#nodes = 200,  depth = 8,  #compares = 1153,  #rotates = 0
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 8,  #compares = 3014,  #rotates = 0
+
+> 
+
+Test: ./tlab 400 P L
+#nodes = 400,  depth = 9,  #compares = 2698,  #rotates = 0
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 9,  #compares = 7034,  #rotates = 0
+
+> 
+
+Test: ./tlab 100 R L
+#nodes = 100,  depth = 12,  #compares = 624,  #rotates = 0
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 12,  #compares = 1571,  #rotates = 0
+
+> 
+
+Test: ./tlab 200 R L
+#nodes = 200,  depth = 15,  #compares = 1506,  #rotates = 0
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 3563,  #rotates = 0
+
+> 
+
+Test: ./tlab 400 R L
+#nodes = 400,  depth = 18,  #compares = 3498,  #rotates = 0
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 18,  #compares = 8122,  #rotates = 0
+
+> 
+
+Test: ./tlab 100 A A
+#nodes = 100,  depth = 100,  #compares = 99,  #rotates = 99
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 100,  #compares = 4861,  #rotates = 99
+
+> 
+
+Test: ./tlab 200 A A
+#nodes = 200,  depth = 200,  #compares = 199,  #rotates = 199
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 200,  #compares = 20512,  #rotates = 199
+
+> 
+
+Test: ./tlab 400 A A
+#nodes = 400,  depth = 400,  #compares = 399,  #rotates = 399
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 400,  #compares = 78043,  #rotates = 399
+
+> 
+
+Test: ./tlab 100 D A
+#nodes = 100,  depth = 100,  #compares = 99,  #rotates = 99
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 100,  #compares = 7831,  #rotates = 99
+
+> 
+
+Test: ./tlab 200 D A
+#nodes = 200,  depth = 200,  #compares = 199,  #rotates = 199
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 200,  #compares = 33049,  #rotates = 199
+
+> 
+
+Test: ./tlab 400 D A
+#nodes = 400,  depth = 400,  #compares = 399,  #rotates = 399
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 400,  #compares = 129913,  #rotates = 399
+
+> 
+
+Test: ./tlab 100 P A
+#nodes = 100,  depth = 64,  #compares = 254,  #rotates = 254
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 64,  #compares = 3421,  #rotates = 254
+
+> 
+
+Test: ./tlab 200 P A
+#nodes = 200,  depth = 128,  #compares = 523,  #rotates = 523
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 128,  #compares = 13768,  #rotates = 523
+
+> 
+
+Test: ./tlab 400 P A
+#nodes = 400,  depth = 256,  #compares = 1064,  #rotates = 1064
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 256,  #compares = 51436,  #rotates = 1064
+
+> 
+
+Test: ./tlab 100 R A
+#nodes = 100,  depth = 11,  #compares = 659,  #rotates = 659
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 11,  #compares = 1442,  #rotates = 659
+
+> 
+
+Test: ./tlab 200 R A
+#nodes = 200,  depth = 15,  #compares = 1571,  #rotates = 1571
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 3479,  #rotates = 1571
+
+> 
+
+Test: ./tlab 400 R A
+#nodes = 400,  depth = 16,  #compares = 3674,  #rotates = 3674
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 16,  #compares = 8429,  #rotates = 3674
+
+> 
+
+Test: ./tlab 100 A B
+#nodes = 100,  depth = 7,  #compares = 596,  #rotates = 1193
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1372,  #rotates = 1193
+
+> 
+
+Test: ./tlab 200 A B
+#nodes = 200,  depth = 12,  #compares = 1617,  #rotates = 2906
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 12,  #compares = 3748,  #rotates = 2906
+
+> 
+
+Test: ./tlab 400 A B
+#nodes = 400,  depth = 26,  #compares = 4597,  #rotates = 6588
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 26,  #compares = 11308,  #rotates = 6588
+
+> 
+
+Test: ./tlab 100 D B
+#nodes = 100,  depth = 7,  #compares = 649,  #rotates = 1563
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1434,  #rotates = 1563
+
+> 
+
+Test: ./tlab 200 D B
+#nodes = 200,  depth = 13,  #compares = 1714,  #rotates = 3448
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 13,  #compares = 3568,  #rotates = 3448
+
+> 
+
+Test: ./tlab 400 D B
+#nodes = 400,  depth = 25,  #compares = 4794,  #rotates = 7330
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 25,  #compares = 9155,  #rotates = 7330
+
+> 
+
+Test: ./tlab 100 P B
+#nodes = 100,  depth = 7,  #compares = 570,  #rotates = 1209
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1346,  #rotates = 1209
+
+> 
+
+Test: ./tlab 200 P B
+#nodes = 200,  depth = 10,  #compares = 1408,  #rotates = 2927
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 10,  #compares = 3345,  #rotates = 2927
+
+> 
+
+Test: ./tlab 400 P B
+#nodes = 400,  depth = 12,  #compares = 3370,  #rotates = 6531
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 12,  #compares = 8090,  #rotates = 6531
+
+> 
+
+Test: ./tlab 100 R B
+#nodes = 100,  depth = 8,  #compares = 528,  #rotates = 561
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 8,  #compares = 1363,  #rotates = 561
+
+> 
+
+Test: ./tlab 200 R B
+#nodes = 200,  depth = 11,  #compares = 1278,  #rotates = 718
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 11,  #compares = 3165,  #rotates = 718
+
+> 
+
+Test: ./tlab 400 R B
+#nodes = 400,  depth = 12,  #compares = 2949,  #rotates = 1266
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 12,  #compares = 7242,  #rotates = 1266
+
+> 
+
+Test: ./tlab 100 A R
+#nodes = 100,  depth = 58,  #compares = 186,  #rotates = 98
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 58,  #compares = 2990,  #rotates = 98
+
+> 
+
+Test: ./tlab 200 A R
+#nodes = 200,  depth = 106,  #compares = 405,  #rotates = 199
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 106,  #compares = 10778,  #rotates = 199
+
+> 
+
+Test: ./tlab 400 A R
+#nodes = 400,  depth = 214,  #compares = 790,  #rotates = 398
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 214,  #compares = 42263,  #rotates = 398
+
+> 
+
+Test: ./tlab 100 D R
+#nodes = 100,  depth = 58,  #compares = 186,  #rotates = 98
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 58,  #compares = 4610,  #rotates = 98
+
+> 
+
+Test: ./tlab 200 D R
+#nodes = 200,  depth = 106,  #compares = 405,  #rotates = 199
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 106,  #compares = 17267,  #rotates = 199
+
+> 
+
+Test: ./tlab 400 D R
+#nodes = 400,  depth = 214,  #compares = 790,  #rotates = 398
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 214,  #compares = 69563,  #rotates = 398
+
+> 
+
+Test: ./tlab 100 P R
+#nodes = 100,  depth = 42,  #compares = 302,  #rotates = 170
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 42,  #compares = 2523,  #rotates = 170
+
+> 
+
+Test: ./tlab 200 P R
+#nodes = 200,  depth = 76,  #compares = 670,  #rotates = 346
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 76,  #compares = 8717,  #rotates = 346
+
+> 
+
+Test: ./tlab 400 P R
+#nodes = 400,  depth = 153,  #compares = 1464,  #rotates = 771
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 153,  #compares = 32050,  #rotates = 771
+
+> 
+
+Test: ./tlab 100 R R
+#nodes = 100,  depth = 12,  #compares = 653,  #rotates = 286
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 12,  #compares = 1508,  #rotates = 286
+
+> 
+
+Test: ./tlab 200 R R
+#nodes = 200,  depth = 15,  #compares = 1611,  #rotates = 812
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 3592,  #rotates = 812
+
+> 
+
+Test: ./tlab 400 R R
+#nodes = 400,  depth = 21,  #compares = 3563,  #rotates = 1658
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 21,  #compares = 8583,  #rotates = 1658
+
+> 
+
+Test: ./tlab 100 A S
+#nodes = 100,  depth = 99,  #compares = 148,  #rotates = 98
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 13,  #compares = 2110,  #rotates = 881
+
+> 
+
+Test: ./tlab 200 A S
+#nodes = 200,  depth = 199,  #compares = 298,  #rotates = 198
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 4669,  #rotates = 1964
+
+> 
+
+Test: ./tlab 400 A S
+#nodes = 400,  depth = 399,  #compares = 598,  #rotates = 398
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 22,  #compares = 10452,  #rotates = 4430
+
+> 
+
+Test: ./tlab 100 D S
+#nodes = 100,  depth = 99,  #compares = 148,  #rotates = 98
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 13,  #compares = 2022,  #rotates = 885
+
+> 
+
+Test: ./tlab 200 D S
+#nodes = 200,  depth = 199,  #compares = 298,  #rotates = 198
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 4499,  #rotates = 1968
+
+> 
+
+Test: ./tlab 400 D S
+#nodes = 400,  depth = 399,  #compares = 598,  #rotates = 398
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 22,  #compares = 10139,  #rotates = 4434
+
+> 
+
+Test: ./tlab 100 P S
+#nodes = 100,  depth = 74,  #compares = 263,  #rotates = 192
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 14,  #compares = 2115,  #rotates = 936
+
+> 
+
+Test: ./tlab 200 P S
+#nodes = 200,  depth = 143,  #compares = 551,  #rotates = 392
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 15,  #compares = 4684,  #rotates = 2062
+
+> 
+
+Test: ./tlab 400 P S
+#nodes = 400,  depth = 280,  #compares = 1133,  #rotates = 790
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 21,  #compares = 10612,  #rotates = 4674
+
+> 
+
+Test: ./tlab 100 R S
+#nodes = 100,  depth = 11,  #compares = 653,  #rotates = 602
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 13,  #compares = 2335,  #rotates = 1275
+
+> 
+
+Test: ./tlab 200 R S
+#nodes = 200,  depth = 15,  #compares = 1577,  #rotates = 1470
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 26,  #compares = 5373,  #rotates = 3052
+
+> 
+
+Test: ./tlab 400 R S
+#nodes = 400,  depth = 20,  #compares = 3711,  #rotates = 3508
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 22,  #compares = 12393,  #rotates = 7173
+
+> 
+
+Test: ./tlab 100 A V
+#nodes = 100,  depth = 7,  #compares = 573,  #rotates = 93
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1392,  #rotates = 93
+
+> 
+
+Test: ./tlab 200 A V
+#nodes = 200,  depth = 8,  #compares = 1345,  #rotates = 192
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 8,  #compares = 3257,  #rotates = 192
+
+> 
+
+Test: ./tlab 400 A V
+#nodes = 400,  depth = 9,  #compares = 3089,  #rotates = 391
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 9,  #compares = 7419,  #rotates = 391
+
+> 
+
+Test: ./tlab 100 D V
+#nodes = 100,  depth = 7,  #compares = 573,  #rotates = 93
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 7,  #compares = 1392,  #rotates = 93
+
+> 
+
+Test: ./tlab 200 D V
+#nodes = 200,  depth = 8,  #compares = 1345,  #rotates = 192
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 8,  #compares = 3257,  #rotates = 192
+
+> 
+
+Test: ./tlab 400 D V
+#nodes = 400,  depth = 9,  #compares = 3089,  #rotates = 391
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 9,  #compares = 7419,  #rotates = 391
+
+> 
+
+Test: ./tlab 100 P V
+#nodes = 100,  depth = 8,  #compares = 592,  #rotates = 99
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 8,  #compares = 1446,  #rotates = 99
+
+> 
+
+Test: ./tlab 200 P V
+#nodes = 200,  depth = 9,  #compares = 1382,  #rotates = 215
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 9,  #compares = 3307,  #rotates = 215
+
+> 
+
+Test: ./tlab 400 P V
+#nodes = 400,  depth = 10,  #compares = 3197,  #rotates = 451
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 10,  #compares = 7705,  #rotates = 451
+
+> 
+
+Test: ./tlab 100 R V
+#nodes = 100,  depth = 9,  #compares = 537,  #rotates = 65
+
+Search for 100 values known to be in tree
+Found 100 matches; ok
+Search for 33 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 100,  depth = 9,  #compares = 1443,  #rotates = 65
+
+> 
+
+Test: ./tlab 200 R V
+#nodes = 200,  depth = 9,  #compares = 1275,  #rotates = 152
+
+Search for 200 values known to be in tree
+Found 200 matches; ok
+Search for 66 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 200,  depth = 9,  #compares = 3066,  #rotates = 152
+
+> 
+
+Test: ./tlab 400 R V
+#nodes = 400,  depth = 11,  #compares = 2969,  #rotates = 314
+
+Search for 400 values known to be in tree
+Found 400 matches; ok
+Search for 133 values known to *not* be in tree
+Found 0 matches; ok
+#nodes = 400,  depth = 11,  #compares = 7172,  #rotates = 314
+
+> 

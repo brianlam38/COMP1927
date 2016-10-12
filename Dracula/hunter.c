@@ -94,19 +94,23 @@ void decideHunterMove(HunterView gameState)
 
     /* First 5 rounds, converge on Godalming */
     } else if (round < 6) {
-        int i;
-        int isFound = 0;
-        for (i = 0; i < (TRAIL_SIZE); i++) {
-            if (dTrail[i] > MAX_MAP_LOCATION) // No location found
-                continue;
-            else                              // Location is found, stop loop                                       
-                isFound = 1;                  
-                break;                 
+        if (dTrail[0] == hTrail[0]) {
+            submitID(hTrail[0], "Dracula is here, I am staying!");
+        } else {
+            int i;
+            int isFound = 0;
+            for (i = 0; i < (TRAIL_SIZE); i++) {
+                if (dTrail[i] > MAX_MAP_LOCATION) // No location found
+                    continue;
+                else                              // Location is found, stop loop                                       
+                    isFound = 1;                  
+                    break;           
+            }
+            if (isFound == 0)                                     
+                submitID(convergeOnLeader(gameState), "Converging on LEADER");
+            else                                              
+                submitID(convergeOnDrac(gameState), "Converging on DRAC");   
         }
-        if (isFound == 0)                                     
-            submitID(convergeOnLeader(gameState), "Converging on LEADER");
-        else                                              
-            submitID(convergeOnDrac(gameState), "Converging on DRAC");
 
     /* After 5 rounds, research or converge */
     } else if (round >= 6) {
@@ -125,13 +129,69 @@ void decideHunterMove(HunterView gameState)
             if (isFound == 0)                                               // Research if loc unknown
                 submitID(hTrail[0], "Researching!");
             else {
-                if (dTrail[i] > MAX_MAP_LOCATION)
-                    submitID(hTrail[0], "Temporary fix");                   /* FOR HI / D? - NEEDS FIXING */
-                else
-                    submitID(convergeOnDrac(gameState), "Converging on DRAC"); // Loc known, converge
+                switch(LocationID) {
+                    case HIDE:
+                    submitID(hideAndSeek(h), "Dracula is HIDING");
+                    break;
+                case DOUBLE_BACK_1:
+                    submitID(DBSeek(h), "Dracula did a DB1");
+                    break;
+                case DOUBLE_BACK_2:
+                    submitID(DBSeek(h), "Dracula did a DB2");
+                    break;
+                case DOUBLE_BACK_3:
+                    submitID(DBSeek(h), "Dracula did a DB3");
+                    break;
+                case DOUBLE_BACK_4:
+                    submitID(DBSeek(h), "Dracula did a DB4");
+                    break;
+                case DOUBLE_BACK_5:
+                    submitID(DBSeek(h), "Dracula did a DB5");
+                    break;
+                default:
+                    submitID(convergeOnDrac(gameState), "Converging on DRAC");
+                }
             }
         }
     }               
+}
+/* ### LOGIC FOR HIDE ### */
+// Returns location of where drac may be from a HIDE
+LocationID hideAndSeek(HunterView h) {
+
+    // (1) # of degrees away = trail# - 1
+    // (2) search for all possible locations X degrees away
+    // (3) go to the locations
+
+    /* Grabs dracula trail */
+    LocationID dTrail[TRAIL_SIZE];
+    giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
+
+    /* Grabs position of hide */
+    for (int i = 0, i < TRAIL_SIZE; i++) {
+        if (dTrail[i] == HIDE) {
+            break;
+        }         
+    }
+    /* (1) # of locs away from curr loc */
+    int numLocsAway = i--;                    // HI move = stay in same location.
+                                              // E.g. if HI move was in dTrail[2] -> curr loc = 3rd loc
+                                              // This also means that dTrail[1] -> same loc.
+                                              // Drac should only be 1 move away from current loc
+    
+
+
+}
+/* ### LOGIC FOR DB ### */ 
+// Returns location of where drac may be from a DOUBLE BACK
+LocationID DBSeek(HunterView h) {
+    if (dTrail[i] == HIDE) {
+        // # of degrees away = trail# - 1
+        // search for all possible locations X degrees away
+        // go to the locations
+        int pathNum = i - 1;
+    }
+   
 }
 
 // Returns LocationID of whereToGoNext to hunt drac
@@ -149,10 +209,12 @@ LocationID convergeOnDrac(HunterView h) {
     
     /* Grab location from trail */  
     for (i = 0; i < TRAIL_SIZE; i++) {
-        if (dTrail[i] >= 0 && dTrail[i] <= MAX_MAP_LOCATION)
-            break;      
+        if (dTrail[i] >= 0 && dTrail[i] <= MAX_MAP_LOCATION) {
+            break;  
+        } 
     }
 
+    /* Drac trail is found */
     if (dTrail[i] >= 0 && dTrail[i] <= MAX_MAP_LOCATION) {
         int myNums = 0;
 
@@ -182,7 +244,7 @@ LocationID convergeOnDrac(HunterView h) {
                 foundPlace = (foundPlace) ? dracsChoices[j] : dest;
                 //If a place is found return that, else return dest
                 free (dracsChoices);
-                free(myChoices);
+                free (myChoices);
                 return foundPlace;
 
         } else {

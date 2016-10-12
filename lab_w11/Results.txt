@@ -1,0 +1,23 @@
+Results for Tests on 5000 values
+
+Depth = depth of tree, Cost = average #comparisons per search
+
+
+             Ascending Order        Prefix Order        Random Order
+Insert
+Method       Depth      Cost     Depth      Cost     Depth      Cost
+
+L         ________  ________  ________  ________  ________  ________
+
+A         ________  ________  ________  ________  ________  ________
+
+R         ________  ________  ________  ________  ________  ________
+
+B         ________  ________  ________  ________  ________  ________
+
+S         ________  ________  ________  ________  ________  ________
+
+V         ________  ________  ________  ________  ________  ________
+
+
+Notes (what the above indicates):
