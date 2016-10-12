@@ -1,10 +1,10 @@
 #!/bin/sh
 
-size=200
+size=5000
 
 for insert in L A B R S V
 do
-	for order in A
+	for order in A P R
 	do
 		echo ""
 		echo "Test: ./tlab $size $order $insert"

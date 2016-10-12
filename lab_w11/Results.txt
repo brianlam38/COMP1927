@@ -7,9 +7,9 @@ Depth = depth of tree, Cost = average #comparisons per search
 Insert
 Method       Depth      Cost     Depth      Cost     Depth      Cost
 
-L         ________  ________  ________  ________  ________  ________
+L             5000   3114.47	      13     11.75	   28	   15.95
 
-A         ________  ________  ________  ________  ________  ________
+A             5000   1886.53      2954   1115.11
 
 R         ________  ________  ________  ________  ________  ________
 

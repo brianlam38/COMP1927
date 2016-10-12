@@ -157,6 +157,7 @@ Link insert(Link t, Item it)
 {
 	if (t == NULL) return newNode(it);
 	int diff = cmp(key(it),key(t->value));
+	t->within->ncompares++;
 	if (diff == 0)
 		t->value = it;
 	else if (diff < 0)
@@ -170,6 +171,7 @@ Link insertAtRoot(Link t, Item it)
 { 
 	if (t == NULL) return newNode(it);
 	int diff = cmp(key(it), key(t->value));
+	t->within->ncompares++;
 	if (diff == 0)
 		t->value = it;
 	else if (diff < 0) {
@@ -209,6 +211,7 @@ Link insertSplay(Link t, Item it)
 	Key v = key(it);
 	if (t == NULL) return newNode(it);
 	int diff = cmp(v,key(t->value));
+	t->within->ncompares++;
 	if (diff == 0)
 		t->value = it;
 	else if (diff < 0) { 
@@ -216,6 +219,7 @@ Link insertSplay(Link t, Item it)
 			t->left = newNode(it);
 			return t;
 		}
+		t->within->ncompares++;
 		if (less(v,key(t->left->value))) {
 			t->left->left = insertSplay(t->left->left, it);
 			t = rotateR(t); 
@@ -230,6 +234,7 @@ Link insertSplay(Link t, Item it)
 			t->right = newNode(it);
 			return t;
 		}
+		t->within->ncompares++;
 		if (less(key(t->right->value),v)) {
 			t->right->right = insertSplay(t->right->right, it);
 			t = rotateL(t);
@@ -246,6 +251,7 @@ static Link insertAVL(Link t, Item it)
 {
 	if (t == NULL) return newNode(it);
 	int diff = cmp(key(it), key(t->value));
+	t->within->ncompares++;
 	if (diff == 0)
 		t->value = it;
 	else if (diff < 0)
@@ -278,6 +284,7 @@ static Link search(Link t, Key k)
 	if (t == NULL) return NULL;
 	Link res = NULL;
 	int diff = cmp(k,t->value);
+	t->within->ncompares++;
 	if (diff == 0)
 		res = t;
 	else if (diff < 0)
@@ -289,6 +296,7 @@ static Link search(Link t, Key k)
 
 static Link searchSplay(Link t, Key k, int *found)
 {
+	int cmpCount = 0;
 	Link res;
 	if (t == NULL) {
 		// item not found
@@ -296,26 +304,32 @@ static Link searchSplay(Link t, Key k, int *found)
 		res = NULL;  
 	}
 	else if (eq(key(t->value),k)) {
+		cmpCount++;		
 		*found = 1; // item found, store true  
 		res =  t;  
 	}
 	else if (less(k,key(t->value))) {
+		cmpCount+=2;
 		if (t->left == NULL){
 			*found = 0;// item not found
 			//res = rotateRight(t); 
 			res = t;
 		}
 		else if (eq(key(t->left->value),k)) {
+			cmpCount++;
 			*found = 1;
 			res = rotateR(t);
 		}
 		else {
+			cmpCount++;
 			if (less(k,key(t->left->value))) {
+				cmpCount++;
 				// left-left
 				t->left->left = searchSplay(t->left->left, k, found);
 				t = rotateR(t);
 			}
 			else {
+				cmpCount++;
 				// left-right
 				t->left->right = searchSplay(t->left->right, k, found);
 				t->left = rotateL(t->left);
@@ -324,22 +338,27 @@ static Link searchSplay(Link t, Key k, int *found)
 		}
 	}
 	else { // k > key(t->value)
+		t->within->ncompares += 2;
 		if (t->right == NULL) {
 			*found = 0;// item not found
 			//res = rotateLeft(t);
 			res = t;
 		}
 		else if (eq(key(t->right->value),k)) {
+			cmpCount++;
 			*found = 1;
 			res = rotateL(t);
 		}
 		else{
+			cmpCount++;
 			if (less(key(t->right->value),k)) {
+				cmpCount++;
 				/* right-right */
 				t->right->right = searchSplay(t->right->right, k, found);
 				t = rotateL(t);   
 			}
 			else {
+				cmpCount++;
 				/* right-left */
 				t->right->left = searchSplay(t->right->left, k, found);
 				t->right = rotateR(t->right);
@@ -347,6 +366,8 @@ static Link searchSplay(Link t, Key k, int *found)
 			res = rotateL(t);
 		}
    }
+   t->within->ncompares += cmpCount;
+
    return res;
 }
 
@@ -361,6 +382,7 @@ static Link delete(Link t, Key k)
 {
 	if (t == NULL) return NULL;
 	int diff = cmp(k,t->value);
+	t->within->ncompares++;
 	if (diff == 0)
 		t = deleteRoot(t);
 	else if (diff < 0)
@@ -411,12 +433,12 @@ Link rotateR(Link n1)
 {
 	if (n1 == NULL) return NULL;
 	Link n2 = n1->left;
+
+	n1->within->nrotates++;
+	
 	if (n2 == NULL) return n1;
 	n1->left = n2->right;
 	n2->right = n1;
-
-	/* ROTATION COUNT */
-	n2->within->nrotates++;
 
 	return n2;
 }
@@ -426,12 +448,12 @@ Link rotateL(Link n2)
 {
 	if (n2 == NULL) return NULL;
 	Link n1 = n2->right;
+	
+	n2->within->nrotates++;
+	
 	if (n1 == NULL) return n2;
 	n2->right = n1->left;
 	n1->left = n2;
-
-	/* ROTATION COUNT */
-	n1->within->nrotates++;
 
 	return n1;
 }
