@@ -178,7 +178,7 @@ LocationID hideAndSeek(HunterView h) {
                                               // E.g. if HI move was in dTrail[2] -> curr loc = 3rd loc
                                               // This also means that dTrail[1] -> same loc.
                                               // Drac should only be 1 move away from current loc
-    
+
 
 
 }
@@ -191,6 +191,9 @@ LocationID DBSeek(HunterView h) {
         // go to the locations
         int pathNum = i - 1;
     }
+
+    // Randomise direction in which hunter heads towards from the HIDE move
+    // 
    
 }
 
@@ -255,10 +258,6 @@ LocationID convergeOnDrac(HunterView h) {
     }
     //This function will return the same place the hunter is, if the hunter is already there
     //To actually find Drac, add stuff to the function, so the hunters search around 'dest'
-    
-    // Use pathLength() to determine #turns away Dracula is
-    // Use BFS to determine which cities he may currently be in (within the #turns/degrees
-    // Close him off?
 
     int res = searchNearby(h, player);
     if (res == -1) return whereIs(h,player); //just in case this function was called in the wrong
@@ -438,7 +437,7 @@ static void submitID(LocationID dest, char *message) {
     return curr;
 }
 */
-// Which adjacent cities can the Hunter go next?
+// Which adjacent cities can the player go next?
 static LocationID *whereToGo(int player,int *numLocations, int from, int sea, int stationsAllowed) {
 
     if (from == UNKNOWN_LOCATION) return NULL;
