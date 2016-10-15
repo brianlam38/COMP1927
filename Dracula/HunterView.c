@@ -82,7 +82,7 @@ LocationID *whereCanIgo(HunterView currentView, int *numLocations,
     assert(currentView != NULL && currentView->view != NULL);
     PlayerID player = whoAmI(currentView);
     LocationID from = whereIs(currentView,player);    // get the current player
-    return connectedLocations(currentView->view, numLocations,
+    return connectedLocations(numLocations,
                               from, player,
                               giveMeTheRound(currentView), road, rail, sea);
 }
@@ -92,7 +92,7 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return connectedLocations(currentView->view, numLocations,
+    return connectedLocations(numLocations,
                               whereIs(currentView, player), player,
                               giveMeTheRound(currentView), road, rail, sea);
 }
