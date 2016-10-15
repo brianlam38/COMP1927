@@ -23,14 +23,18 @@ struct dracView {
 DracView newDracView(char *pastPlays, PlayerMessage messages[]) {
     int i;
     LocationID trail[TRAIL_SIZE];
+
     DracView dracView = malloc(sizeof(struct dracView));
     assert(dracView != NULL);
     dracView->view = newGameView(pastPlays, messages);
+    dracView->view->players[PLAYER_DRACULA]->playerCurrLocation =
+        whereIs(dracView, PLAYER_DRACULA);
+
     for (i = 0; i < TRAIL_SIZE ; i++) {
         dracView->trail[i] = malloc(sizeof(encounterData));
         assert(dracView->trail[i] != NULL);
     }
-    giveMeTheTrail(dracView, PLAYER_DRACULA, trail);
+    giveMeTheTrail(dracView, PLAYER_DRACULA, trail, FALSE);
     for (i = 0; i < TRAIL_SIZE ; i++) {
         dracView->trail[i]->location = trail[i];
         whatsThere(dracView, trail[i], &dracView->trail[i]->numTraps,
@@ -79,7 +83,10 @@ int howHealthyIs(DracView currentView, PlayerID player) {
 LocationID whereIs(DracView currentView, PlayerID player) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return currentView->view->players[player]->playerCurrLocation;
+
+    LocationID trail[TRAIL_SIZE];
+    giveMeTheTrail(currentView, player, trail, FALSE);
+    return trail[0];
 }
 
 // Get the most recent move of a given player
@@ -99,7 +106,8 @@ void lastMove(DracView currentView, PlayerID player,
 void whatsThere(DracView currentView, LocationID where,
                 int *numTraps, int *numVamps) {
     assert(currentView != NULL && currentView->view != NULL);
-    assert(validPlace(where) || where == NOWHERE || where == TELEPORT);
+    assert(validPlace(where) || where == NOWHERE);
+
     int i;
     //index place of first move of Dracula in pastPlays
     int firstMove = PLAYER_DRACULA * CHARS_PER_TURN;
@@ -107,6 +115,7 @@ void whatsThere(DracView currentView, LocationID where,
     LocationID trail[TRAIL_SIZE];
     *numTraps = 0;        //initialise to 0 before counting
     *numVamps = 0;        //initialise to 0 before counting
+
     if (where == NOWHERE || idToType(where) == SEA) {
         return;
     } else {
@@ -123,7 +132,6 @@ void whatsThere(DracView currentView, LocationID where,
                              where, numTraps, numVamps);
             }
         }
-
     }
     return;
 }
@@ -132,15 +140,16 @@ void whatsThere(DracView currentView, LocationID where,
 
 // Fills the trail array with the location ids of the last 6 turns
 void giveMeTheTrail(DracView currentView, PlayerID player,
-                    LocationID trail[TRAIL_SIZE]) {
+                    LocationID trail[TRAIL_SIZE], int hide) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
+
     int i;
     //index place of first move of player in pastPlays
     int firstMove = player * CHARS_PER_TURN;
     int nChar = countChar(currentView->view->pastPlays);
 
-    if (player == PLAYER_DRACULA) {
+    if (!hide) {
         initialiseTrail(trail);
         //loop and keep updating trail of Dracula till the last round
         for (i = firstMove; i < nChar - 2; i += CHARS_PER_ROUND) {
@@ -151,130 +160,112 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
         //put original locations in the trail if the player is a hunter
         getHistory(currentView->view, player, trail);
     }
-
-    return;
-}
-
-void giveMeTheTrail2(DracView currentView, PlayerID player,
-                    LocationID trail[TRAIL_SIZE]) {
-    assert(currentView != NULL && currentView->view != NULL);
-    assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    //index place of first move of player in pastPlays
-    getHistory(currentView->view, player, trail);
     return;
 }
 
 //// Functions that query the map to find information about connectivity
 // What are my (Dracula's) possible next moves (locations)
-LocationID *whereCanIgo(DracView currentView, int *numLocations, int road,
-                        int sea) {
+LocationID *whereCanIgo(DracView currentView, int *numLocations,
+                        int road, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
-    LocationID *adjLoc = connectedLocations(currentView->view, numLocations,
-                              whereIs(currentView, PLAYER_DRACULA),
-                              PLAYER_DRACULA, giveMeTheRound(currentView),
-                              road, FALSE, sea);
 
+    LocationID currLoc = whereIs(currentView, PLAYER_DRACULA);
+    LocationID *adjLoc = connectedLocations(numLocations,
+                                            currLoc, PLAYER_DRACULA,
+                                            giveMeTheRound(currentView),
+                                            road, FALSE, sea);
+    LocationID hideTrail[TRAIL_SIZE];
     LocationID trail[TRAIL_SIZE];
-    LocationID trail2[TRAIL_SIZE];
     int i, index;
-    giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
-    giveMeTheTrail2(currentView, PLAYER_DRACULA, trail2);
+    for(i=0;i<(*numLocations);i++) {
+printf("adjLoc[%d] = %s\n",i,idToName(adjLoc[i]));
+}
+    getHistory(currentView->view, PLAYER_DRACULA, hideTrail);
+    giveMeTheTrail(currentView, PLAYER_DRACULA,
+                   trail, FALSE);
+    shiftRight(hideTrail, 0, TRAIL_SIZE - 1);
     shiftRight(trail, 0, TRAIL_SIZE - 1);
+    hideTrail[0] = UNKNOWN_LOCATION;
     trail[0] = UNKNOWN_LOCATION;
-    if (trail[1] == NORTH_SEA || trail[1] == ENGLISH_CHANNEL ||
-        trail[1] == IRISH_SEA || trail[1] == ATLANTIC_OCEAN ||
-        trail[1] == ATLANTIC_OCEAN || trail[1] == BAY_OF_BISCAY ||
-        trail[1] == MEDITERRANEAN_SEA || trail[1] == TYRRHENIAN_SEA ||
-        trail[1] == 	IONIAN_SEA || trail[1] == ADRIATIC_SEA ||
-        trail[1] == 	BLACK_SEA) {
-        shiftLeft(adjLoc, 0, *numLocations - 1);
-        (*numLocations)--;
-        adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
-        assert(adjLoc != NULL);
-    }
-    if (hasDBOrHI(trail2, DRAC_VIEW) == HAS_HIDE) {
-        shiftLeft(adjLoc, 0, *numLocations - 1);
-        (*numLocations)--;
-        adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
-        assert(adjLoc != NULL);
-    } else if (hasDBOrHI(trail2, DRAC_VIEW) == HAS_DOUBLE_BACK) {
+    int dbOrHi = hasDBOrHI(hideTrail);
+    int dbPos = posOfDb(hideTrail);
+    int noShift = 0;
+
+    if (dbOrHi == HAS_DOUBLE_BACK) {
+printf("st db\n");
+        if (idToType(currLoc) == SEA) {
+printf("i=1\n");
+            shiftLeft(adjLoc, 0, (*numLocations) - 1);
+            (*numLocations)--;
+            if ((*numLocations) > 0) {
+                adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                assert(adjLoc != NULL);
+            } else {
+                free(adjLoc);
+                adjLoc = NULL;
+            }
+        }
         for (i = 2; i < TRAIL_SIZE; i++) {
-            index = inArrayForDrac(adjLoc, trail[i], *numLocations);
-            if ((index != -1) && (adjLoc[index] != trail[1])) {
-                shiftLeft(adjLoc, index, *numLocations - 1);
+            index = inArray(adjLoc, trail[i], *numLocations);
+printf("index = %d\n", index);
+            if ((i == 5) && (hideTrail[5] == HIDE)) noShift = 1;
+            if (hideTrail[i] == HIDE && i == dbPos - 1) noShift = 1;
+            //if (hideTrail[i] == TELEPORT) noShift = 1;
+            if ((index != -1) && (i != dbPos) && (adjLoc[index] != trail[1]) && (noShift != 1)) {
+                shiftLeft(adjLoc, index, (*numLocations) - 1);
                 (*numLocations)--;
-                adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
-                assert(adjLoc != NULL);
+                if ((*numLocations) > 0) {
+                    adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                    assert(adjLoc != NULL);
+                } else {
+                    free(adjLoc);
+                    adjLoc = NULL;
+                }
             }
+            noShift = 0;
         }
-    } else if (hasDBOrHI(trail2, DRAC_VIEW) == BOTH_HIDE_AND_DB) {
-        for (i = 0; i < TRAIL_SIZE; i++) {
-            index = inArrayForDrac(adjLoc, trail[i], *numLocations);
-            if (index != -1) {
-                shiftLeft(adjLoc, index, *numLocations - 1);
+printf("fi db\n");
+    } else if (dbOrHi == BOTH_HIDE_AND_DB) {
+printf("st both\n");
+printf("numLoc = %d\n", *numLocations);
+for(i=0;i<(*numLocations);i++) {
+printf("adjLoc[%d] = %s\n",i,idToName(adjLoc[i]));
+}
+        for (i = 1; i < TRAIL_SIZE; i++) {
+            index = inArray(adjLoc, trail[i], *numLocations);
+            if ((i == 5) && (hideTrail[5] == HIDE)) noShift = 1;
+            if (hideTrail[i] == HIDE && i == dbPos - 1) noShift = 1;
+            //if (hideTrail[i] == TELEPORT) noShift = 1;
+            if ((index != -1) && (i != dbPos) && (noShift != 1)) {
+printf("dbpos=%d\n", dbPos);
+                shiftLeft(adjLoc, index, (*numLocations) - 1);
                 (*numLocations)--;
-                adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
-                assert(adjLoc != NULL);
+                if ((*numLocations) > 0) {
+printf("st realloc, numLoc = %d\n", *numLocations);
+                    adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                    assert(adjLoc != NULL);
+printf("fi realloc\n");
+                } else {
+                    free(adjLoc);
+                    adjLoc = NULL;
+                }
             }
+            noShift = 0;
         }
+for(i=0;i<(*numLocations);i++) {
+//printf("adjLoc[%d] = %s\n",i,idToName(adjLoc[i]));
+}
+printf("fi both\n");
     }
     return adjLoc;
 }
-// What are my (Dracula's) possible next moves (locations)
-/*LocationID *whereCanIgo(DracView currentView, int *numLocations,
-                        int road, int sea) {
-
-    assert(currentView != NULL && currentView->view != NULL);
-    printf("where is dracula %d\n", whereIs(currentView, PLAYER_DRACULA));
-    LocationID *adjLocations = connectedLocations(currentView->view, numLocations,
-                              whereIs(currentView, PLAYER_DRACULA),
-                              PLAYER_DRACULA, giveMeTheRound(currentView),
-                              road, FALSE, sea);
-                              int x;
-                                for (x = 0 ; x < *numLocations ; x++) {
-                                    printf("%d\n",adjLocations[x]);
-                                }*/
-    //
-    // LocationID trail[TRAIL_SIZE];
-    // giveMeTheTrail(currentView, PLAYER_DRACULA, trail);
-    // if (hasDBOrHI(trail, -1)) {
-    //   int overLap = 0;
-    //   int x;
-    //   int y;
-    //   for (x = 0 ; x < *numLocations ; x++) {
-    //     for (y = 0 ; y < TRAIL_SIZE ; y++) {
-    //       if (trail[y] == adjLocations[x]) overLap++;
-    //     }
-    //   }
-    //   *numLocations -= overLap;
-    //   int repeatedLocations = 0;
-    //   for (x = 0; x < TRAIL_SIZE - 2; x++) {
-    //       if (trail[x] == trail[x + 1] && trail[x] != -1) {
-    //         repeatedLocations++;
-    //       }
-    //   }
-    //   *numLocations += repeatedLocations;
-    //   LocationID *newAdjLocations = malloc((*numLocations) *sizeof(LocationID));
-    //   int z = 0;
-    //   for (x = 0 ; x < *numLocations ; x++) {
-    //     int check = 0;
-    //     for (y = 0 ; y < TRAIL_SIZE ; y++) {
-    //       if (trail[y] == adjLocations[x]) check++;
-    //       if (check == 0 ) newAdjLocations[z++] = adjLocations[x];
-    //
-    //     }
-    //   }
-    //   return newAdjLocations;
-    // } else {
-    // }
-//}
 
 // What are the specified player's next possible moves
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
-                           PlayerID player, int road, int rail, int sea) {
+                           LocationID from, PlayerID player, Round round,
+                           int road, int rail, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
-    return connectedLocations(currentView->view, numLocations,
-                              whereIs(currentView, player), player,
-                              giveMeTheRound(currentView), road, rail, sea);
+    return connectedLocations(numLocations,
+                              from, player, round, road, rail, sea);
 }

@@ -287,11 +287,10 @@ void getHistory(GameView currentView, PlayerID player,
 
 //// Functions that query the map to find information about connectivity
 // Returns an array of LocationIDs for all directly connected locations
-LocationID *connectedLocations(GameView currentView, int *numLocations,
+LocationID *connectedLocations(int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea)
 {
-    assert(currentView != NULL);
     assert(from >= MIN_MAP_LOCATION && from <= MAX_MAP_LOCATION);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     assert(round >= 0);
@@ -306,11 +305,10 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
     //find the nearby cities of type ROAD
     if (road) {
         connections = NearbyCities(map, from, connections, numLocations, ROAD);
-
         //case: Dracula can't move to hospital
         // delete the location of hospital if it is in the connections array
         if (player == PLAYER_DRACULA &&
-            inArray(connections, ST_JOSEPH_AND_ST_MARYS, *numLocations)) {
+            inArray(connections, ST_JOSEPH_AND_ST_MARYS, *numLocations) != -1) {
             for (i = 0; i < *numLocations; i++) {
                 if (connections[i] == ST_JOSEPH_AND_ST_MARYS) {
                     for (j = i; j + 1 < *numLocations; j++) {
@@ -321,8 +319,12 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
             }
             //reset the size of array
             (*numLocations)--;
-            connections = realloc(connections, *numLocations * sizeof(LocationID));
-            assert(connections != NULL);
+            if ((*numLocations) > 0) {
+                connections = realloc(connections, (*numLocations) * sizeof(LocationID));
+                assert(connections != NULL);
+            } else {
+                connections = NULL;
+            }
         }
     }
 
@@ -347,7 +349,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
         railConnections[0] = from;
 
         if (player == PLAYER_DRACULA || stationsAllowed == 0)
-        return connections;
+            return connections;
 
         //get the primary rail connections from the given location
         connections = NearbyCities(map, from, connections, numLocations, RAIL);
@@ -389,8 +391,7 @@ LocationID *connectedLocations(GameView currentView, int *numLocations,
                 connections[*numLocations - 1] = railConnections[i];
             }
         }
+        free(railConnections);
     }
     return connections;
 }
-
-////////////////////////////////////// end of GameView.c ////////////////////////////////////

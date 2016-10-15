@@ -11,6 +11,7 @@
 #include "Globals.h"
 #include "GameView.h"
 
+
 // struct definition of Map
 typedef struct vNode *VList;
 
@@ -39,28 +40,29 @@ struct gameView {
     int gameScore;                         // current game score
     Round roundNumber;                     // current round number
     PlayerID currentPlayer;                // ID of current player
-    // PlayerMessage *messages;               // messages provided by players
+    PlayerMessage *messages;               // messages provided by players
     playerInfo *players[NUM_PLAYERS];      // array of player info
 
 };
 
+
 typedef struct QueueRep *Queue;
 
 typedef struct QueueNode {
-    LocationID value;
-    struct QueueNode *next;
+  LocationID value;
+  struct QueueNode *next;
 } QueueNode;
 
 typedef struct QueueRep {
-    QueueNode *head;  // ptr to first node
-    QueueNode *tail;  // ptr to last node
+  QueueNode *head;  // ptr to first node
+  QueueNode *tail;  // ptr to last node
 } QueueRep;
 
 typedef struct PQueueRep *PQueue;
 
 typedef struct PQueueNode {
     LocationID value;
-  int distance;
+    int distance;
     struct PQueueNode *next;
 } PQueueNode;
 
@@ -70,7 +72,7 @@ typedef struct PQueueRep {
 } PQueueRep;
 
 //max number of event encountered each play
-#define NUM_EVENT_ENCOUNTER 3
+#define NUM_EVENT_ENCOUNTER 4
 //number of chars per round in pastPlays
 #define CHARS_PER_ROUND     40
 //number of chars per turn in pastPlays
@@ -81,10 +83,10 @@ typedef struct PQueueRep {
 #define HUNTER_VIEW         -2
 
 //types of special moves in Dracula's trail
-#define NO_SPECIAL_MOVE     0
-#define HAS_HIDE            -1
-#define HAS_DOUBLE_BACK     -2
-#define BOTH_HIDE_AND_DB    -3
+#define NO_SPECIAL_MOVE     -1
+#define HAS_HIDE            -2
+#define HAS_DOUBLE_BACK     -3
+#define BOTH_HIDE_AND_DB    -4
 
 
 // traverse the map and return an array of nearby cities of "from" with type "type"
@@ -98,8 +100,6 @@ LocationID *NearbyCities(Map map, LocationID from,
 // return the index of first occurance of the object
 int inArray(int *array, int object, int size);
 
-//check if an element is in the given array
-int inArrayForDrac(int *array, int object, int size);
 
 // shift the array to the left
 // start: the starting index of array to shift
@@ -132,6 +132,7 @@ void strToAbbrev(char *play, char abbrev[]);
 int hunterTurnHealth(char *pastPlays, int health,
                      LocationID prevLocation, LocationID currLocation);
 
+
 // initialise a given trail to UNKNOWN_LOCATION
 void initialiseTrail(LocationID trail[TRAIL_SIZE]);
 
@@ -159,8 +160,8 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
-int findPathLength(LocationID src, LocationID dest);
 
+int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *nextLoc);
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train);
 
@@ -174,7 +175,7 @@ int QueueIsEmpty(Queue); // check for no items
 PQueue newPQueue(); // create new empty queue
 void dropPQueue(PQueue); // free memory used by queue
 void showPQueue(PQueue); // display as 3 > 5 > 4 > ...
-void PQueueJoin(PQueue, LocationID it, LocationID location); // add item on queue
+void PQueueJoin(PQueue PQ, LocationID it, int distance); // add item on queue
 LocationID PQueueLeave(PQueue); // remove item from queue
 int PQueueIsEmpty(PQueue); // check for no items
 
@@ -184,6 +185,8 @@ int PQueueIsEmpty(PQueue); // check for no items
 //        HAS_HIDE         if there is a hide in Dracula's trail,
 //        HAS_DOUBLE_BACK  if there is a double-back in Dracula's trail,
 //        BOTH_HIDE_AND_DB if there are both double-back and hide in Dracula's trail
-int hasDBOrHI(LocationID trail[TRAIL_SIZE], int view);
+int hasDBOrHI(LocationID trail[TRAIL_SIZE]);
+int posOfDb(LocationID trail[TRAIL_SIZE]);
+
 
 #endif /* commonFunctions_h */

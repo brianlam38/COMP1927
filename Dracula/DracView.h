@@ -96,12 +96,13 @@ void whatsThere(DracView currentView, LocationID where,
 //   then moved to the current location of 29
 // If Dracula asks about his own trail, he should get precise information
 //   about where he has been (real locations, not double-back, etc)
+// If hide is true, then it returns the array with location id converting 
+//   to Hide and Double-back
 
 void giveMeTheTrail(DracView currentView, PlayerID player,
-                        LocationID trail[TRAIL_SIZE]);
+                        LocationID trail[TRAIL_SIZE], int hide);
 
-void giveMeTheTrail2(DracView currentView, PlayerID player,
-                      LocationID trail[TRAIL_SIZE]);
+
 //// Functions that query the map to find information about connectivity
 
 // whereCanIgo() returns an array of LocationIDs giving
@@ -129,7 +130,11 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int s
 //   to produce the answers
 // The player's current location should be included in the array
 
+//LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
+//                           PlayerID player, Round round, int road, int rail, int sea);
+
 LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
-                           PlayerID player, int road, int rail, int sea);
+                           LocationID from, PlayerID player, Round round,
+                           int road, int rail, int sea);
 
 #endif

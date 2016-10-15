@@ -118,7 +118,7 @@ void getHistory(GameView currentView, PlayerID player,
 //   the hospital or travel by rail but need not take into account Dracula's trail
 // The destination 'from' should be included in the array
 
-LocationID *connectedLocations(GameView currentView, int *numLocations,
+LocationID *connectedLocations(int *numLocations,
                                LocationID from, PlayerID player, Round round,
                                int road, int rail, int sea);
 
