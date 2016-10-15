@@ -11,7 +11,6 @@
 #include "Globals.h"
 #include "GameView.h"
 
-
 // struct definition of Map
 typedef struct vNode *VList;
 
@@ -33,6 +32,7 @@ typedef struct _playerInfo {
     int playerHealth;                      // health of each player
     LocationID playerCurrLocation;         // current loaction of each player
     LocationID playerTrail[TRAIL_SIZE];    // trail location of each player
+    LocationID actualLoc;
 } playerInfo;
 
 struct gameView {
@@ -45,17 +45,16 @@ struct gameView {
 
 };
 
-
 typedef struct QueueRep *Queue;
 
 typedef struct QueueNode {
-  LocationID value;
-  struct QueueNode *next;
+    LocationID value;
+    struct QueueNode *next;
 } QueueNode;
 
 typedef struct QueueRep {
-  QueueNode *head;  // ptr to first node
-  QueueNode *tail;  // ptr to last node
+    QueueNode *head;  // ptr to first node
+    QueueNode *tail;  // ptr to last node
 } QueueRep;
 
 typedef struct PQueueRep *PQueue;
@@ -97,8 +96,8 @@ LocationID *NearbyCities(Map map, LocationID from,
 
 
 // check if an object is in the array
-// return the index of first occurance of the object
 int inArray(int *array, int object, int size);
+int findMostCommon(int *array,int size);
 
 
 // shift the array to the left
@@ -109,7 +108,6 @@ void shiftLeft(LocationID *array, int start, int end);
 
 // shift the array to the right
 void shiftRight(LocationID *array, int start, int end);
-
 
 // given a Place abbreviation, return its ID number
 // (with other "locations" included)
@@ -131,7 +129,6 @@ void strToAbbrev(char *play, char abbrev[]);
 // currLocation : current location of the hunter
 int hunterTurnHealth(char *pastPlays, int health,
                      LocationID prevLocation, LocationID currLocation);
-
 
 // initialise a given trail to UNKNOWN_LOCATION
 void initialiseTrail(LocationID trail[TRAIL_SIZE]);
@@ -160,7 +157,7 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
-
+int simpleFindPathLength(LocationID src, LocationID dest);
 int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *nextLoc);
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train);
@@ -190,3 +187,17 @@ int posOfDb(LocationID trail[TRAIL_SIZE]);
 
 
 #endif /* commonFunctions_h */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
