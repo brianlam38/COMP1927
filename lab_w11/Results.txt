@@ -21,3 +21,9 @@ V               13     11.78        14     12.10        15     11.79
 
 
 Notes (what the above indicates):
+
+Overall, it can be observed that a high tree depth is associated with a higher cost. This would be expected as node traversal depends on tree depth.
+
+Standard Insertion (L) - ASCENDING
+Ascending will create a list with only one branch per node, hence a high depth number.
+

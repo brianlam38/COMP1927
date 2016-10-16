@@ -87,6 +87,8 @@ typedef struct PQueueRep {
 #define HAS_DOUBLE_BACK     -3
 #define BOTH_HIDE_AND_DB    -4
 
+#define NUM_SEA             10
+
 
 // traverse the map and return an array of nearby cities of "from" with type "type"
 // *nearby and *size is the original array and size of the array
@@ -96,8 +98,9 @@ LocationID *NearbyCities(Map map, LocationID from,
 
 
 // check if an object is in the array
+// return the index of first occurance of the object
+// return -1 if the object is not in the array
 int inArray(int *array, int object, int size);
-int findMostCommon(int *array,int size);
 
 
 // shift the array to the left
@@ -108,6 +111,7 @@ void shiftLeft(LocationID *array, int start, int end);
 
 // shift the array to the right
 void shiftRight(LocationID *array, int start, int end);
+
 
 // given a Place abbreviation, return its ID number
 // (with other "locations" included)
@@ -129,6 +133,7 @@ void strToAbbrev(char *play, char abbrev[]);
 // currLocation : current location of the hunter
 int hunterTurnHealth(char *pastPlays, int health,
                      LocationID prevLocation, LocationID currLocation);
+
 
 // initialise a given trail to UNKNOWN_LOCATION
 void initialiseTrail(LocationID trail[TRAIL_SIZE]);
@@ -157,10 +162,12 @@ LocationID dracSpecialLocation(LocationID currID, LocationID trail[TRAIL_SIZE]);
 void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
+
 int simpleFindPathLength(LocationID src, LocationID dest);
-int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *nextLoc);
+int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path);
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train);
+int findMostCommon(int *array,int size);
 
 Queue newQueue(); // create new empty queue
 void dropQueue(Queue); // free memory used by queue
@@ -187,17 +194,3 @@ int posOfDb(LocationID trail[TRAIL_SIZE]);
 
 
 #endif /* commonFunctions_h */
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -9,7 +9,7 @@
 #include "GameView.h"
 
 //count the number of nearby cities of a specified location and
-// store the nearby cities in an array + returns array
+// store the nearby cities in an array
 LocationID *NearbyCities(Map map, LocationID from,
                          LocationID *nearby, int *size, int type) {
     VList curr;
@@ -48,25 +48,6 @@ void shiftRight(LocationID *array, int start, int end) {
     int i;
     for (i = end; i > start; i--)
         array[i] = array[i - 1];
-}
-
-int findMostCommon(int *array,int size) {
-    int Locations[NUM_MAP_LOCATIONS] = {0};
-    int i;
-    
-    for (i = 0; i < size; i++) {
-        if (array[i] != -1) 
-            Locations[array[i]]++;
-    }
-    int mode = 0;
-    for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-        if (Locations[i] >= mode) {
-            mode = i;
-        }
-    }
-    if (Locations[i] > 1)
-        return mode;
-    else return -1;
 }
 
 //given an "other" location abbreviation, return its ID number
@@ -368,6 +349,25 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
     return curr;
 }
 
+int findMostCommon(int *array,int size) {
+    int Locations[NUM_MAP_LOCATIONS] = {0};
+    int i;
+    
+    for (i = 0; i < size; i++) {
+        if (array[i] != -1) 
+            Locations[array[i]]++;
+    }
+    int mode = 0;
+    for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+        if (Locations[i] >= mode) {
+            mode = i;
+        }
+    }
+    if (Locations[i] > 1)
+        return mode;
+    else return -1;
+}
+
 // Finds # moves to get from src -> dest
 int simpleFindPathLength( LocationID src, LocationID dest)
 {
@@ -407,124 +407,16 @@ int simpleFindPathLength( LocationID src, LocationID dest)
     return length;
 }
 
-// find the minimum number of turns required for a player to get to dest from src
-int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *nextLoc) {
-    assert(validPlace(src));
-    assert(validPlace(dest));
 
-    Map map = newMap();
-//LocationID *path = calloc(map->nV, sizeof(LocationID));
-    *nextLoc = src;
-    if (src == dest) return 0;
 
-    int numLoc;
-    int *visited = calloc(map->nV,sizeof(int));
-    int *tmp = calloc(map->nV,sizeof(int));
-    int *preVisited = calloc(map->nV,sizeof(int));
-    LocationID *currVisited;
-    LocationID *tmpPath = calloc(map->nV, sizeof(LocationID));
-    int isFound = 0;
-    int length = 0;
-    LocationID x, i;
 
-    preVisited[src] = 1;
-    visited[src] = 1;
-    while (isFound != 1) {
-        for (x = 0; x < map->nV && isFound != 1; x++) {
-            if (preVisited[x]) {
-                currVisited = connectedLocations(&numLoc, x, player,
-                                                round, TRUE, TRUE, TRUE);
-//int a;
-//for (a=0;a<numLoc;a++) {
-  //  printf("adjLoc[%d] = %s\n",a,idToName(currVisited[a]));
-//}
-                preVisited[x] = 0;
-                tmp[x] = 0;
-                for (i = 0; i < numLoc; i++) {
-                    if (currVisited[i] == dest) isFound = 1;
-                    if (!visited[currVisited[i]]) {
-                        tmpPath[currVisited[i]] = x;
-                        tmp[currVisited[i]] = 1;
-                        visited[currVisited[i]] = 1;
-                    }
-                }
-                free(currVisited);
-            }
-        }
-        for (x = 0; x < map->nV && isFound != 1; x++) {
-            if (tmp[x]) preVisited[x] = 1;
-        }
-        round++;
-        length++;
-    }
-    i = length;
-//int a;
-//for (a=0;a<70;a++) {
-  //  printf("tmppath[%d] = %s\n",a,idToName(tmpPath[a]));
-//}
-    for (x = dest; x != src; x = tmpPath[x]) {
-        //path[i] = x;
-        //i --;
-printf("%s >", idToName(x));
-        *nextLoc = x;
-    }
-    //printf("nextLoc = %s\n", idToName(*nextLoc));
-    //*nextLoc = path[1];
 
-    free(tmp);
-    free(preVisited);
-    free(visited);
-    free(tmpPath);
-    disposeMap(map);
-    return length;
-}
 
-// check if there's a double-back or hide in Dracula's trail
-int hasDBOrHI(LocationID trail[TRAIL_SIZE]) {
-printf("had or not?\n");
-    int hide = 0;
-    int douB = 0;
-    int i;
-    for (i = 0; i < TRAIL_SIZE; i++) {
-printf("tr[%d] = %d\n", i, trail[i]);
-        if (trail[i] == HIDE) {
-            hide++;
-        } else if (trail[i] == DOUBLE_BACK_1 ||
-                   trail[i] == DOUBLE_BACK_2 ||
-                   trail[i] == DOUBLE_BACK_3 ||
-                   trail[i] == DOUBLE_BACK_4 ||
-                   trail[i] == DOUBLE_BACK_5) {
-            douB++;
-        }
-    }
-printf("hide = %d, douB = %d\n", hide, douB);
-    if ((hide != 0) && (douB != 0)) {
-printf("both hidb\n");
-        return BOTH_HIDE_AND_DB;
-    } else if (hide != 0) {
-printf("hdie\n");
-        return HAS_HIDE;
-    } else if (douB != 0) {
-        return HAS_DOUBLE_BACK;
-    } else {
-        return NO_SPECIAL_MOVE;
-    }
-}
 
-// check if there's a double-back or hide in Dracula's trail
-int posOfDb(LocationID trail[TRAIL_SIZE]) {
-    int i;
-    for (i = 0; i < TRAIL_SIZE; i++) {
-        if (trail[i] == DOUBLE_BACK_1 ||
-            trail[i] == DOUBLE_BACK_2 ||
-            trail[i] == DOUBLE_BACK_3 ||
-            trail[i] == DOUBLE_BACK_4 ||
-            trail[i] == DOUBLE_BACK_5) {
-            return i;
-        }
-    }
-    return -1;
-}
+
+
+/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 
 // create new empty Queue
 PQueue newPQueue()
@@ -617,12 +509,141 @@ int PQueueIsEmpty(PQueue PQ)
     return (PQ->head == NULL);
 }
 
+// find the minimum number of turns required for a player to get to dest from src
+int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path) {
+    assert(validPlace(src));
+    assert(validPlace(dest));
+
+    Map map = newMap();
+//LocationID *path = calloc(map->nV, sizeof(LocationID));
+    //*nextLoc = src;
+    path[0] = src;
+    if (src == dest) return 0;
+
+    int numLoc;
+    int *visited = calloc(map->nV,sizeof(int));
+    int *tmp = calloc(map->nV,sizeof(int));
+    int *preVisited = calloc(map->nV,sizeof(int));
+    LocationID *currVisited;
+    LocationID *tmpPath = calloc(map->nV, sizeof(LocationID));
+    int isFound = 0;
+    int length = 0;
+    LocationID x, i;
+
+    preVisited[src] = 1;
+    visited[src] = 1;
+    while (isFound != 1) {
+        for (x = 0; x < map->nV && isFound != 1; x++) {
+            if (preVisited[x]) {
+                currVisited = connectedLocations(&numLoc, x, player,
+                                                round, TRUE, TRUE, TRUE);
+//int a;
+//for (a=0;a<numLoc;a++) {
+  //  printf("adjLoc[%d] = %s\n",a,idToName(currVisited[a]));
+//}
+                preVisited[x] = 0;
+                tmp[x] = 0;
+                for (i = 0; i < numLoc; i++) {
+                    if (currVisited[i] == dest) isFound = 1;
+                    if (!visited[currVisited[i]]) {
+                        tmpPath[currVisited[i]] = x;
+                        tmp[currVisited[i]] = 1;
+                        visited[currVisited[i]] = 1;
+                    }
+                }
+                free(currVisited);
+            }
+        }
+        for (x = 0; x < map->nV && isFound != 1; x++) {
+            if (tmp[x]) preVisited[x] = 1;
+        }
+        round++;
+        length++;
+    }
+    i = length;
+//int a;
+//for (a=0;a<70;a++) {
+  //  printf("tmppath[%d] = %s\n",a,idToName(tmpPath[a]));
+//}
+    for (x = dest; x != src; x = tmpPath[x]) {
+        path[i] = x;
+        i --;
+//////////printf("%s >", idToName(x));
+        //*nextLoc = x;
+    }
+  /////////printf("%s ", idToName(x));
+    //*nextLoc = path[1];
+    //printf("nextLoc = %s\n", idToName(*nextLoc));
 
 
+    free(tmp);
+    free(preVisited);
+    free(visited);
+    free(tmpPath);
+    disposeMap(map);
+    return length;
+}
 
+// check if there's a double-back or hide in Dracula's trail
+int hasDBOrHI(LocationID trail[TRAIL_SIZE]) {
+printf("had or not?\n");
+    int hide = 0;
+    int douB = 0;
+    int i;
+    for (i = 0; i < TRAIL_SIZE; i++) {
+printf("tr[%d] = %d\n", i, trail[i]);
+        if (trail[i] == HIDE) {
+            hide++;
+        } else if (trail[i] == DOUBLE_BACK_1 ||
+                   trail[i] == DOUBLE_BACK_2 ||
+                   trail[i] == DOUBLE_BACK_3 ||
+                   trail[i] == DOUBLE_BACK_4 ||
+                   trail[i] == DOUBLE_BACK_5) {
+            douB++;
+        }
+    }
+printf("hide = %d, douB = %d\n", hide, douB);
+    if ((hide != 0) && (douB != 0)) {
+printf("both hidb\n");
+        return BOTH_HIDE_AND_DB;
+    } else if (hide != 0) {
+printf("hdie\n");
+        return HAS_HIDE;
+    } else if (douB != 0) {
+        return HAS_DOUBLE_BACK;
+    } else {
+        return NO_SPECIAL_MOVE;
+    }
+}
 
+// check if there's a double-back or hide in Dracula's trail
+int posOfDb(LocationID trail[TRAIL_SIZE]) {
+    int i;
+    for (i = 0; i < TRAIL_SIZE; i++) {
+        if (trail[i] == DOUBLE_BACK_1 ||
+            trail[i] == DOUBLE_BACK_2 ||
+            trail[i] == DOUBLE_BACK_3 ||
+            trail[i] == DOUBLE_BACK_4 ||
+            trail[i] == DOUBLE_BACK_5) {
+            return i;
+        }
+    }
+    return -1;
+}
 
-
-
-
-
+// to learn the moving pattern of dracula
+void learnDracMove(LocationID trail[TRAIL_SIZE]) {
+   int i;
+   for (i = 0; i < TRAIL_SIZE; i++) {
+      if (trail[i] >= MIN_MAP_LOCATION && trail[i] <= MAX_MAP_LOCATION) {
+          //check 1. furthest from furthest
+          // 2.furthest from nearest
+          // 3. SEA type
+          // 4. rail and road connections
+          // 5. dealing with health
+          // 6. predicting hunters move
+      }
+   }
+   // return different mode value, then use that mode for predicting drac moves
+   return;
+}
