@@ -31,7 +31,7 @@ LocationID *NearbyCities(Map map, LocationID from,
 int inArray(int *array, int object, int size) {
     int i;
     for(i = 0; i < size; i++) {
-        if (array[i] == object) return 1;
+        if (array[i] == object) return i;
     }
     return -1;
 }

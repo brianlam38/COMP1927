@@ -25,5 +25,30 @@ Notes (what the above indicates):
 Overall, it can be observed that a high tree depth is associated with a higher cost. This would be expected as node traversal depends on tree depth.
 
 Standard Insertion (L) - ASCENDING
-Ascending will create a list with only one branch per node, hence a high depth number.
+- Create a list with only one branch per node, hence a high depth number.
+Standard Insertion (L) - PREFIX
+- Prefix will create a balanced tree
+
+Insertion at root (A) - ASCENDING
+- Once branch per node again, high depth number.
+Insertion at root (A) - PREFIX
+- Bad combination
+
+Random insertion via. L+A (R) - ASCENDING and PREFIX
+- Both standard insertion and insertion at root are not well balanced
+for ascending order, so randomly choosing either would have the same result.
+
+Insertion at leaves w/ rebalancing (B) - ASCENDING
+- Improvement in balancing the tree with the periodic rebalancing.
+Insertion at leaves w/ rebalancing (B) - PREFIX
+- Creates a well balanced tree with periodic rebalancing.
+
+Splay Tree insertion (S) - ASCENDING and PREFIX
+- 
+
+
+
+
+Random insertion order seems to be the best option in producing a balanced tree, as each item of data is not correlated, thus has a lower chance of building a list-like structure.
+
 
