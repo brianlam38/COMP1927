@@ -44,10 +44,10 @@ Insertion at leaves w/ rebalancing (B) - PREFIX
 - Creates a well balanced tree with periodic rebalancing.
 
 Splay Tree insertion (S) - ASCENDING and PREFIX
-- 
+- Tree is more balanced for random queries as most nodes would be moved to the root.
 
-
-
+AVL Approach (V) - ASCENDING and PREFIX
+- Low tree depth and cost overall, as it is self-balancing.
 
 Random insertion order seems to be the best option in producing a balanced tree, as each item of data is not correlated, thus has a lower chance of building a list-like structure.
 

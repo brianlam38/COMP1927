@@ -165,14 +165,15 @@ y    } else if (round >= 6 && dTrail[5] != CITY_UNKNOWN && dTrail[5] != SEA_UNKN
             if (isFound == 0)
                 submitID(hTrail[0], "Researching!");
             else {
-                if (dTrail[i] >= MAX_MAP_LOCATION) {
+                //if (dTrail[i] >= MAX_MAP_LOCATION) {
+                if (dTrail[i] == HIDE) {
                     //char message[MESSAGE_SIZE];
                     //returnLastMessage(gameState,(player+3)%4,message);
                     //strcat(message);
                     //submitID(hTrail[0], message);
                       submitID(hTrail[0], "Temporary Fix");
                 } else
-                            submitID(convergeOnDrac(gameState), "Converging on DRAC");
+                      submitID(convergeOnDrac(gameState), "Converging on DRAC");
             }
 
         }
