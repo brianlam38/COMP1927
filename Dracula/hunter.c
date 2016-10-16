@@ -321,7 +321,7 @@ LocationID searchNearby(HunterView h, int player) {
             inCase = placesToGo[i];                                 // patrol around STRASBOURG
             int size = 0;
             LocationID *placesNearDest = whereToGo(player,&size,placesToGo[i],0,(round+1)%4);
-            if (inArray(placesNearDest,STRASBOURG,size)) return placesToGo[i];
+            if (inArray(placesNearDest,STRASBOURG,size) != -1) return placesToGo[i];
             free(placesNearDest);
         }            
     }
