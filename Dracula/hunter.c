@@ -47,6 +47,8 @@ static int convergeOnLeader(HunterView h);
 static int visitedDest(HunterView h, LocationID place, int pos);
 static LocationID searchNearby(HunterView h, int player);
 LocationID *whereDracWent(HunterView h, int *numLocations, int *offset);
+//static LocationID hideAndSeek(HunterView h);
+//static LocationID DBSeek(HunterView h);
 
 /*
     Current Strategy:
@@ -117,40 +119,40 @@ void decideHunterMove(HunterView gameState)
 
     /* After 5 rounds, research or converge */
     } else if (round >= 6) {
-        if (dTrail[0] == hTrail[0]) {                                       // Drac is in same city
+        if (dTrail[0] == hTrail[0]) {                                       // Drac is here
             submitID(hTrail[0], "Dracula is here, I am staying!");
         } else {
             int i;
             int isFound = 0;
             for (i = 0; i < (TRAIL_SIZE); i++) {
-                if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)  // Drac loc unknown
+                if (dTrail[i] == CITY_UNKNOWN || dTrail[i] == SEA_UNKNOWN)  // Drac is unknown
                     continue;
                 else
-                    isFound = 1;                                            // Drac loc known, stop loop
+                    isFound = 1;                                            // Drac is known or HI/DB
                     break;                                                
             }
-            if (isFound == 0)                                               // Research if loc unknown
+            if (isFound == 0)
                 submitID(hTrail[0], "Researching!");
             else {
-                switch(LocationID) {
+                switch(dTrail[i]) {
                     case HIDE:
-                    submitID(hideAndSeek(h), "Dracula is HIDING");
-                    break;
-                case DOUBLE_BACK_1:
-                    submitID(DBSeek(h), "Dracula did a DB1");
-                    break;
-                case DOUBLE_BACK_2:
-                    submitID(DBSeek(h), "Dracula did a DB2");
-                    break;
-                case DOUBLE_BACK_3:
-                    submitID(DBSeek(h), "Dracula did a DB3");
-                    break;
-                case DOUBLE_BACK_4:
-                    submitID(DBSeek(h), "Dracula did a DB4");
-                    break;
-                case DOUBLE_BACK_5:
-                    submitID(DBSeek(h), "Dracula did a DB5");
-                    break;
+                        submitID(convergeOnDrac(gameState), "Dracula is HIDING");
+                        break;
+                    case DOUBLE_BACK_1:
+                        submitID(convergeOnDrac(gameState), "Dracula did a DB1");
+                        break;
+                    case DOUBLE_BACK_2:
+                        submitID(convergeOnDrac(gameState), "Dracula did a DB2");
+                        break;
+                    case DOUBLE_BACK_3:
+                        submitID(convergeOnDrac(gameState), "Dracula did a DB3");
+                        break;
+                    case DOUBLE_BACK_4:
+                        submitID(convergeOnDrac(gameState), "Dracula did a DB4");
+                        break;
+                    case DOUBLE_BACK_5:
+                        submitID(convergeOnDrac(gameState), "Dracula did a DB5");
+                        break;
                 default:
                     submitID(convergeOnDrac(gameState), "Converging on DRAC");
                 }
@@ -160,45 +162,43 @@ void decideHunterMove(HunterView gameState)
 }
 /* ### LOGIC FOR HIDE ### */
 // Returns location of where drac may be from a HIDE
-LocationID hideAndSeek(HunterView h) {
+
+//LocationID hideAndSeek(HunterView h) {
 
     // (1) # of degrees away = trail# - 1
     // (2) search for all possible locations X degrees away
     // (3) go to the locations
 
     /* Grabs dracula trail */
-    LocationID dTrail[TRAIL_SIZE];
-    giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
+//    LocationID dTrail[TRAIL_SIZE];
+//    giveMeTheTrail(h,PLAYER_DRACULA,dTrail);
 
-    /* Grabs position of hide */
-    for (int i = 0, i < TRAIL_SIZE; i++) {
-        if (dTrail[i] == HIDE) {
-            break;
-        }         
-    }
-    /* (1) # of locs away from curr loc */
-    int numLocsAway = i--;                    // HI move = stay in same location.
-                                              // E.g. if HI move was in dTrail[2] -> curr loc = 3rd loc
-                                              // This also means that dTrail[1] -> same loc.
-                                              // Drac should only be 1 move away from current loc
+    /* Grabs position of location before hide (The true location) */
+//    int i;
+//    for (i = 0; i < TRAIL_SIZE; i++) {
+//        if (dTrail[i] == HIDE) {
+//            break;
+//        }         
+//    }
+    // HI move = stay in same location.
+    // Hunter lands on city where dTrail[3] == HI
+    // This means that dTrail[4] location will reveal
 
+    /* Determines what to do */
+//    int player = whoAmI(h);   
+//    LocationID trueLoc;
+//    trueLoc = howToGetTo(dTrail[i+1],whereIs(h,player),giveMeTheRound(h),player,&i,1,1); 
 
+//    return trueLoc;
+//}
 
-}
 /* ### LOGIC FOR DB ### */ 
 // Returns location of where drac may be from a DOUBLE BACK
+/*
 LocationID DBSeek(HunterView h) {
-    if (dTrail[i] == HIDE) {
-        // # of degrees away = trail# - 1
-        // search for all possible locations X degrees away
-        // go to the locations
-        int pathNum = i - 1;
-    }
-
-    // Randomise direction in which hunter heads towards from the HIDE move
-    // 
-   
+    insert code here
 }
+*/
 
 // Returns LocationID of whereToGoNext to hunt drac
 LocationID convergeOnDrac(HunterView h) {
