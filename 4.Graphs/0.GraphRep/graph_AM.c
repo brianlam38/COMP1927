@@ -8,21 +8,21 @@ Graph newGraph(int nV) {
 	assert(nV > 0);
 
 	int i, j;
-	int **e = malloc(nV * sizeof(int*));	// Allocate "column" (ptr to array of ptrs)
-	assert(e != NULL);
+	int **e = malloc(nV * sizeof(int*));	// Alloc "column" 
+	assert(e != NULL);						// (ptr to array of ptrs)
 	for (i = 0; i < nV; i++) {
 		e[i] = malloc(nV * sizeof(int));	// Allocate "rows"
 		assert(e[i] != NULL);
 		for (j = 0; j < nV; j++)			// Init array values = 0
 			e[i][j] = 0;
 	}
-	Graph g = malloc(sizeof(GraphRep));		// Allocate struct
+	Graph g = malloc(sizeof(GraphRep));		// Alloc struct
 	assert (g != NULL);
 	g->nV = nV;								// Init vertices
 	g->nE = 0;								// Init # edges
-	g->edges = e;							// Reference to ptr to first row of edges array
+	g->edges = e;							// Set edges = ptr e
 
-	return g 		// return struct ptr
+	return g
 }
 
 // #####################
@@ -39,9 +39,8 @@ int validV(Graph g, Vertex v) {
 	return (validG(g) && v > 0 && v < g->nV);
 }
 
-// Checking valid edge (check whether two vertices are valid to check for edge)
-// Note: there is no actual edge object, simply a 1 / 0 in the matrix to
-//       implicitly represent the edge
+// Checking valid edge is implicit
+// 1/0 in matrix to represent edges
 int validE(Graph g, Edge e) {
 	return (validV(g,e.v) && validV(g,e.w));
 }
