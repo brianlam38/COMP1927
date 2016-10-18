@@ -1,0 +1,50 @@
+Samples from Game #0:
+
+pastPlays string at end of round 0, start of round 1, given to Godalming:
+
+GMN.... SPL.... HAM.... MPA.... DC?.V..
+
+Following pastPlays strings come from subsequent moves:
+
+pastPlays string given to Seward:
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV....
+
+pastPlasy string given to Van Helsing:
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV.... SLO....
+
+pastPlays string given to Mina Harker:
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV.... SLO.... HNS....
+
+pastPlays string given to Dracula:
+MN.... SPL.... HAM.... MPA.... DZU.V.. GLV.... SLO.... HNS.... MST....
+
+pastPlays string given to Godalming:
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV.... SLO.... HNS.... MST.... DC?T...
+
+pastPlays string given to Seward:
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV.... SLO.... HNS.... MST.... DC?T... GIR....
+
+etc.
+
+
+Samples from Game #1:
+
+pastPlays string given to Mina Harker after several rounds:
+
+GMN.... SPL.... HAM.... MPA.... DC?.V.. GLV.... SLO.... HNS.... MST.... DC?T... GIR.... SPL.... HAO.... MZU.... DCDT... GSW.... SLO.... HNS.... MFR.... DC?T... GLV.... SPL.... HAO.... MZU.... DC?T... GSW.... SLO.... HNS....
+
+pastPlays string given to Dracula after Mina's move:
+
+GMN.... SPL.... HAM.... MPA.... DGA.V.. GLV.... SLO.... HNS.... MST.... DHIT... GIR.... SPL.... HAO.... MZU.... DCDT... GSW.... SLO.... HNS.... MFR.... DKLT... GLV.... SPL.... HAO.... MZU.... DBCT... GSW.... SLO.... HNS.... MMR....
+
+
+Samples from Game #2:
+
+pastPlays string given to Godalming after several rounds:
+
+GED.... SGE.... HZU.... MCA.... DCF.V.. GMN.... SCFVD.. HGE.... MLS.... DBOT... GLO.... SMR.... HCF.... MMA.... DC?T... GPL.... SMS.... HMR.... MGR.... DBAT... GLO.... SBATD.. HMS.... MMA.... DC?T... GPL.... SSJ.... HBA.... MGR.... DC?T... GPL.... SSJ.... HBA.... MGR.... DC?T...
+
+pastPlays string given to Dracula after other hunters have moved:
+
+GED.... SGE.... HZU.... MCA.... DCF.V.. GMN.... SCFVD.. HGE.... MLS.... DBOT... GLO.... SMR.... HCF.... MMA.... DTOT... GPL.... SMS.... HMR.... MGR.... DBAT... GLO.... SBATD.. HMS.... MMA.... DSRT... GPL.... SSJ.... HBA.... MGR.... DALT... GPL.... SSJ.... HBA.... MGR.... DMAT... GLO.... SBE.... HMS.... MMATD..
+
