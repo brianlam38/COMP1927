@@ -70,7 +70,6 @@ void decideHunterMove(HunterView gameState)
     srand(time(NULL));
     int player = whoAmI(gameState);         // store curr player
     int round = giveMeTheRound(gameState);  // store curr round
-    int health = howHealthyIs(gameState, player);
 
     LocationID dTrail[TRAIL_SIZE];          // get drac trail
     giveMeTheTrail(gameState,PLAYER_DRACULA,dTrail);
@@ -97,8 +96,8 @@ void decideHunterMove(HunterView gameState)
                 submitID(M_START, "MINA START");
         }
     /* Low health, go to hospital */
-    } else if (health <= 2 && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
-        submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "Hunter to hospital");
+    } else if (whereIs(gameState,player) == ST_JOSEPH_AND_ST_MARYS && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
+        submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "The comeback is real");
     /* First 6 turns, converge on GODALMING */
     } else if (round < 6) {
         int i;
@@ -126,7 +125,6 @@ void decideHunterMove(HunterView gameState)
             for (i = 0; i < (TRAIL_SIZE); i++) {
                 if (dTrail[i] > MAX_MAP_LOCATION)
                     continue;
-
                 else {
                     isFound = 1;
                     break;
