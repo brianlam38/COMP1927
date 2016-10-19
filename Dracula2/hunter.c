@@ -70,6 +70,7 @@ void decideHunterMove(HunterView gameState)
     srand(time(NULL));
     int player = whoAmI(gameState);         // store curr player
     int round = giveMeTheRound(gameState);  // store curr round
+    int health = howHealthyIs(gameState, player);
 
     LocationID dTrail[TRAIL_SIZE];          // get drac trail
     giveMeTheTrail(gameState,PLAYER_DRACULA,dTrail);
@@ -77,21 +78,10 @@ void decideHunterMove(HunterView gameState)
     LocationID hTrail[TRAIL_SIZE];          // get current hunter trail
     giveMeTheTrail(gameState,player,hTrail);
 
-    /* CURRENT DRYRUN LOGS
-    
-    (1) Round 0 placement = successful
-    (2) Round 1 = Researching (incorrect logic)
-    (3) Round 2 = Converge on Godalming (fn not implemented)
-
-    */int temp = 0;
-
-    if (whereIs(gameState,player) == ST_JOSEPH_AND_ST_MARYS && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
-        submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "The comeback is real");
-        return;
-    }
+    int temp = 0;
 
     printf("The current round is: %d\n", round);
-    // Round 0 placement
+    /* Round 0 placement */
     if (round == 0) {
         switch(player) {
             case PLAYER_LORD_GODALMING:
@@ -106,61 +96,34 @@ void decideHunterMove(HunterView gameState)
             default:
                 submitID(M_START, "MINA START");
         }
-    // First 6 turns, converge on GODALMING
-    /*  ORIGINAL CODE
-
-        } else if (round < 6 && (dTrail[0] == CITY_KNOWN || dTrail[0] == SEA_UNKNOWN)) {
-            submitID(convergeOnLeader(gameState), "Converging on Leader");
-
-        ISSUE:
-        Currently, there is no logic in (rounds < 6) for hunters picking up drac's trail
-        when they are still within the condition. Build logic for this.
-
-        Sample pseudocode within (else if (round < 6) for loop):
-        if dracula trail != CITY_UNKNOWN or SEA_UNKNOWN
-            then convergeOnDrac
-    */
-    } else if (whereIs(gameState,player) == ST_JOSEPH_AND_ST_MARYS && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
-        submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "The comeback is real");
-
+    /* Low health, go to hospital */
+    } else if (health <= 2 && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
+        submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "Hunter to hospital");
+    /* First 6 turns, converge on GODALMING */
     } else if (round < 6) {
         int i;
         int isFound = 0;
         //int inSea = 0;
-
-        for (i = 0; i < (TRAIL_SIZE); i++) {                            // loop through trail
-            if (dTrail[i] >= MAX_MAP_LOCATION) //includes unknown city, sea, Double back and hide
+        for (i = 0; i < (TRAIL_SIZE); i++) {
+            if (dTrail[i] >= MAX_MAP_LOCATION)
                 continue;
-            else {                                                           // if anything other than
-                isFound = 1;                                                // CT/SEA_UNKNOWN, isFound = 1
-                break;
-            }                                                      // break out of loop, prevent re-assigning as 0
+            else {
+                isFound = 1;
+                break;  
+            }         
         }
-        if (isFound == 0)                                                   // if drac not found, converge on lead
+        if (isFound == 0)
             submitID(convergeOnLeader(gameState), "Converging on LEADER");
-        else                                                                // else converge on drac
+        else
             submitID(convergeOnDrac(gameState), "Converging on DRAC");
-    /* After initial 6 turns */
-    /* ORIGINAL     
-    } else if (round >= 6 && dTrail[0] != CITY_UNKNOWN && dTrail[0] != SEA_UNKNOWN) {
-        if (dTrail[0] == hTrail[0]) {            // Stay in city if drac is here
-            submitID(hTrail[0], "Dracula's here");
-        } else {                                 // Converge on drac
-            submitID(convergeOnDrac(gameState),"Converging on Dracula");
-        }
-y    } else if (round >= 6 && dTrail[5] != CITY_UNKNOWN && dTrail[5] != SEA_UNKNOWN) {
-      submitID(convergeOnDrac(gameState), "Converge on him!");  
-    */    
+    /* After initial 6 turns */ 
     } else if (round >= 6) {
         if (dTrail[0] == hTrail[0]) {
             submitID(hTrail[0], "Dracula is here, I am staying!");
         } else {
             int i;
             int isFound = 0;
-
-
             for (i = 0; i < (TRAIL_SIZE); i++) {
-
                 if (dTrail[i] > MAX_MAP_LOCATION)
                     continue;
 
@@ -169,13 +132,12 @@ y    } else if (round >= 6 && dTrail[5] != CITY_UNKNOWN && dTrail[5] != SEA_UNKN
                     break;
                 }
             }
-
-            if (isFound == 0)
+            if (isFound == 0) {
  //               if (!inSea)
                     submitID(hTrail[0], "Researching!");
  //               else
  //                   zoneStrat(gameState);
-            else {
+            } else {
                 if (dTrail[i] >= MAX_MAP_LOCATION) {
                     //char message[MESSAGE_SIZE];
                     //returnLastMessage(gameState,(player+3)%4,message);
@@ -183,12 +145,11 @@ y    } else if (round >= 6 && dTrail[5] != CITY_UNKNOWN && dTrail[5] != SEA_UNKN
                     //submitID(hTrail[0], message);
                       submitID(hTrail[0], "Temporary Fix");
                 } else
-   //                 if (inSea)
-     //                   spreadToCoast(gameState);
-     //               else
-                      submitID(convergeOnDrac(gameState), "Converging on DRAC");
+   //               if (inSea)
+     //                 spreadToCoast(gameState);
+     //             else
+                        submitID(convergeOnDrac(gameState), "Converging on DRAC");
             }
-
         }
     }               
 }
