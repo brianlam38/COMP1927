@@ -131,10 +131,10 @@ void decideHunterMove(HunterView gameState)
                 }
             }
             if (isFound == 0) {
- //               if (!inSea)
+                if (round % 4 == 0)
                     submitID(hTrail[0], "Researching!");
- //               else
- //                   zoneStrat(gameState);
+                else
+                    submitID(searchNearby(gameState, player), "Searching Nearby");
             } else {
                 if (dTrail[i] >= MAX_MAP_LOCATION) {
                     //char message[MESSAGE_SIZE];
@@ -308,6 +308,12 @@ LocationID searchNearby(HunterView h, int player) {
     //returns -1 if unable to find anywhere unvisited
     //returns an unvisited place not next to STRATSBOURG otherwise
     printf("Time taken in Case = %lu\n",(clock()-start));
+    if (numPlaces > 0) {
+        inCase = placesToGo[numPlaces-1];
+    } else {
+        inCase = placesToGo[0];
+    }
+    free(placesToGo);
     return inCase;
 }
 
