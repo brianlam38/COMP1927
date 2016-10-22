@@ -8,6 +8,7 @@
 #include "Item.h"
 
 typedef struct ListRep *List;
+typedef struct ListNode *Node;
 
 List newList(); // create new empty list
 void dropList(List); // free memory used by list

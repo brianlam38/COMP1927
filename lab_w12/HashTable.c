@@ -11,7 +11,7 @@
 // Types and functions local to HashTable ADT
 
 typedef struct HashTabRep {
-	List *lists;  // either use this
+	List *lists;  // either use this		// ptr to array of linked lists???
 	int   nslots; // # elements in array
 	int   nitems; // # items stored in HashTable
 } HashTabRep;
@@ -73,7 +73,12 @@ void HashTableStats(HashTable ht)
 	int lenNum = 0;
 	int i, j;
 
-	for (List curr == L->first; curr != NULL; curr = curr->next) {
+	List currList = ht->lists[i];
+	Node currNode = NULL;
+
+	//int lenNum = malloc((ht->nitems) * sizeof(int));
+
+	for (currNode = currList->first; currNode != NULL; currNode = currNode->next) {
 		chainLen++;
 	}
 	printf("Chain length distribution\n");

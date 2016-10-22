@@ -11,6 +11,7 @@
 #include "Globals.h"
 #include "GameView.h"
 
+
 // struct definition of Map
 typedef struct vNode *VList;
 
@@ -32,7 +33,6 @@ typedef struct _playerInfo {
     int playerHealth;                      // health of each player
     LocationID playerCurrLocation;         // current loaction of each player
     LocationID playerTrail[TRAIL_SIZE];    // trail location of each player
-    LocationID actualLoc;
 } playerInfo;
 
 struct gameView {
@@ -45,16 +45,17 @@ struct gameView {
 
 };
 
+
 typedef struct QueueRep *Queue;
 
 typedef struct QueueNode {
-    LocationID value;
-    struct QueueNode *next;
+	LocationID value;
+	struct QueueNode *next;
 } QueueNode;
 
 typedef struct QueueRep {
-    QueueNode *head;  // ptr to first node
-    QueueNode *tail;  // ptr to last node
+	QueueNode *head;  // ptr to first node
+	QueueNode *tail;  // ptr to last node
 } QueueRep;
 
 typedef struct PQueueRep *PQueue;
@@ -88,6 +89,7 @@ typedef struct PQueueRep {
 #define BOTH_HIDE_AND_DB    -4
 
 #define NUM_SEA             10
+#define NUM_HUNTERS         4
 
 
 // traverse the map and return an array of nearby cities of "from" with type "type"
@@ -101,6 +103,10 @@ LocationID *NearbyCities(Map map, LocationID from,
 // return the index of first occurance of the object
 // return -1 if the object is not in the array
 int inArray(int *array, int object, int size);
+
+
+// copy an array of int from old to new
+void copyArray(int *old, int *new, int size);
 
 
 // shift the array to the left
@@ -163,10 +169,12 @@ void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
 
+int hunterPathLength(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path);
+int isReachable(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *previsited,  LocationID *tmpPath);
 int simpleFindPathLength(LocationID src, LocationID dest);
 int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path);
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
-                             int player, int *pathLength, int sea, int train);
+                      int player, int *pathLength, int sea, int train);
 int findMostCommon(int *array,int size);
 
 Queue newQueue(); // create new empty queue

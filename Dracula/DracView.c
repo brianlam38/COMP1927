@@ -165,7 +165,7 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 
 //// Functions that query the map to find information about connectivity
 // What are my (Dracula's) possible next moves (locations)
-LocationID *whereCanIgo(DracView currentView, int *numLocations,
+LocationID *whereCanDracgo(DracView currentView, int *numLocations,
                         int road, int sea) {
     assert(currentView != NULL && currentView->view != NULL);
 
@@ -178,7 +178,7 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations,
     LocationID trail[TRAIL_SIZE];
     int i, index;
     for(i=0;i<(*numLocations);i++) {
-printf("adjLoc[%d] = %s\n",i,idToName(adjLoc[i]));
+printf("connected[%d] = %s\n",i,idToName(adjLoc[i]));
 }
     getHistory(currentView->view, PLAYER_DRACULA, hideTrail);
     giveMeTheTrail(currentView, PLAYER_DRACULA,
@@ -268,4 +268,68 @@ LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
     return connectedLocations(numLocations,
                               from, player, round, road, rail, sea);
+}
+
+// check where dracula can go from a given location
+LocationID *whereCanIgo(int *numLocations, LocationID trail[TRAIL_SIZE],
+                        LocationID hideTrail[TRAIL_SIZE], LocationID currLoc,
+                        int road, int sea) {
+    LocationID *adjLoc = connectedLocations(numLocations,
+                                            currLoc, PLAYER_DRACULA,
+                                            1, road, FALSE, sea);
+//int y;
+//for (y = 0;y<*numLocations;y++) {
+//printf("connection = %s\n",idToName(adjLoc[y]));}
+    int i, index;
+    shiftRight(hideTrail, 0, TRAIL_SIZE - 1);
+    shiftRight(trail, 0, TRAIL_SIZE - 1);
+    hideTrail[0] = UNKNOWN_LOCATION;
+    trail[0] = UNKNOWN_LOCATION;
+    int dbOrHi = hasDBOrHI(hideTrail);
+    int dbPos = posOfDb(hideTrail);
+    int noShift = 0;
+
+    if (dbOrHi == HAS_DOUBLE_BACK) {
+
+        if (idToType(currLoc) != SEA) noShift = 1;
+        for (i = 1; i < TRAIL_SIZE; i++) {
+            if (trail[i] == currLoc && idToType(currLoc) != SEA) noShift = 1;
+            index = inArray(adjLoc, trail[i], *numLocations);
+            //if ((i == 5) && (hideTrail[5] == HIDE)) noShift = 1;
+            //if (hideTrail[i] == HIDE && i == dbPos - 1) noShift = 1;
+            if ((index != -1) && (i != dbPos) && (noShift != 1)) {
+                shiftLeft(adjLoc, index, (*numLocations) - 1);
+                (*numLocations)--;
+                if ((*numLocations) > 0) {
+                    adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                    assert(adjLoc != NULL);
+                } else {
+                    free(adjLoc);
+                    adjLoc = NULL;
+                }
+            }
+            noShift = 0;
+        }
+    } else if (dbOrHi == BOTH_HIDE_AND_DB) {
+        for (i = 1; i < TRAIL_SIZE; i++) {
+            index = inArray(adjLoc, trail[i], *numLocations);
+            //if ((i == 5) && (hideTrail[5] == HIDE)) noShift = 1;
+            //if (hideTrail[i] == HIDE && i == dbPos - 1) noShift = 1;
+            //if (hideTrail[i] == TELEPORT) noShift = 1;
+//printf("index=%d, dbPos=%d,i=%d\n",index, dbPos, i);
+            if ((index != -1) && (i != dbPos) && (hideTrail[i] != HIDE)) {
+//printf("del\n");
+                shiftLeft(adjLoc, index, (*numLocations) - 1);
+                (*numLocations)--;
+                if ((*numLocations) > 0) {
+                    adjLoc = realloc(adjLoc, (*numLocations) * sizeof(LocationID));
+                    assert(adjLoc != NULL);
+                } else {
+                    free(adjLoc);
+                    adjLoc = NULL;
+                }
+            }
+        }
+    }
+    return adjLoc;
 }

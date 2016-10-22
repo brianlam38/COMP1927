@@ -7,6 +7,7 @@
 #include "Places.h"
 #include "Globals.h"
 #include "GameView.h"
+#include <time.h>
 
 //count the number of nearby cities of a specified location and
 // store the nearby cities in an array
@@ -301,6 +302,7 @@ int QueueIsEmpty(Queue Q)
 // FUNCTIONS UNIQUE TO DRACULA
 // ###########################
 
+
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
                              int player, int *pathLength, int sea, int train) {
 
@@ -344,6 +346,7 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
     LocationID curr = dest;
     while (prevList[curr] != from) {    // Traversing back
         curr = prevList[curr];
+	(*pathLength)++;
     }
 
     return curr;
@@ -352,9 +355,9 @@ LocationID howToGetTo(LocationID dest, LocationID from, int round,
 int findMostCommon(int *array,int size) {
     int Locations[NUM_MAP_LOCATIONS] = {0};
     int i;
-    
+
     for (i = 0; i < size; i++) {
-        if (array[i] != -1) 
+        if (array[i] != -1)
             Locations[array[i]]++;
     }
     int mode = 0;
@@ -454,7 +457,7 @@ void showPQueue(PQueue PQ)
     curr = PQ->head;
     while (curr != NULL) {
         printf("location: %d",curr->value);
-    printf("distance from: %d",curr->distance);
+        printf("distance from: %d",curr->distance);
         if (curr->next != NULL)
             printf(">");
         curr = curr->next;
@@ -515,8 +518,6 @@ int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round
     assert(validPlace(dest));
 
     Map map = newMap();
-//LocationID *path = calloc(map->nV, sizeof(LocationID));
-    //*nextLoc = src;
     path[0] = src;
     if (src == dest) return 0;
 
@@ -568,30 +569,155 @@ int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round
     for (x = dest; x != src; x = tmpPath[x]) {
         path[i] = x;
         i --;
-//////////printf("%s >", idToName(x));
+//printf("%s >", idToName(x));
         //*nextLoc = x;
     }
-  /////////printf("%s ", idToName(x));
+//printf("%s ", idToName(x));
     //*nextLoc = path[1];
     //printf("nextLoc = %s\n", idToName(*nextLoc));
-
-
+//printf("findpathlength = %d\n", length);
     free(tmp);
     free(preVisited);
     free(visited);
     free(tmpPath);
     disposeMap(map);
+
     return length;
 }
 
+
+int hunterPathLength(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path) {
+    assert(validPlace(src));
+    assert(validPlace(dest));
+
+    if (src == dest) return 0;
+
+    int *visited = calloc(map->nV, sizeof(int));
+    int *previsited = calloc(map->nV, sizeof(int));
+    int *newlyvisited = calloc(map->nV, sizeof(int));
+    int isFound = 0;
+    int length = 0;
+LocationID *tmpPath = calloc(map->nV, sizeof(LocationID));
+LocationID x;
+//        printf("railstop = %d\n", railStop);
+//    printf("src is %s, dest is %s, player is %d, ronud is %d\n", idToName(src), idToName(dest), player, round);
+        previsited[src] = 1;
+        newlyvisited[src] = 1;
+        visited[src] = 1;
+
+            while (isFound != 1) {
+                for (x = 0; x < map->nV; x++) {
+                    if (newlyvisited[x]) {
+          //              printf("putting in aaa is %s\n", idToName(x));
+                        isFound = isReachable(map, railMap, x, dest, player, round, previsited, tmpPath);
+                        if (isFound) break;
+                        newlyvisited[x] = 0;
+                     }
+                }
+
+                for (x = 0; x < map->nV && isFound != 1; x++) {
+                    if (visited[x] == 0 && previsited[x] == 1) {
+                        visited[x] = 1;
+                        newlyvisited[x] = 1;
+//tmpPath[
+        //                printf("newlyvisited is %s\n", idToName(x));
+                    }
+                }
+                round++;
+                length++;
+            }
+int i = length;
+for (x = dest; x != src; x = tmpPath[x]) {
+        path[i] = x;
+        i --;
+//printf("%s >", idToName(x));
+        //*nextLoc = x;
+    }
+//printf("%s ", idToName(x));
+    free(previsited);
+    free(newlyvisited);
+    free(visited);
+    //printf("hpathlength = %d\n", length);
+    return length;
+}
+
+
+
+// check if dest is reacheable in next move
+int isReachable(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *previsited,  LocationID *tmpPath) {
+    assert(validPlace(src));
+    assert(validPlace(dest));
+
+    int isFound = 0;
+    int railStop = (round + player) % 4;
+    LocationID w, y, z;
+    VList curr, p, n;
+if (player == PLAYER_DRACULA) railStop = 0;
+//printf("railstop = %d, src = %s, dest = %s\n", railStop, idToName(src), idToName(dest));
+    for (curr = map->connections[src]; curr != NULL && (isFound != 1); curr = curr->next) {
+        if ((player == PLAYER_DRACULA && curr->type == RAIL) ||
+            (player == PLAYER_DRACULA && curr->v == ST_JOSEPH_AND_ST_MARYS)) continue;
+        else {
+            y = curr->v;//printf("0/1railstop = %s\n", idToName(y));printf("railstop = %d\n", railStop);
+//printf("currtype = %d\n", curr->type);
+            if (railStop > 1 && (curr->type == RAIL || curr->type == ANY)) {
+//printf("hasrail = %s\n", idToName(y));
+                for (p = railMap->connections[y]; p != NULL && isFound != 1; p = p->next) {
+                        z = p->v;//printf("2railstop = %s\n", idToName(z));
+                        if ((p->type == RAIL || p->type == ANY) && z != src) {
+                            if (railStop == 3) {
+                                for (n = railMap->connections[z]; n != NULL && isFound != 1; n = n->next) {
+                                    w = n->v; //printf("3railstop = %s\n", idToName(w));
+                                    if ((n->type == RAIL || n->type == ANY) && w != y) {
+                                        if (previsited[w]) continue;
+tmpPath[w] = src;
+                                        if (w == dest) {
+                                            isFound = 1;
+                                            break;
+                                        }
+                                        if (!previsited[w]) {
+                                            previsited[w] = 1;
+                                        }
+                                    }
+                                }
+                            }
+                            if (previsited[z]) continue;
+tmpPath[z] = src;
+                            if (z == dest) {
+                                isFound = 1;
+                                break;
+                            }
+                            if (!previsited[z]) {
+                                previsited[z] = 1;
+                            }
+                        }
+                    }
+                }
+                if (previsited[y]) continue;
+tmpPath[y] = src;
+                if (y == dest) {
+                    isFound = 1;
+                    break;
+                }
+                if (!previsited[y]) {
+                    previsited[y] = 1;
+                }
+            }
+        }
+    if (isFound) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 // check if there's a double-back or hide in Dracula's trail
 int hasDBOrHI(LocationID trail[TRAIL_SIZE]) {
-printf("had or not?\n");
     int hide = 0;
     int douB = 0;
     int i;
     for (i = 0; i < TRAIL_SIZE; i++) {
-printf("tr[%d] = %d\n", i, trail[i]);
         if (trail[i] == HIDE) {
             hide++;
         } else if (trail[i] == DOUBLE_BACK_1 ||
@@ -602,12 +728,9 @@ printf("tr[%d] = %d\n", i, trail[i]);
             douB++;
         }
     }
-printf("hide = %d, douB = %d\n", hide, douB);
     if ((hide != 0) && (douB != 0)) {
-printf("both hidb\n");
         return BOTH_HIDE_AND_DB;
     } else if (hide != 0) {
-printf("hdie\n");
         return HAS_HIDE;
     } else if (douB != 0) {
         return HAS_DOUBLE_BACK;
@@ -615,6 +738,7 @@ printf("hdie\n");
         return NO_SPECIAL_MOVE;
     }
 }
+
 
 // check if there's a double-back or hide in Dracula's trail
 int posOfDb(LocationID trail[TRAIL_SIZE]) {
@@ -630,6 +754,16 @@ int posOfDb(LocationID trail[TRAIL_SIZE]) {
     }
     return -1;
 }
+
+// copy an array of int from old to new
+void copyArray(int *old, int *new, int size) {
+  int i;
+  for (i = 0; i < size; i++) {
+    new[i] = old[i];
+  }
+  return;
+}
+
 
 // to learn the moving pattern of dracula
 void learnDracMove(LocationID trail[TRAIL_SIZE]) {
@@ -647,3 +781,19 @@ void learnDracMove(LocationID trail[TRAIL_SIZE]) {
    // return different mode value, then use that mode for predicting drac moves
    return;
 }
+
+
+
+//1. how to escape after meeting a hunter
+//2. make the lowest mark (if drac is gonna game over)
+ //(also another tecniques: if surrounded by hunters,
+   //go to sea and stay still drac has 2 bloods left or found a safe place to land,
+    //this can earn a greater round numbers, ie, a lower mark)
+//3. if drac has sufficient health and hunter is gonna game over,
+  //then drac stay around in sea to avoid meeting with the hunters
+//4. conditions for when should drac stay in sea
+//5. optimalscore function
+//6. when should drac go back to cities from sea
+//7. select adjLocs appropriately if drac just met a hunter
+//8. limit the use of HI and DB if hunters r far away
+//9. things to do when they know one of ur locations

@@ -10,13 +10,14 @@
 #include "Map.h"       //use the Map ADT
 #include "Places.h"    //use the Places ADT
 #include "commonFunctions.h"    //Our ADT
+#include <time.h>
 
 // We have put the gameView struct to commonFunction.h
 //  for other files to access it
 
 // Creates a new GameView to summarise the current state of the game
 GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
-    // int i;
+    //int i;
     int nChar = countChar(pastPlays);
 
     GameView currView = malloc(sizeof(struct gameView));
@@ -31,17 +32,17 @@ GameView newGameView(char *pastPlays, PlayerMessage messages[]) {
 
     PlayerID player = currView->currentPlayer;
     //if it is not before the first play (ie, messages is not empty)
-    // if (((nChar + 1)/CHARS_PER_TURN) != 0) {
-    //     currView->messages = calloc(((nChar + 1)/CHARS_PER_TURN) ,
-    //                                 sizeof(char[MESSAGE_SIZE]));
-    //     assert(currView->messages != NULL);
-    //     for (i = 0; i < currView->roundNumber * NUM_PLAYERS + player; i++) {
-    //         strcpy(currView->messages[i], messages[i]);
-    //     }
-    // } else {
-    //     //initialise messages to NULL if it's empty
-    //     currView->messages = NULL;
-    // }
+//    if (((nChar + 1)/CHARS_PER_TURN) != 0) {
+//        currView->messages = calloc(((nChar + 1)/CHARS_PER_TURN) ,
+//                                    sizeof(char[MESSAGE_SIZE]));
+//        assert(currView->messages != NULL);
+//        for (i = 0; i < currView->roundNumber * NUM_PLAYERS + player; i++) {
+//            strcpy(currView->messages[i], messages[i]);
+//        }
+//    } else {
+//        //initialise messages to NULL if it's empty
+//        currView->messages = NULL;
+//    }
 
     //fill in info for each player
     for (player = PLAYER_LORD_GODALMING; player < NUM_PLAYERS; player++) {
@@ -63,8 +64,8 @@ void disposeGameView(GameView toBeDeleted) {
         free(toBeDeleted->players[player]);
         toBeDeleted->players[player] = NULL;
     }
-    // if (toBeDeleted->messages != NULL) free(toBeDeleted->messages);
-    // toBeDeleted->messages = NULL;
+//    if (toBeDeleted->messages != NULL) free(toBeDeleted->messages);
+//    toBeDeleted->messages = NULL;
     if (toBeDeleted->pastPlays != NULL) free(toBeDeleted->pastPlays);
     toBeDeleted->pastPlays = NULL;
     free(toBeDeleted);
@@ -168,7 +169,6 @@ int getScore(GameView currentView) {
     return score;
 }
 
-// Get the current health points for a given player
 int getHealth(GameView currentView, PlayerID player) {
     assert(currentView != NULL);
     assert(player >= PLAYER_LORD_GODALMING && player < NUM_PLAYERS);
@@ -199,7 +199,7 @@ int getHealth(GameView currentView, PlayerID player) {
             type = idToType(currID);
             if (currID == SEA_UNKNOWN || type == SEA) {
                 health -= LIFE_LOSS_SEA;
-            } else if (currID == TELEPORT) {
+            } else if (currID == TELEPORT || currID == CASTLE_DRACULA) {
                 health += LIFE_GAIN_CASTLE_DRACULA;
             }
         }
