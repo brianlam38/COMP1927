@@ -87,7 +87,7 @@ void decideHunterMove(HunterView gameState)
     
         submitID(startLocations[player],"Ready or not, here I come :D");  
 
-    /* Go to hospital */
+    /* Low health, go to hospital */
     } else if (whereIs(gameState,player) == ST_JOSEPH_AND_ST_MARYS && hTrail[0] != ST_JOSEPH_AND_ST_MARYS) {
         submitID (howToGetTo(hTrail[0],ST_JOSEPH_AND_ST_MARYS,round,player,&temp,0,1), "The comeback is real");
     /* First 6 turns, converge on GODALMING */
@@ -133,8 +133,8 @@ void decideHunterMove(HunterView gameState)
                 else
                     submitID(searchNearby(gameState, player), "Searching Nearby");
             } else {
-                if (dTrail[i] >= MAX_MAP_LOCATION && dTrail[i] != TELEPORT) {                   
-                    submitID(hTrail[0], "Temporary Fix");
+                if (dTrail[i] >= MAX_MAP_LOCATION && dTrail[i] != TELEPORT) {
+                      submitID(hTrail[0], "Temporary Fix");
                 } else
                     submitID(convergeOnDrac(gameState), "Converging on DRAC");
             }
