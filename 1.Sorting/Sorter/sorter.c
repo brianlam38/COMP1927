@@ -151,7 +151,9 @@ int eq(int x, int y)
 void swap(int a[], int i, int j)
 {
 	nswaps++;
-	int tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+	int tmp = a[i];
+	a[i] = a[j];
+	a[j] = tmp;
 }
 
 void move(int a[], int i, int j)
@@ -216,9 +218,9 @@ int isSorted(int a[], int lo, int hi)
 void bubbleSort(int a[], int lo, int hi)
 {
    int i, j, nswaps;
-   for (i = lo; i < hi; i++) {
+   for (i = lo; i < hi; i++) {		// Start from index 1
       nswaps = 0;
-      for (j = hi; j > i; j--) {
+      for (j = hi; j > i; j--) {	//
          if (less(a[j], a[j-1])) {
             swap(a,j,j-1);
             nswaps++;
