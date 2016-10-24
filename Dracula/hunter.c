@@ -115,14 +115,7 @@ void decideHunterMove(HunterView gameState)
         } else {
             int i;
             int isFound = 0;
-            int fleeBySea = 0;
-
             for (i = 0; i < (TRAIL_SIZE); i++) {
-                if (i > 1) {
-                    if (dTrail[i] == SEA_UNKNOWN && dTrail[i-1] == SEA_UNKNOWN)
-                        fleeBySea = 1; break;
-                }
-
                 if (dTrail[i] > MAX_MAP_LOCATION && dTrail[i] != TELEPORT)
                     continue;
                 else {
@@ -130,32 +123,7 @@ void decideHunterMove(HunterView gameState)
                     break;
                 }
             }
-
-            if (fleeBySea) {
-                int steps = 0;
-                if (player == PLAYER_LORD_GODALMING) {
-                    LocationID dest = howToGetTo(CONSTANTA,hTrail[0],round,player,&steps,1,1);
-                    if (visitedDest(gameState,CONSTANTA,2)) 
-                        submitID(howToGetTo(SALONICA,hTrail[0],round,player,&steps,1,1),"Kinda camping it out");
-                    else submitID(dest,"Defs camping it out at CD");
-                } else if (player == PLAYER_DR_SEWARD) {
-                    LocationID dest = howToGetTo(ROME,hTrail[0],round,player,&steps,1,1);
-                    if (visitedDest(gameState,ROME,2)) 
-                        submitID(howToGetTo(CASTLE_DRACULA,hTrail[0],round,player,&steps,1,1),"I'll check base instead");
-                    else submitID(dest,"Are you at rome?");
-                } else if (player == PLAYER_VAN_HELSING) {
-                    LocationID dest = howToGetTo(GALWAY,hTrail[0],round,player,&steps,1,1);
-                    if (visitedDest(gameState,GALWAY,2)) 
-                        submitID(howToGetTo(LONDON,hTrail[0],round,player,&steps,1,1),"I think I'll visit the UK");
-                    else submitID(dest,"Are you trying to do that TP hack?");
-                } else {
-                    LocationID dest = howToGetTo(ALICANTE,hTrail[0],round,player,&steps,1,1);
-                    if (visitedDest(gameState,ALICANTE,3)) 
-                        submitID(howToGetTo(BORDEAUX,hTrail[0],round,player,&steps,1,1),"Imma visit BO cause you lurking");
-                    else submitID(dest,"You trying to make a quick escape aye?");
-                }
-
-            } else if (isFound == 0) {
+            if (isFound == 0) {
                 //if (round % 4 == 0)
                 //    submitID(hTrail[0], "Researching!");
                 int steps = 0;
@@ -223,22 +191,24 @@ LocationID convergeOnDrac(HunterView h) {
 
             LocationID *dracsChoices = whereDracWent(h,&numLocations,&offset);
 
-            if (numLocations == 1) {
+            if (numLocations == 1 && dracsChoices[0] != -1) {
                 dest = howToGetTo(dracsChoices[0],whereIs(h,player),round,player,&stepsAway,0,1);
                 free(dracsChoices);
                 return dest;
-            } else if (numLocations == 2) {
+            } else if (numLocations == 2 && dracsChoices[player%2] != -1) {
+
                 dest = howToGetTo(dracsChoices[player%2],whereIs(h,player),round,player,&stepsAway,0,1);
                 free(dracsChoices);
                 return dest;
-            } else if (numLocations == 3) {
+            } else if (numLocations == 3 && dracsChoices[player%3] != -1) {
                 dest = howToGetTo(dracsChoices[player%3],whereIs(h,player),round,player,&stepsAway,0,1);
                 free(dracsChoices);
                 return dest;
-            } else if (numLocations == 4) {
+            } else if (numLocations == 4 && dracsChoices[player%4] != -1) {
                 dest = howToGetTo(dracsChoices[player%4],whereIs(h,player),round,player,&stepsAway,0,1);
                 free(dracsChoices);
                 return dest;
+
             }
 
 
