@@ -165,7 +165,7 @@ void move(int a[], int i, int j)
 void copy(int a[], int *i, int b[], int *j)
 {
 	nmoves++;
-	a[*i] = b[*j];
+	a[*i] = b[*j];	// copies value from real to temp list
     *i = *i + 1;
     *j = *j + 1;
 }
@@ -214,23 +214,23 @@ int isSorted(int a[], int lo, int hi)
 
 // Sorting Algorithms
 
-/* BUBBLE SORT */
+/* BUBBLE SORT: O(n) -> O(n^2) */
 void bubbleSort(int a[], int lo, int hi)
 {
   	int i, j, nswaps;
-   	for (i = lo; i < hi; i++) {			// Multiple iter through array
+   	for (i = lo; i < hi; i++) {			// Loop through list
      	nswaps = 0;
-      	for (j = hi; j > i; j--) {		// Swaps out of order elts until
-        	if (a[j] < a[j-1]) {		// sorted section is reached
+      	for (j = hi; j > i; j--) {		// Loop downwards from end
+        	if (a[j] < a[j-1]) {		// If a[j] < a[j-1], swap
             	swap(a,j,j-1);
             	nswaps++;
          	}
       	}
-      	if (nswaps == 0) break;			// Go to next iteration
-   	}
+      	if (nswaps == 0) break;			// No more swaps possible,
+   	}									// List is entirely sorted.
 }
 
-/* INSERTION SORT */
+/* INSERTION SORT: O(n) -> O(n^2) */
 void insertionSort(int a[], int lo, int hi)
 {
    	int i, j, min, val;
@@ -252,8 +252,7 @@ void insertionSort(int a[], int lo, int hi)
    	}
 }
 
-// shell sort
-
+/* SHELL SORT: O(nLogn) -> O(n(Logn)^2) */
 void shellSort(int a[], int lo, int hi)
 {
 	int gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1};
@@ -272,44 +271,43 @@ void shellSort(int a[], int lo, int hi)
 	}
 }
 
-// mergesort
-
+/* MERGESORT: O(nLogn) -> O(nLogn) */
 void merge(int a[], int lo, int mid, int hi)
 {
-   int  i, j, k, nitems = hi-lo+1;
-   int *tmp = malloc(nitems*sizeof(int));
+   	int  i, j, k;
+   	int nitems = hi-lo+1;
+   	int *tmp = malloc(nitems*sizeof(int)); // alloc temp list
 
-   i = lo; j = mid+1; k = 0;
-   while (i <= mid && j <= hi) {
-     if (less(a[i],a[j]))
-        copy(tmp, &k, a, &i);
-	 else
-        copy(tmp, &k, a, &j);
-   }
-   while (i <= mid) copy(tmp, &k, a, &i);
-   while (j <= hi) copy(tmp, &k, a, &j);
+   	i = lo; j = mid+1; k = 0;		
+   	while (i <= mid && j <= hi) {
+    	if (less(a[i],a[j]))
+        	copy(tmp, &k, a, &i); // a[i] < a[j] = move I to sorted and increment I/J
+	 	else
+        	copy(tmp, &k, a, &j); // a[i] > a[j] = move J to sorted and increment I/J
+   	}
+   	while (i <= mid) copy(tmp, &k, a, &i); // append remaining to sorted
+   	while (j <= hi) copy(tmp, &k, a, &j);  // append remaining to sorted
 
-   //copy back
-   for (i = lo, k = 0; i <= hi; i++, k++) {
-      a[i] = tmp[k];
-      nmoves++;
-   }
-   free(tmp);
+   	for (i = lo, k = 0; i <= hi; i++, k++) { // copy back into orig list
+      	a[i] = tmp[k];
+   	}
+   	free(tmp);	// free temp list ptr
 }
+
 void mergeSort(int a[], int lo, int hi)
 {
-   int mid = (lo+hi)/2; // mid point
-   if (hi <= lo) return;
-   mergeSort(a, lo, mid);
-   mergeSort(a, mid+1, hi);
-   merge(a, lo, mid, hi);
+   	int mid = (lo+hi)/2; 	 // split list into LHS and RHS
+   	if (hi <= lo) return;
+   	mergeSort(a, lo, mid);	 // recursively halves LHS
+   	mergeSort(a, mid+1, hi); // recursively halves RHS
+   	merge(a, lo, mid, hi);   // recursively merges LHS + RHS into sorted lists
+   								// (until final single sorted list remains)
 }
 
-/* ### QUICKSORT ### */
+/* QUICKSORT: O(nlogn) -> O(n^2) */
 
 // PARTITIONING PHASE
-// Splits elts into LHS (smaller) or RHS (larger)
-// than partition value.
+// Splits elts into smaller (LHS) or larger (RHS) than partition val.
 int partition(int a[], int lo, int hi)
 {
    	int v = a[lo];  				// choose pivot (lowest elt)
@@ -337,17 +335,17 @@ void quickSort(int a[], int lo, int hi)
    quickSort(a, i+1, hi);		// recursively sort RHS
 }
 
-/* SELECTION SORT */
+/* SELECTION SORT: O(n^2) -> O(n^2) */
 void selectionSort(int a[], int lo, int hi)
 {
    	int i, j, min;
    	for (i = lo; i < hi; i++) {				
-    	min = i;
-      	for (j = i+1; j <= hi; j++) {  // Loop to find min
+    	min = i;					   // Set min = 1st elt
+      	for (j = i+1; j <= hi; j++) {  // Find a[j] < min
         	if (a[j] < a[min]) {
-        		min = j;
+        		min = j;			   // Set min = index j
         	}
       	}
-      	swap(a,i,min);				   // Swap min with i
+      	swap(a,i,min);		    // Swap val @min <-> val @i
    	}			  // Sorted portion has now been added to
 }
