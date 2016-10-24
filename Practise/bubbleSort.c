@@ -30,7 +30,7 @@ void DSCbubbleSort(int a[], int lo, int hi) {
 
 	int i, j;
 	int nswaps;
-	for (i = lo; i <= hi; i++) {					// Iterate through list
+	for (i = lo; i < hi; i++) {					// Iterate through list
 		nswaps = 0;
 		for (j = hi; j > i; j--) {					// Loop downwards, until reach i
 			if (a[j-1] > a[j]) swap(a,j,j-1);		// a[j-1] > a[j] , then swap
@@ -45,7 +45,7 @@ void ASCbubbleSort(int b[], int lo, int hi) {
 	int i, j;
 	int nswaps;
 
-	for (i = lo; i <= hi; i++) {
+	for (i = lo; i < hi; i++) {
 		nswaps = 0;
 		for (j = lo; j <= hi-1; j++) {
 			if (b[j] > b[j+1]) swap(b,j,j+1);
