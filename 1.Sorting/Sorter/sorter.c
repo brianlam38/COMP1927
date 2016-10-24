@@ -214,37 +214,42 @@ int isSorted(int a[], int lo, int hi)
 
 // Sorting Algorithms
 
-// bubble sort
+/* BUBBLE SORT */
 void bubbleSort(int a[], int lo, int hi)
 {
-   int i, j, nswaps;
-   for (i = lo; i < hi; i++) {		// Start from index 1
-      nswaps = 0;
-      for (j = hi; j > i; j--) {	//
-         if (less(a[j], a[j-1])) {
-            swap(a,j,j-1);
-            nswaps++;
-         }
-      }
-      if (nswaps == 0) break;
-   }
+  	int i, j, nswaps;
+   	for (i = lo; i < hi; i++) {			// Multiple iter through array
+     	nswaps = 0;
+      	for (j = hi; j > i; j--) {		// Swaps out of order elts until
+        	if (a[j] < a[j-1]) {		// sorted section is reached
+            	swap(a,j,j-1);
+            	nswaps++;
+         	}
+      	}
+      	if (nswaps == 0) break;			// Go to next iteration
+   	}
 }
 
-// insertion sort
-
+/* INSERTION SORT */
 void insertionSort(int a[], int lo, int hi)
 {
-   int i, j, min, val;
-   min = lo;
-   for (i = lo+1; i <= hi; i++)
-      if (less(a[i],a[min])) min = i;
-   swap(a, lo, min);
-   for (i = lo+2; i <= hi; i++) {
-      val = a[i];
-      for (j = i; less(val,a[j-1]); j--)
-         move(a, j, j-1);
-      a[j] = val;
-   }
+   	int i, j, min, val;
+   	min = lo;							   // Take 1st elt and put as sorted
+   	for (i = lo+1; i <= hi; i++)		   // Starting from 2nd (unsorted), look through list 
+      	if (less(a[i],a[min])) min = i;	   	  // Set min = index of smallest
+   	swap(a, lo, min);					   // Swap values of min <-> index of smallest
+
+   	/* Sorted list now contains 2 elts, order preserved
+   	   Starts i=lo+2 as 1st elt is definitely lowest val
+   	   S1 S2 | U1 U2 U3 U4 . . .
+   	*/
+
+   	for (i = lo+2; i <= hi; i++) {
+      	val = a[i];						   // Take 1st elt in UNSORTED list (key value)
+      	for (j = i; less(val,a[j-1]); j--) // Loop down SORTED list while val < j-1
+         	move(a, j, j-1);			   	  // Keep shifting values up (to give space for insertion)
+      	a[j] = val;						   // Insert value into list
+   	}
 }
 
 // shell sort
@@ -327,15 +332,17 @@ void quickSort(int a[], int lo, int hi)
    quickSort(a, i+1, hi);
 }
 
-// selection sort
+/* SELECTION SORT */
 void selectionSort(int a[], int lo, int hi)
 {
-   int i, j, min;
-   for (i = lo; i < hi; i++) {
-      min = i;
-      for (j = i+1; j <= hi; j++) {
-         if (less(a[j],a[min])) min = j;
-      }
-      swap(a,i,min);
-   }
+   	int i, j, min;
+   	for (i = lo; i < hi; i++) {				
+    	min = i;
+      	for (j = i+1; j <= hi; j++) {  // Loop to find min
+        	if (a[j] < a[min]) {
+        		min = j;
+        	}
+      	}
+      	swap(a,i,min);				   // Swap min with i
+   	}			  // Sorted portion has now been added to
 }
