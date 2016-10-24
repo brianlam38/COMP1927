@@ -234,10 +234,10 @@ void bubbleSort(int a[], int lo, int hi)
 void insertionSort(int a[], int lo, int hi)
 {
    	int i, j, min, val;
-   	min = lo;							   // Take 1st elt and put as sorted
-   	for (i = lo+1; i <= hi; i++)		   // Starting from 2nd (unsorted), look through list 
-      	if (less(a[i],a[min])) min = i;	   	  // Set min = index of smallest
-   	swap(a, lo, min);					   // Swap values of min <-> index of smallest
+   	min = lo;							 // Take 1st elt and place in sorted
+   	for (i = lo+1; i <= hi; i++)		 // Starting from 2nd (unsorted), look through list 
+      	if (less(a[i],a[min])) min = i;	    // Set min = index of smallest
+   	swap(a, lo, min);					 // Swap value @min <-> value @lo
 
    	/* Sorted list now contains 2 elts, order preserved
    	   Starts i=lo+2 as 1st elt is definitely lowest val
@@ -245,9 +245,9 @@ void insertionSort(int a[], int lo, int hi)
    	*/
 
    	for (i = lo+2; i <= hi; i++) {
-      	val = a[i];						   // Take 1st elt in UNSORTED list (key value)
+      	val = a[i];						   // Take 1st elt in UNSORTED list (key)
       	for (j = i; less(val,a[j-1]); j--) // Loop down SORTED list while val < j-1
-         	move(a, j, j-1);			   	  // Keep shifting values up (to give space for insertion)
+         	move(a, j, j-1);			   	  // Keep shifting values up (free space for insert
       	a[j] = val;						   // Insert value into list
    	}
 }
@@ -305,31 +305,36 @@ void mergeSort(int a[], int lo, int hi)
    merge(a, lo, mid, hi);
 }
 
-// quicksort
+/* ### QUICKSORT ### */
 
+// PARTITIONING PHASE
+// Splits elts into LHS (smaller) or RHS (larger)
+// than partition value.
 int partition(int a[], int lo, int hi)
 {
-   int v = a[lo];  // pivot
-   int i = lo+1, j = hi;
-   for (;;) {
-      while (!less(v,a[i]) && i < j) i++;
-      while (!less(a[j],v) && j > i) j--;
-      if (i == j) break;
-      swap(a,i,j);
-   }
-   j = less(a[i],v) ? i : i-1;
-   swap(a,lo,j);
-   return j;
+   	int v = a[lo];  				// choose pivot (lowest elt)
+   	int i = lo+1, j = hi;			// set up i=BOT j=TOP
+   	for (;;) { 						// infinite loop until i=j
+    	while (less(a[i],v) && i < j) // a[i] < partition, i++ (LHS)
+    		i++;
+     	while (less(v,a[j]) && j > i) // partition < a[i], j-- (RHS)
+     		j--;
+      	if (i == j) break; 
+      	swap(a,i,j);				// swap values to correct side
+   	}
+   	j = less(a[i],v) ? i : i-1;		// set pivot index
+   	swap(a,lo,j);					// place pivot val in correct pos
+   	return j;
 }
 
 void quickSort(int a[], int lo, int hi)
 {
    int i; // index of pivot
    //printf("qsort(a,%d,%d)\n",lo,hi);
-   if (lo >= hi) return;
-   i = partition(a, lo, hi);
-   quickSort(a, lo, i-1);
-   quickSort(a, i+1, hi);
+   if (lo >= hi) return;		// lo cross hi = sorted
+   i = partition(a, lo, hi);	// set i = pivot j
+   quickSort(a, lo, i-1);		// recursively sort LHS
+   quickSort(a, i+1, hi);		// recursively sort RHS
 }
 
 /* SELECTION SORT */

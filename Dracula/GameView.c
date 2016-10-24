@@ -299,7 +299,7 @@ LocationID *connectedLocations(int *numLocations,
     LocationID *connections = malloc((*numLocations) * sizeof(LocationID));
     assert(connections != NULL);
     connections[0] = from;    //initialise the array
-    Map map = newMap();       //get the game map
+    Map map = newGraph();       //get the game map
     int i, j;
 
     //find the nearby cities of type ROAD

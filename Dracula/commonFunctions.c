@@ -764,6 +764,75 @@ void copyArray(int *old, int *new, int size) {
   return;
 }
 
+// make the trail as a linked list
+VList trailAsList(LocationID trail[TRAIL_SIZE], LocationID hideTrail[TRAIL_SIZE]) {
+    VList L = NULL;
+    VList tmp = L;
+    int type, i;
+    
+    for (i = TRAIL_SIZE - 1; i >= 0; i--) {
+        if (hideTrail[i] == HIDE) type = 1;
+        else if (hideTrail[i] > HIDE) type = 2;
+        else type = 0;
+        tmp = listInsert(L, trail[i], type);
+        L = tmp;
+    }
+    return L;
+}
+
+// apppend one location to the head of a list
+VList listInsert(VList L, int v, int type) {
+    VList n = malloc(sizeof(struct vNode));
+    assert(n != NULL);
+    n->v = v;
+    n->type = type;
+    n->next = NULL;
+    VList newL = NULL;
+    if (L == NULL)
+        newL = n;
+    else {
+        n->next = L;
+        newL = n;
+    }
+    return newL;
+}
+
+// free the list
+void freeList(VList L) {
+    if (L != NULL) {
+        VList p = L->next;
+        while (L != NULL) {
+            free(L);
+            L = p;
+        }
+    }
+    return;
+}
+
+// check if there's a double-back or hide in Dracula's trail linked list
+int hasDBOrHIList(VList trailList) {
+    int hide = 0;
+    int douB = 0;
+    int i;
+    VList cur = trailList;
+    for (i = 0; i < TRAIL_SIZE; i++) {
+        if (cur->type == 1) {
+            hide++;
+        } else if (cur->type == 2) {
+            douB++;
+        }
+        cur = cur->next;
+    }
+    if ((hide != 0) && (douB != 0)) {
+        return BOTH_HIDE_AND_DB;
+    } else if (hide != 0) {
+        return HAS_HIDE;
+    } else if (douB != 0) {
+        return HAS_DOUBLE_BACK;
+    } else {
+        return NO_SPECIAL_MOVE;
+    }
+}
 
 // to learn the moving pattern of dracula
 void learnDracMove(LocationID trail[TRAIL_SIZE]) {
