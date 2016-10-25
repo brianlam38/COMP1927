@@ -47,27 +47,27 @@ void showBSTree(BSTree t)
 	doShowTree(t);
 }
 
-// compute depth of BSTree
+// compute depth of BSTree (DEPTH = ROOT -> a LEAF)
 int BSTreeDepth(BSTree t)
 {
-	if (t == NULL)
+	if (t == NULL)	// empty tree, 0 depth
 		return 0;
 	else {
-		int ldepth = 1+BSTreeDepth(t->left);
-		int rdepth = 1+BSTreeDepth(t->right);
-		return (ldepth > rdepth) ? ldepth : rdepth;
+		int ldepth = 1+BSTreeDepth(t->left);	// Compute depth of LHS subtree
+		int rdepth = 1+BSTreeDepth(t->right);	// Compute depth of RHS subtree
+		return (ldepth > rdepth) ? ldepth : rdepth;	// Return depth of longer subtree
 	}
 }
 
 // count #nodes in BSTree
 int BSTreeNumNodes(BSTree t)
 {
-	if (t == NULL)
+	if (t == NULL)	// empty tree base case
 		return 0;
 	else
-		return 1 + BSTreeNumNodes(t->left)
-		         + BSTreeNumNodes(t->right);
-	return -1;
+		return 1 + BSTreeNumNodes(t->left)	// Total nodes = ROOT NODE
+		         + BSTreeNumNodes(t->right);//             + all LHS nodes
+	return -1;							    //             + all RHS nodes
 }
 
 // check whether value exists in BSTree (RECURSIVE)
@@ -98,39 +98,41 @@ int BSTreeFindI(BSTree t, int v)
 	return 0;						// otherwise, return FALSE
 }									// if NULL is reached (tree end)
 
-// insert a new value into a BSTree (recursively)
+// insert a new value into a BSTree (RECURSIVE)
 BSTree BSTreeInsert(BSTree t, int v)
 {
-	if (t == NULL)
-		t = newBSTNode(v);
-	else if (v < t->value)
+	if (t == NULL)				// EMPTY TREE or END OF TREE:
+		t = newBSTNode(v);			// create NEW NODE w/ value v
+	else if (v < t->value)		// if v < node val, insert in LHS subtree
 		t->left = BSTreeInsert(t->left,v);
-	else if (v > t->value)
+	else if (v > t->value)		// if v > node val, insert in RHS subtree
 		t->right = BSTreeInsert(t->right,v);
-	return t;
+
+	return t;					// return ptr to NEW NODE
 }
 
-// insert a new value into a BSTree (iteratively)
+// insert a new value into a BSTree (ITERATIVE)
 BSTree BSTreeInsertI(BSTree t, int v)
 {
-	if (t == NULL) return newBSTNode(v);
-	Link curr = t, parent = NULL;
-	while (curr != NULL) {
-		if (v < curr->value)
-			{ parent = curr; curr = curr->left; }
-		else if (v > curr->value)
-			{ parent = curr; curr = curr->right; }
+	if (t == NULL) return newBSTNode(v);	// EMPTY TREE, create ROOT NODE
+	Link curr = t;
+	Link parent = NULL;
+	while (curr != NULL) {				/* PART 1: Loop until value found or tree ends */
+		if (v < curr->value)				// if v < node val, insert in LHS subtree
+			{ parent = curr; curr = curr->left; }	// keep track of parent node (prev)
+		else if (v > curr->value)			// if v > node val, go to RHS subtree
+			{ parent = curr; curr = curr->right; }	// keep track of parent node (prev)
 		else
-			return t;
+			return t;						// v = node val, return EXISTING NODE
 	}
-	Link new = newBSTNode(v);
-	if (v < parent->value)
+	Link new = newBSTNode(v);			/* PART 2: Tree ended, append to tree */
+	if (v < parent->value)					// if v < parent val, insert node to LHS
 		parent->left = new;
-	else
+	else									// if v > parent val, insert node to RHS 
 		parent->right = new;
-	return t;
-}
 
+	return t;								// return NEW NODE
+}
 
 // generic traversal
 void BSTreeTraverse(BSTree t,
