@@ -281,12 +281,12 @@ void merge(int a[], int lo, int mid, int hi)
    	i = lo; j = mid+1; k = 0;		
    	while (i <= mid && j <= hi) {
     	if (less(a[i],a[j]))
-        	copy(tmp, &k, a, &i); // a[i] < a[j] = move I to sorted and increment I/J
+        	copy(tmp, &k, a, &i); // a[i] < a[j] = move I to sortedL and increment I/J
 	 	else
-        	copy(tmp, &k, a, &j); // a[i] > a[j] = move J to sorted and increment I/J
+        	copy(tmp, &k, a, &j); // a[i] > a[j] = move J to sortedL and increment I/J
    	}
-   	while (i <= mid) copy(tmp, &k, a, &i); // append remaining to sorted
-   	while (j <= hi) copy(tmp, &k, a, &j);  // append remaining to sorted
+   	while (i <= mid) copy(tmp, &k, a, &i); // append remaining to sortedL
+   	while (j <= hi) copy(tmp, &k, a, &j);  // append remaining to sortedL
 
    	for (i = lo, k = 0; i <= hi; i++, k++) { // copy back into orig list
       	a[i] = tmp[k];
@@ -306,7 +306,7 @@ void mergeSort(int a[], int lo, int hi)
 
 /* QUICKSORT: O(nlogn) -> O(n^2) */
 
-// PARTITIONING PHASE
+// PART 1: Partitioning
 // Splits elts into smaller (LHS) or larger (RHS) than partition val.
 int partition(int a[], int lo, int hi)
 {
