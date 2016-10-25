@@ -116,7 +116,7 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 // The set of possible locations must be consistent with the rules on Dracula's
 //   movement (e.g. can't MOVE to a location currently in his trail)
 
-LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea);
+LocationID *whereCanDracgo(DracView currentView, int *numLocations, int road, int sea);
 
 // whereCanTheyGo() returns an array of LocationIDs giving all of the
 //   locations that the given Player could reach from their current location
@@ -137,7 +137,7 @@ LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
                            LocationID from, PlayerID player, Round round,
                            int road, int rail, int sea);
 
-LocationID *whereCanDracgo(DracView currentView, int *numLocations, LocationID trail[TRAIL_SIZE],
+LocationID *whereCanIgo(int *numLocations, LocationID trail[TRAIL_SIZE],
                           LocationID hideTrail[TRAIL_SIZE], LocationID currLoc,
                           int road, int sea);
 

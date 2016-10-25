@@ -71,6 +71,8 @@ typedef struct PQueueRep {
     PQueueNode *tail;  // ptr to last node
 } PQueueRep;
 
+// number of hunters
+#define NUM_HUNTERS         4
 //max number of event encountered each play
 #define NUM_EVENT_ENCOUNTER 4
 //number of chars per round in pastPlays
@@ -89,6 +91,21 @@ typedef struct PQueueRep {
 #define BOTH_HIDE_AND_DB    -4
 
 #define NUM_SEA             10
+#define NUM_ISLAND          6
+#define NUM_PORT_CITY       29
+#define NUM_TOP_AREA        11
+#define NUM_LEFT_AREA       13
+#define NUM_MIDDLE_AREA     27
+#define NUM_RIGHT_AREA      19
+#define NUM_BOTTOM_AREA     15
+
+#define CURR_EMPTY          0
+#define RIGHT_EMPTY         1
+#define LEFT_EMPTY          2
+#define BOTTOM_EMPTY        3
+#define TOP_EMPTY           4
+#define MIDDLE_EMPTY        5
+
 
 
 // traverse the map and return an array of nearby cities of "from" with type "type"
@@ -102,6 +119,10 @@ LocationID *NearbyCities(Map map, LocationID from,
 // return the index of first occurance of the object
 // return -1 if the object is not in the array
 int inArray(int *array, int object, int size);
+
+
+// copy an array of int from old to new
+void copyArray(int *old, int *new, int size);
 
 
 // shift the array to the left
@@ -164,6 +185,8 @@ void numEncounter(LocationID trail[TRAIL_SIZE], char c,
                   LocationID where, int *numTraps, int *numVamps);
 
 
+int hunterPathLength(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path);
+int isReachable(Map map, Map railMap, LocationID src, LocationID dest, PlayerID player, Round round, LocationID *previsited,  LocationID *tmpPath);
 int simpleFindPathLength(LocationID src, LocationID dest);
 int findPathLength(LocationID src, LocationID dest, PlayerID player, Round round, LocationID *path);
 LocationID howToGetTo(LocationID dest, LocationID from, int round,
@@ -192,6 +215,21 @@ int PQueueIsEmpty(PQueue); // check for no items
 //        BOTH_HIDE_AND_DB if there are both double-back and hide in Dracula's trail
 int hasDBOrHI(LocationID trail[TRAIL_SIZE]);
 int posOfDb(LocationID trail[TRAIL_SIZE]);
+
+
+// make the trail as a linked list
+VList trailAsList(LocationID trail[TRAIL_SIZE], LocationID hideTrail[TRAIL_SIZE]);
+
+
+// apppend one location to the head of a list
+VList listInsert(VList L, int v, int type);
+
+
+// free the list
+void freeList(VList L);
+
+// check if there's a double-back or hide in Dracula's trail linked list
+int hasDBOrHIList(VList trailList);
 
 
 #endif /* commonFunctions_h */

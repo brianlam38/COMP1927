@@ -20,7 +20,7 @@ typedef int TransportID;
 #define RAIL                     2
 #define BOAT                     3
 #define ANY                      4
-	
+
 #define RAIL_0			 5
 #define RAIL_1			 6
 #define RAIL_2			 7
@@ -122,6 +122,8 @@ typedef int LocationID;
 #define NOWHERE                 UNKNOWN_LOCATION
 
 
+void idToAbbrev(LocationID p, char *abbrev);
+
 // given a Place number, return its name
 char *idToName(int place);
 
@@ -133,8 +135,6 @@ int nameToID(char *name);
 
 // given a Place abbreviation, return its ID number
 int abbrevToID(char *abbrev);
-
-void idToAbbrev(LocationID p, char *abbrev);
 
 #define isLand(place)  (idToType(place) == LAND)
 #define isSea(place)  (idToType(place) == SEA)

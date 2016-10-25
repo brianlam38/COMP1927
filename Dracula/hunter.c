@@ -35,8 +35,8 @@ void returnLastMessage(HunterView h, int player, char *message);
 #include <time.h>
 
 #define G_START STRASBOURG // Godalming = Stratsbourg  (centre)
-#define S_START LISBON // Seward = Lisbon          (left)
-#define V_START VARNA // Van Helsing = Varna      (right)
+#define S_START GRANADA // Seward = Lisbon          (left)
+#define V_START CONSTANTA // Van Helsing = Varna      (right)
 #define M_START MANCHESTER // Mina Harker = Galway     (top)
 
 static void submitID(LocationID dest, char *message);
@@ -647,6 +647,4 @@ LocationID *whereDracWent(HunterView h, int *numLocations, int *offset) {
 
     return potentialLoc;
 }
-
-
 
