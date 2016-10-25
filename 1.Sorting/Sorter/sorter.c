@@ -234,22 +234,22 @@ void bubbleSort(int a[], int lo, int hi)
 void insertionSort(int a[], int lo, int hi)
 {
    	int i, j, min, val;
-   	min = lo;							 // Take 1st elt and place in sorted
-   	for (i = lo+1; i <= hi; i++)		 // Starting from 2nd (unsorted), look through list 
-      	if (less(a[i],a[min])) min = i;	    // Set min = index of smallest
-   	swap(a, lo, min);					 // Swap value @min <-> value @lo
+   	min = lo;							// PART 1
+   	for (i = lo+1; i <= hi; i++)		// Loops through list to find lowest val
+      	if (less(a[i],a[min])) min = i;	// and swaps lowest val <-> start val
+   	swap(a, lo, min);
 
-   	/* Sorted list now contains 2 elts, order preserved
-   	   Starts i=lo+2 as 1st elt is definitely lowest val
+   	/* Sorted list now contains 2 elts, order preserved.
+   	   2 elts as the 1st = sorted, 2nd = new comparison
    	   S1 S2 | U1 U2 U3 U4 . . .
    	*/
 
    	for (i = lo+2; i <= hi; i++) {
-      	val = a[i];						   // Take 1st elt in UNSORTED list (key)
-      	for (j = i; less(val,a[j-1]); j--) // Loop down SORTED list while val < j-1
-         	move(a, j, j-1);			   	  // Keep shifting values up (free space for insert
-      	a[j] = val;						   // Insert value into list
-   	}
+      	val = a[i];						   // PART 2
+      	for (j = i; less(val,a[j-1]); j--) // Loops down and compares the key elt
+         	move(a, j, j-1);			   // with sorted part. Insert key into
+      	a[j] = val;						   // the correct place in sorted.
+   	}									   // Set new key = next I
 }
 
 /* SHELL SORT: O(nLogn) -> O(n(Logn)^2) */
