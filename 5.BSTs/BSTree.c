@@ -18,11 +18,11 @@ typedef struct BSTNode {
 static
 Link newBSTNode(int v)
 {
-	Link new = malloc(sizeof(BSTNode));
+	Link new = malloc(sizeof(BSTNode));	// Allocate space for node
 	assert(new != NULL);
-	new->value = v;
-	new->left = new->right = NULL;
-	return new;
+	new->value = v;					    // Sets key value
+	new->left = new->right = NULL;		// Sets LHS and RHS -> NULL
+	return new;							// Return ptr to new node
 }
 
 // create a new empty BSTree
@@ -34,10 +34,10 @@ BSTree newBSTree()
 // free memory associated with BSTree
 void dropBSTree(BSTree t)
 {
-	if (t == NULL) return;
-	dropBSTree(t->left);
-	dropBSTree(t->right);
-	free(t);
+	if (t == NULL) return;	// check tree exists
+	dropBSTree(t->left);	// recursively free ptrs to LHS
+	dropBSTree(t->right);	// recursively free ptrs to RHS
+	free(t);				// free tree
 }
 
 // show a BSTree
@@ -70,33 +70,33 @@ int BSTreeNumNodes(BSTree t)
 	return -1;
 }
 
-// check whether a value is in a BSTree (recursively)
+// check whether value exists in BSTree (RECURSIVE)
 int BSTreeFind(BSTree t, int v)
 {
-	if (t == NULL)
+	if (t == NULL)						// base case (FALSE) + empty tree case
 		return 0;
-	else if (v < t->value)
+	else if (v < t->value)				// if v < node val, check LHS
 		return BSTreeFind(t->left,v);
-	else if (v > t->value)
+	else if (v > t->value)				// if v > node val, check RHS
 		return BSTreeFind(t->right,v);
-	else // v == t->value
+	else // v == t->value			    // v = node val, return TRUE
 		return 1;
 }
 
-// check whether a value is in a BSTree (iteratively)
+// check whether a value is in a BSTree (ITERATIVE)
 int BSTreeFindI(BSTree t, int v)
 {
-	Link curr = t;
-	while (curr != NULL) {
-		if (v < curr->value)
+	Link curr = t;					// point curr -> root node t
+	while (curr != NULL) {			// while curr != end of tree
+		if (v < curr->value)		// if v < node val, go LHS of node
 			curr = curr->left;
-		else if (v > curr->value)
+		else if (v > curr->value)	// if v > node val, go RHS of node
 			curr = curr->right;
-		else // v == curr->value
+		else // v == curr->value	// v = node val, return TRUE
 			return 1;
 	}
-	return 0;
-}
+	return 0;						// otherwise, return FALSE
+}									// if NULL is reached (tree end)
 
 // insert a new value into a BSTree (recursively)
 BSTree BSTreeInsert(BSTree t, int v)
