@@ -134,17 +134,19 @@ BSTree BSTreeInsertI(BSTree t, int v)
 	return t;								// return NEW NODE
 }
 
-// generic traversal
-void BSTreeTraverse(BSTree t,
-                    Visit visit,
-                    char *style)
+/* GENERIC TRAVERSAL */
+// Remember, visit is a FN that takes in an Item and
+// doesn't return anything. We're giving the BSTreeTraverse
+// function a ptr to the visit function.
+void BSTreeTraverse(BSTree t, void (*visit)(Item), char *style)
 {
-	if (t == NULL) return;
-	if (strcmp(style,"NLR") == 0) (*visit)(t);
-	BSTreeTraverse(t->left, visit, style);
-	if (strcmp(style,"LNR") == 0) (*visit)(t);
-	BSTreeTraverse(t->right, visit, style);
-	if (strcmp(style,"LRN") == 0) (*visit)(t);
+	if (t == NULL) return;	// base case, empty tree
+
+	if (strcmp(style,"NLR") == 0) (*visit)(t->value); // deref, visit root node FIRST
+	BSTreeTraverse(t->left, visit, style); // visit LHS
+	if (strcmp(style,"LNR") == 0) (*visit)(t->value); // deref, visit root node MID
+	BSTreeTraverse(t->right, visit, style); // visit RHS
+	if (strcmp(style,"LRN") == 0) (*visit)(t->value); // deref, visit root node LAST
 }
 
 // delete a value from a BSTree

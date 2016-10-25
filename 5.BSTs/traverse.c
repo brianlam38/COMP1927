@@ -1,26 +1,27 @@
 #include <stdio.h>
 #include "Queue.h"
 
+// LEVEL-ORDER TRAVERSAL (Breadth-First) and show values
 void showBSTreeBF(BSTree t)
 {
-	if (t == NULL) return;
-	Queue q = newQueue();
+	if (t == NULL) return;	// empty tree
+	Queue q = newQueue();	// create queue
 	Link curr;
-	enQueue(q, t);
-	while (curr = deQueue(q)) {
-		printf("%d ", curr->value);
+	enQueue(q, t);					// add root node to queue
+	while (curr = deQueue(q)) { 	// take front elt off queue
+		printf("%d ", curr->value); // print deQueued nodes
 		if (curr->left != NULL)
-			enQueue(q, curr->left);
+			enQueue(q, curr->left); // add LHS child to queue
 		if (curr->right != NULL)
-			enQueue(q, curr->right);
+			enQueue(q, curr->right); // add RHS child to queue
 	}
+	// Loop ends queue is empty now
 	printf("\n");
 }
 
 /* 	Traversal with visit operation
 	void(*visit)(item) = Do something when we visit an item
 	Example: Print something out, compute something etc.
-	Visit function: Takes item, does something to it, no returns.
 */
 void Traverse(Tree t, void (*visit)(Item)) {
 	if (t != NULL) {
@@ -33,13 +34,14 @@ void Traverse(Tree t, void (*visit)(Item)) {
  	// Level-order cannot be implemented recursively
 }
 
-/* Passing ptr into function
+/* 	Passing ptr into function
+   	E.g. void Traverse(Tree t, void (*visit)(item));
 
-   void(*visit)(item)
-
-   *visit = ptr to a function with parameter of type (Item)
-   void(*visit)(item) = the function returns nothing
+	Visit is a FN that takes in an Item and doesn't return
+	anything. We're giving the BSTreeTraverse function a
+	ptr to the visit function.
 */
+
 
 
 
