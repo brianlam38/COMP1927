@@ -18,30 +18,3 @@ void showBSTreeBF(BSTree t)
 	// Loop ends queue is empty now
 	printf("\n");
 }
-
-/* 	Traversal with visit operation
-	void(*visit)(item) = Do something when we visit an item
-	Example: Print something out, compute something etc.
-*/
-void Traverse(Tree t, void (*visit)(Item)) {
-	if (t != NULL) {
-		// visit data in root node FIRST = NLR (prefix)
-		Traverse(t->left, visit);
-		// visit data in root node MIDDLE = LNR (infix)
-		Traverse(t->right,visit);
-		// visit data in root node LAST = LRN (postfix)
- 	}
- 	// Level-order cannot be implemented recursively
-}
-
-/* 	Passing ptr into function
-   	E.g. void Traverse(Tree t, void (*visit)(item));
-
-	Visit is a FN that takes in an Item and doesn't return
-	anything. We're giving the BSTreeTraverse function a
-	ptr to the visit function.
-*/
-
-
-
-

@@ -1,56 +1,57 @@
-// delete a value from a BSTree
-// - return new BSTree t without Key k
+/*  DELETE VALUE FROM BSTree */
+//  Return new BSTree t without Key k
 
+// PART 1: TRAVERSE TO NODE
 BSTree BSTreeDelete(BSTree t, Key k)
 {
-	// case 1: empty tree => nothing to delete
+	// CASE #1: empty tree => nothing to delete
 	if (t == NULL) return NULL;
 
-	// case 2: k smaller than root =>
+	// CASE #2: k smaller than root =>
 	//         new left subtree has k deleted
 	if (k < t->value)
 		t->left = BSTreeDelete(t->left,k);
 
-	// case 3: k larger than root =>
+	// CASE #3: k larger than root =>
 	//         new right subtree has k deleted
 	if (k > t->value)
 		t->right = BSTreeDelete(t->right,k);
 
-	// case 4: k is value at root =>
+	// case #4: k is value at root =>
 	//         new tree has root deleted
+	// KEY VALUE IS FOUND. DELETE CURRENT NODE.
 	if (k == t->value)
 		t = deleteRoot(t);
 
 	return t;
 }
 
-// delete root of tree
-
+// PART 2: DELETE NODE
 BSTree deleteRoot(BSTree t)
 {
 	Link newRoot;
 
-	// case 1: no subtrees => tree empty after delete
-	if (t->left == NULL && t->right == NULL) {
+	// CASE #1: no subtrees => tree empty after delete
+	if (t->left == NULL && t->right == NULL) {	// LHS = NULL and RHS = NULL
 		free(t);
 		return NULL;
 	}
 
-	// case 2a: just right subtree => make it the new root
+	// CASE #2a: RIGHT SUBTREE => make it the new root
 	if (t->left == NULL && t->right != NULL) {
-		newRoot = t->right;
-		free(t);
-		return newRoot;
-	}
+		newRoot = t->right; // make child node -> new root node
+		free(t);			// remove old root node
+		return newRoot;			// NOTE: Linking back to parent is handled
+	}							//       by recursion at the higher level
 
-	// case 2b: just left subtree => make it the new root
+	// CASE #2b: LEFT SUBTREE => make it the new root
 	if (t->left != NULL && t->right == NULL) {
 		newRoot = t->left;
 		free(t);
 		return newRoot;
 	}
 
-	// case 3: two subtrees => replace root by successor
+	// CASE #3: TWO SUBTREES => replace root by successor
 	if (t->left != NULL && t->right != NULL) {
 	{
 		// - find successor  (min value > root value)

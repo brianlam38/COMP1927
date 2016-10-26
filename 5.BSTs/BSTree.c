@@ -135,8 +135,8 @@ BSTree BSTreeInsertI(BSTree t, int v)
 }
 
 /* GENERIC TRAVERSAL */
-// Remember, visit is a FN that takes in an Item and
-// doesn't return anything. We're giving the BSTreeTraverse
+// Remember, visit is a FN that takes in an Item, does something
+// to it and doesn't return anything. We're giving the BSTreeTraverse
 // function a ptr to the visit function.
 void BSTreeTraverse(BSTree t, void (*visit)(Item), char *style)
 {
