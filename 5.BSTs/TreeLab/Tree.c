@@ -66,35 +66,38 @@ int nnodes(Tree t)
 	return 1 + nnodes(t->left) + nnodes(t->right);
 }
 
-// insert a new value into a Tree
+/* TREE INSERTION */
 Tree insert(Tree t, Item it)
 {
-	if (t == NULL) return newNode(it);
-	int diff = cmp(key(it),key(t->value));
-	if (diff == 0)
-		t->value = it;
-	else if (diff < 0)
-		t->left = insert(t->left, it);
-	else if (diff > 0)
-		t->right = insert(t->right, it);
+	if (t == NULL) return newNode(it);		// Empty tree
+	int diff = cmp(key(it),key(t->value));	// Store cmp value
+	if (diff == 0)							// NO DIFFERENCE
+		t->value = it;							// Replace old -> new item
+	else if (diff < 0)						// LESS THAN
+		t->left = insert(t->left, it);			// Insert new item -> LHS
+	else if (diff > 0)						// GREATER THAN
+		t->right = insert(t->right, it);		// Insert new item -> RHS
 	return t;
 }
 
+/* TREE INSERTION AT ROOT NODE */
+// STEP 1: Insert new node as leaf in LHS or RHS subtree
+// STEP 2: RotateR or RotateL until new node = MAIN ROOT
 Tree insertAtRoot(Tree t, Item it)
-{ 
-   if (t == NULL) return newNode(it);
-   int diff = cmp(key(it), key(t->value));
-   if (diff == 0)
-      t->value = it;
-   else if (diff < 0) {
-      t->left = insertAtRoot(t->left, it);
-      //printf("rotateR(%d)\n",t->value);
-      t = rotateR(t);
+{
+   if (t == NULL) return newNode(it);		// Empty tree
+   int diff = cmp(key(it), key(t->value));	// Store cmp value
+   if (diff == 0)							// NO DIFFERENCE
+      t->value = it;							// Replace old -> new item
+   else if (diff < 0) {						// LESS THAN
+      t->left = insertAtRoot(t->left, it);		// Insert into LHS Subtree
+      //printf("rotateR(%d)\n",t->value);		// Move to MAIN ROOT via.
+      t = rotateR(t);							// rotateR(t)
    }
-   else if (diff > 0) {
-      t->right = insertAtRoot(t->right, it);
-      //printf("rotateL(%d)\n",t->value);
-      t = rotateL(t);
+   else if (diff > 0) {						// GREATER THAN
+      t->right = insertAtRoot(t->right, it);	// Insert into RHS Subtree
+      //printf("rotateL(%d)\n",t->value);		// Move to MAIN ROOT via.
+      t = rotateL(t);							// rotateL(t)
    }
    return t;
 }
@@ -180,16 +183,21 @@ Tree deleteRoot(Tree t)
 	}
 }
 
+/* ROTATE TREE RIGHT */
+// n1 = node to rotateR
 Link rotateR(Link n1)
 {
-   if (n1 == NULL) return n1;
-   Link n2 = n1->left;
-   if (n2 == NULL) return n1;
-   n1->left = n2->right;
+   if (n1 == NULL) return n1;	// if node = Empty tree, no rotation
+   Link n2 = n1->left;			// n2 = ptr to LHS node
+   if (n2 == NULL) return n1;	// if node->LHS = Empty tree, no rotation
+   									// (No LHS node to take its place)
+   n1->left = n2->right;		// Set node LHS = LHS
    n2->right = n1;
    return n2;
 }
 
+/* ROTATE TREE LEFT */
+// n2 = node to rotateL
 Link rotateL(Link n2)
 {
    if (n2 == NULL) return n2;
