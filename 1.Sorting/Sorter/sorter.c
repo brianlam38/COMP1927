@@ -249,7 +249,7 @@ void insertionSort(int a[], int lo, int hi)
       	for (j = i; less(val,a[j-1]); j--) // Loops down and compares the key elt
          	move(a, j, j-1);			   // with sorted part. Insert key into
       	a[j] = val;						   // the correct place in sorted.
-   	}									   // Set new key = next I
+   	}									   // Set new key = next a[i]
 }
 
 /* SHELL SORT: O(nLogn) -> O(n(Logn)^2) */

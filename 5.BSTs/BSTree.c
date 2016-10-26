@@ -149,6 +149,18 @@ void BSTreeTraverse(BSTree t, void (*visit)(Item), char *style)
 	if (strcmp(style,"LRN") == 0) (*visit)(t->value); // deref, visit root node LAST
 }
 
+/* PRACTISE LAB TEST */
+// Given a tree with nodes and values,
+// Write a function map() that changes the values
+// inside the nodes according to (*f)(int).
+void map(Tree t, int(*f)(int)) {
+	if (t != NULL) {
+		t->value = f(t->value);
+		Map(t->left,f);
+		Map(t->right,f);
+	}
+}
+
 // delete a value from a BSTree
 BSTree BSTreeDelete(BSTree t, int v)
 {
