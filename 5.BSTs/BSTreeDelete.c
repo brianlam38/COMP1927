@@ -27,6 +27,7 @@ BSTree BSTreeDelete(BSTree t, Key k)
 }
 
 // PART 2: DELETE NODE
+// We delete by copying successor value into root node + deleting successor
 BSTree deleteRoot(BSTree t)
 {
 	Link newRoot;
@@ -54,15 +55,14 @@ BSTree deleteRoot(BSTree t)
 	// CASE #3: TWO SUBTREES => replace root by successor
 	if (t->left != NULL && t->right != NULL) {
 	{
-		// - find successor  (min value > root value)
-		Link curr = t->right;
-		while (curr->left != NULL)
-			curr = curr->left;
-		Key succ = curr->value;
-		// - delete successor node
-		t = BSTreeDelete(t,succ);
-		// - put its value in root node
-		t->value = succ;
+		Link curr = t->right;		// Move to RHS Subree
+		while (curr->left != NULL) {// Find successor node
+			curr = curr->left;			// (left-most node)
+		}
+		Key succ = curr->value;		// Take succ node val
+		t = BSTreeDelete(t,succ);	// Delete succ node
+		t->value = succ;			// Copy succ node val to root val
+
 		return t;
 	}
 }
