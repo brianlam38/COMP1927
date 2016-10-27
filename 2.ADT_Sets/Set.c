@@ -18,8 +18,8 @@ struct SetRep {
 
 int isValid(Set s)
 {
-	if (s == NULL) return 0;
-	if (s->nelems < 0) return 0;
+	if (s == NULL) return 0;	 // set is empty
+	if (s->nelems < 0) return 0; // set has less than 0 elts
 	return 1;
 }
 
@@ -106,7 +106,7 @@ void SetDelete(Set s, int n)
 	}
 }
 
-// set membership test
+// Find if val is a member of set
 int SetMember(Set s, int n)
 {
 	// assert(isValid(s));
@@ -120,11 +120,11 @@ int SetMember(Set s, int n)
 Set SetUnion(Set s, Set t)
 {
 	// assert(isValid(s) && isValid(t));
-	int i;  Set new = newSet();
+	int i;  Set new = newSet();			// create new set
 	for (i = 0; i < s->nelems; i++)
-		new->elems[i] = s->elems[i];
+		new->elems[i] = s->elems[i];	// copy elts from S1 into new set
 	new->nelems = s->nelems;
-	for (i = 0; i < t->nelems; i++)
+	for (i = 0; i < t->nelems; i++)		// copy elts from S2 into new set
 		SetInsert(new,t->elems[i]);
 	return new;
 }
