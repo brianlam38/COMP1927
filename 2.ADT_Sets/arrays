@@ -1,0 +1,16 @@
+int a[10], b[10];
+
+Can't do ...
+
+a = b;   ??? may not compile, and wouldn't do what you want 
+
+for (int i = 0; i < 10; i++) a[i] = b[i];   ??? depends on compiler
+
+
+Can do:
+
+int i;
+for (i = 0; i < 10; i++) a[i] = b[i];
+
+memcpy(a, b, 10*sizeof(int));
+

@@ -1,0 +1,119 @@
+valid(T,X) =
+   object referenced by X is a valid instance of ADT T
+ptr(X) =
+   the actual pointer value stored in X
+val(X) =
+   the ADT "value" represented by the contents of *X
+X' =
+   value of X at end of function, if we need to
+   distinugish this from its value at the start
+   of the function
+Ret =
+   the return value from a function
+
++ = set union
+* = set intersection
+- = set difference
+|s| = set cardinality (#elements)
+
+
+
+
+// create new empty set
+Set newSet()
+
+Pre: some memory is available
+
+Post: valid(Set,Ret) && SetIsEmpty(Ret)
+
+
+
+// read+insert set values
+void readSet(File *f, Set s)
+
+Pre: valid(FILE*,f) && isReadable(f) && valid(Set,s)
+
+Post: val(s') also contains all values from f
+
+
+
+// make a copy of a set
+Set SetCopy(Set s)
+
+Pre: valid(Set,s)
+
+Post: valid(Set,Ret) && 
+			ptr(Ret) != ptr(s) && val(Ret) == val(s)
+
+
+
+// add item into set
+void SetInsert(Set s, int i)
+
+Pre: valid(Set,s) && valid(int,i)
+
+Post: val(s') == val(s) + {i}
+
+
+
+
+// remove item from set
+void SetDelete(Set s, int i)
+
+Pre: valid(Set,s) && valid(int,i)
+
+Post: val(s') == val(s) - {i}
+
+
+
+// set membership test
+int SetMember(Set s, int i)
+
+Pre: valid(Set,s) && valid(int,i)
+
+Post: Ret == val(s) contains i
+
+
+
+// union
+Set SetUnion(Set s, Set t)
+
+Pre: ???
+
+Post: val(Ret) = val(s) + val(t)
+
+
+
+// intersection
+Set SetIntersect(Set s, Set t)
+
+Pre: ???
+
+Post: ???
+
+
+
+// cardinality (#elements)
+int SetCard(Set s)
+
+Pre: ???
+
+Post: ???
+
+
+
+// free memory used by set
+void dropSet(Set s)
+
+Pre: ???
+
+Post: ???
+
+
+
+// display as {1,2,3...}
+void showSet(Set s)
+
+Pre: ???
+
+Post: ???
