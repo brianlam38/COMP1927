@@ -75,7 +75,7 @@ Set SetCopy(Set s)
 	return new;
 }
 
-// add value into set
+// add value into set (without duplicates)
 void SetInsert(Set s, int n)
 {
 	// assert(isValid(s));
@@ -86,8 +86,8 @@ void SetInsert(Set s, int n)
 		assert(s->elems != NULL);
 	}
 	int i;
-	for (i = 0; i < s->nelems; i++)
-		if (s->elems[i] == n) return;
+	for (i = 0; i < s->nelems; i++)		// Loop through set
+		if (s->elems[i] == n) return;		// If set[i] = value, return
 	s->elems[s->nelems] = n;
 	s->nelems++;
 }
