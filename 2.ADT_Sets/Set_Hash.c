@@ -7,9 +7,18 @@
 #include "Bool.h"
 #include "Set.h"
 
+
+
 // concrete data structure
+typedef struct Node *Link;
+typedef struct Node {
+	int value;
+	Link next;
+};
+
 struct SetRep {
-	...
+	int nelems;
+	int elems[MAXHASH];
 };
 
 // Local functions
