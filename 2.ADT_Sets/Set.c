@@ -133,12 +133,13 @@ Set SetUnion(Set s, Set t)
 Set SetIntersect(Set s, Set t)
 {
 	// assert(isValid(s) && isValid(t));
-	int i;  Set new = newSet();
-	for (i = 0; i < s->nelems; i++) {
-		if (SetMember(t, s->elems[i]))
-			SetInsert(new, s->elems[i]);
+	int i;
+	Set new = newSet();					// create new set
+	for (i = 0; i < s->nelems; i++) {	// loop through set S
+		if (SetMember(t, s->elems[i]))	// if value s[i] belongs in Set t
+			SetInsert(new, s->elems[i]);	// insert value s[i] int Set new
 	}
-	return new;
+	return new;							// return Set new
 }
 
 // cardinality (#elements)
