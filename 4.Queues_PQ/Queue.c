@@ -43,18 +43,18 @@ void dropQueue(Queue q)
 // add item onto queue
 void enqueue(Queue q, Item it)
 {
-	assert(q->nitems < q->size);	// check queue isn't already full (otherwise can't enqueue)
+	assert(q->nitems < q->size);	// check queue is NOT full (otherwise can't enqueue)
 	q->tail = (q->tail+1)%q->size;  // move tail onto next location
-	q->data[q->tail] = it;			// copy new item into that particular location
+	q->data[q->tail] = it;			// copy new item to tail
 	q->nitems++;					// increment num of items
 }
  
 // remove item from queue
 Item dequeue(Queue q)
 {
-	assert(q->nitems > 0);			// check num of items in queue > 0
+	assert(q->nitems > 0);			// check nitems is NOT empty
 	Item it = q->data[q->head];		// grab head item (FIFO, so remove 1st item)
-	q->head = (q->head+1)%q->size;	// advance head ptr (Advance head ptr by 1 position)
+	q->head = (q->head+1)%q->size;	// advance head ptr by 1 pos // removes item
 	q->nitems--;					// decrement item count
 	return it;						// return dequeued item
 }
@@ -73,6 +73,7 @@ int nItems(Queue q)
 }
  
 // display queue on stdout
+// TAKES INTO ACCOUNT WRAPAROUND OF TAIL ITEM WITHIN ARRAY
 void show(Queue q)
 {
 	int i;
