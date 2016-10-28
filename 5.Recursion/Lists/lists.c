@@ -110,8 +110,7 @@ int sumi(List L)
 	return sum;
 }
 
-// display list forward (recursive)
-
+// PRINT LIST (RECURSIVE)
 void putList(List L)
 {
    	if (empty(L))							// CASE #1: Empty list (base case)
@@ -120,14 +119,13 @@ void putList(List L)
     	show(head(L));							// empty(tail(L)) means 1 elt
     	printf("\n");
     } else {								// CASE #3: More than 1 elt
-    	show(head(L));							// Print head
+    	show(head(L));							// Print current val (L->value)
     	printf(", ");							// Print space
-    	putList(tail(L));						// Recursively print remaining vals
+    	putList(tail(L));						// Recursively access next node
    	}
 }
 
-// display list forward (iterative)
-
+// PRINT LIST (ITERATIVE)
 void putListi(List L)
 {
 	Link curr;
@@ -137,21 +135,28 @@ void putListi(List L)
 	}
 }
 
-// display list backward (recursive)
-
+// REVERSE PRINT LIST (RECURSIVE)
 void putListRev(List L)
 {
-   if (empty(L))
-      /*nothing to print*/;
+   if (empty(L))			// Empty list (base case)
+      printf("\n");
    else {
-      putListRev(tail(L));
-      if (!empty(tail(L))) printf(" ");
-      show(head(L));
+      putListRev(tail(L));				// Recursively access next node
+      if (!empty(tail(L))) printf(" ");	// If tail != NULL, print space
+      show(head(L));					// Print current val (L->value)
    }
 }
 
-// display list backward (iterative)
+/* WHAT IS THE DIFFERENCE BETWEEN ASC / DESC PRINTING?
+	ASCENDING:
+	- Does the print operation before recursive operation (L->next)
+	DESCENDING:
+	- Does the recursive operation (L->next) before printing
+	- This works as function will loop to end of list, print the curr (head) value,
+	  break out of the recursion, then repeat until the first case is reached.
+*/
 
+// REVERSE PRINT LIST (ITERATIVE)	
 void putListRevi(List L)
 {
 	printf("Not yet implemented");
