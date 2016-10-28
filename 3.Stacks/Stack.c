@@ -37,11 +37,11 @@ void push(Stack s, Item it)
 {
 	assert(isValidStack(s));
 	
-	Link new = malloc(sizeof(Node));
-	new->value = it;
-	new->next = s->items;
-	s->items = new;
-	s->nitems++;
+	Link new = malloc(sizeof(Node));	// create new node
+	new->value = it;					// set val of node
+	new->next = s->items;				// add to front of list
+	s->items = new;						// re-arrange ptr
+	s->nitems++;						// increment nitems
 }
  
 // remove item from stack
@@ -51,12 +51,12 @@ Item pop(Stack s)
 {
 	assert(isValidStack(s));
 
-	Link old = s->items;
-	s->items = old->next;
-	Item it = old->value;
-	s->nitems--;
-	free(old);
-	return (it);
+	Link old = s->items;	// grab item using ptr (stack -> always remove front of list)
+	s->items = old->next;	// skip over old item
+	Item it = old->value;	// grab old item value
+	s->nitems--;			// decrement nitems
+	free(old);				// FREE OLD ITEM
+	return (it);			// RETURN VAL OF OLD ITEM
 }
  
 // stack contains no items?
@@ -64,7 +64,7 @@ Item pop(Stack s)
 // Post: ret == (nItems(s) == 0)
 int isEmpty(Stack s)
 {
-	return (nItems(s) == 0);
+	return (nItems(s) == 0);	// TRUE if nItems = 0;
 }
  
 // how many items in stack
@@ -88,21 +88,21 @@ void show(Stack s)
 // Post valid(Stack,ret)
 Stack newStack()
 {
-	Stack new = malloc(sizeof(struct StackRep));
-	assert(new != NULL);
-	new->nitems = 0;
-	new->items = NULL;
-	return new;
+	Stack new = malloc(sizeof(struct StackRep)); // allocate mem for new stack
+	assert(new != NULL);	// NULL check
+	new->nitems = 0;		// set nitems = 0
+	new->items = NULL;		// set head of stack = NULL
+	return new;				// return ptr to new stack
 }
  
 // release stack data
 void dropStack(Stack s)
 {
-	Link cur, next;
-	for (cur = s->items; cur != NULL; cur = next) {
-		next = cur->next;
+	Link cur, next;	// next ptr needed as curr must be free'd before going curr->next
+	for (cur = s->items; cur != NULL; cur = next) {	// remove all existing
+		next = cur->next;							// nodes in stack
 		free(cur);
 	}
-	free(s);
+	free(s); // free stack
 }
  
