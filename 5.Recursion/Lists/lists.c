@@ -114,13 +114,16 @@ int sumi(List L)
 
 void putList(List L)
 {
-   if (empty(L))
-      /*nothing to print*/;
-   else {
-      show(head(L));
-      if (!empty(tail(L))) printf(", ");
-      putList(tail(L));
-   }
+   	if (empty(L))							// CASE #1: Empty list (base case)
+    	printf("\n");
+    else if (empty(tail(L))) {				// CASE #2: 1 elt list
+    	show(head(L));							// empty(tail(L)) means 1 elt
+    	printf("\n");
+    } else {								// CASE #3: More than 1 elt
+    	show(head(L));							// Print head
+    	printf(", ");							// Print space
+    	putList(tail(L));						// Recursively print remaining vals
+   	}
 }
 
 // display list forward (iterative)

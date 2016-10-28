@@ -51,8 +51,8 @@ int sum(List L)
 	if (empty(L))
 		return 0;
 	else
-		return head(L) + sum(tail(L));
-}
+		return head(L) + sum(tail(L));	// Keeps adding 1 head at a time,
+}										// until entire list is summed
 
 
 
