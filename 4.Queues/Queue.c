@@ -18,23 +18,26 @@ struct QueueRep {
 // create new empty queue
 Queue newQueue(int length)
 {
-	Queue new = malloc(sizeof(struct QueueRep)); // malloc space for queue representation
+	Queue new = malloc(sizeof(struct QueueRep)); // malloc space for queue rep (struct)
 	assert(new != NULL);						 // check that new ptr is pointing to nothing
-	new->size = length;						     // initialise size of queue
-	new->nitems = 0;							 // initially empty
-	new->head = 0;								 // location starting at 0
-	new->tail = -1;							     // tail needs to start at -1 as we move tail +1 position in enqueue()
-	new->data = malloc(length*sizeof(Item));	 // malloc space for array (storing queue data)
-	assert(new->data != NULL);					 // check that data is pointing to nothing		
+
+	new->size = length;						     // set size = lenght (parameter)
+	new->nitems = 0;
+	new->head = 0;								 // loc starting at 0
+	new->tail = -1;							     // tail starts @-1 as we move tail +1 position in enqueue()
+
+	new->data = malloc(length*sizeof(Item));	 // alloc array for queue data
+	assert(new->data != NULL);					 // check that data is pointing to nothing	
+
 	return new;
 }
  
 // release queue data
 void dropQueue(Queue q)
 {
-	assert(q != NULL);	// check that queue exists
-	free(q->data);		// free up data
-	free(q);			// free up rest of the structure
+	assert(q != NULL);
+	free(q->data);		// free up queue data
+	free(q);			// free up queue struct
 }
  
 // add item onto queue
