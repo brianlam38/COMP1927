@@ -9,18 +9,24 @@ Write functions to sum the values in a list
 Each function has the same prototype: int sum(List);
 
 
-// RECURSIVE VERSION
+// ################
+// BRIAN'S VERSIONS
+// ################
+
+// RECURSIVE VERSION (Brian's ver)
 int sum(List L)
 {
 	if (L->head == NULL) {
 		return 0;
 	}
 	int sum;
-	sum += sum(L->next);
+	if (L->next != NULL) {
+		sum += sum(L->next);		
+	}
 	return sum;
 }
 
-// ITERATIVE VERSION
+// ITERATIVE VERSION (correct same as Jas' ver)
 int sum(List L)
 {
 	Link curr;
@@ -30,3 +36,24 @@ int sum(List L)
 	}
 	return sum;
 }
+
+// #############
+// JAS' VERSIONS
+// #############
+
+// RECURSIVE VERSION
+// Remember:
+// head(L) = gives value in first node of L
+// tail(L) = gives "rest of" list L after first node
+// empty(L) = list is empty (base case)
+int sum(List L)
+{
+	if (empty(L))
+		return 0;
+	else
+		return head(L) + sum(tail(L));
+}
+
+
+
+
