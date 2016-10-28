@@ -7,7 +7,7 @@
 #include "Bool.h"
 #include "Set.h"
 
-
+#define MAXHASH 1009
 
 // concrete data structure
 typedef struct Node *Link;
@@ -18,22 +18,53 @@ typedef struct Node {
 
 struct SetRep {
 	int nelems;
-	int elems[MAXHASH];
+	int htab[MAXHASH];
 };
 
-// Local functions
+// ###############
+// LOCAL FUNCTIONS
+// ###############
 
-// check whether Set looks plausible
-int isValid(Set s)
-{
+// example hash function
+static int hash(int value) {
+	return value%MAXHASH;
 }
 
-// Interface functions
+// check whether Set looks plausible
+static int isValid(Set s) {
+	if (s == NULL) return 0;
+	if (s->nelems < 0) return 0;
+	if (s->nelems > 0) {
+		int i;
+		int nlists = 0;
+		for (i = 0; i < MAXHASH; i++) {	// Scan through H.T looking
+			if (s->htab[i] != NULL) {	// for a non empty list.
+				nlists++;				// Makes sure things are being
+			}							// stored correctly in the H.T
+		}
+		if (nlists == 0) {
+			return 0;
+		}
+	}								
+}
+
+// ###################
+// INTERFACE FUNCTIONS
+// ###################
 
 // create new empty set
 Set newSet()
 {
-	return NULL;
+	Set new = malloc(sizeof(struct SetRep));
+	assert (new != NULL);
+
+	int i;
+	for (i = 0; i < MAXHASH; i++) {	// Initialise table = NULL
+		new->htab[i] = NULL;
+	}
+	new->nelems = 0;
+
+	return new;
 }
 
 // free memory used by set
@@ -49,10 +80,26 @@ Set SetCopy(Set s)
 	return NULL;
 }
 
-// add value into set
+// add value into hash table (append to end of list)
 void SetInsert(Set s, int n)
 {
 	// assert(isValid(s));
+	int val = hash(n);			// get elt
+	Link curr = s->htab[val];	// set curr = start of index
+	Link new = malloc(sizeof(struct Node));
+	assert(new != NULL);
+
+	while (curr != NULL) {		// loop until end
+		if (curr->value == n) {	// check for duplicate
+			return;
+		}
+		curr = curr->next;
+	}
+	curr->next = new;			// add node to end
+	new->value = n;				// add value to node
+	new->next = NULL;
+
+	s->nelems++;				// increment nelems
 }
 
 // remove value from set
