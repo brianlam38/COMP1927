@@ -15,7 +15,6 @@ typedef struct BSTNode {
 } BSTNode;
 
 // make a new node containing a value
-static
 Link newBSTNode(int v)
 {
 	Link new = malloc(sizeof(BSTNode));	// Allocate space for node
@@ -98,66 +97,69 @@ int BSTreeFindI(BSTree t, int v)
 	return 0;						// otherwise, return FALSE
 }									// if NULL is reached (tree end)
 
-// insert a new value into a BSTree (RECURSIVE)
+/* INSERT VALUE IN TREE (RECURSIVE) */
 BSTree BSTreeInsert(BSTree t, int v)
 {
-	if (t == NULL)				// EMPTY TREE or END OF TREE:
-		t = newBSTNode(v);			// create NEW NODE w/ value v
-	else if (v < t->value)		// if v < node val, insert in LHS subtree
+	if (t == NULL)				// #1 Reach end of tree -> Add node
+		t = newBSTNode(v);
+	else if (v < t->value)		// #2 Insert in LHS subtree
 		t->left = BSTreeInsert(t->left,v);
-	else if (v > t->value)		// if v > node val, insert in RHS subtree
+	else if (v > t->value)		// #3 Insert in RHS subtree
 		t->right = BSTreeInsert(t->right,v);
-
-	return t;					// return ptr to NEW NODE
+	return t;					// Return ptr to tree
 }
 
-// insert a new value into a BSTree (ITERATIVE)
+/* INSERT VALUE IN TREE (ITERATIVE) */
 BSTree BSTreeInsertI(BSTree t, int v)
 {
-	if (t == NULL) return newBSTNode(v);	// EMPTY TREE, create ROOT NODE
+	if (t == NULL) return newBSTNode(v);	// #1 Empty tree, insert node
+
 	Link curr = t;
 	Link parent = NULL;
-	while (curr != NULL) {				/* PART 1: Loop until value found or tree ends */
-		if (v < curr->value)				// if v < node val, insert in LHS subtree
-			{ parent = curr; curr = curr->left; }	// keep track of parent node (prev)
-		else if (v > curr->value)			// if v > node val, go to RHS subtree
-			{ parent = curr; curr = curr->right; }	// keep track of parent node (prev)
+	while (curr != NULL) {				    // #2: Find value / end of tree
+		if (v < curr->value)					// Go to LHS subtree
+			{ parent = curr; curr = curr->left; }
+		else if (v > curr->value)				// Go to RHS subtree
+			{ parent = curr; curr = curr->right; }
 		else
-			return t;						// v = node val, return EXISTING NODE
+			return t;
 	}
-	Link new = newBSTNode(v);			/* PART 2: Tree ended, append to tree */
-	if (v < parent->value)					// if v < parent val, insert node to LHS
+
+	Link new = newBSTNode(v);				// #3 Add node to end of tree
+	if (v < parent->value)							// Add to LHS subtree
 		parent->left = new;
-	else									// if v > parent val, insert node to RHS 
+	else											// Add to RHS subtree
 		parent->right = new;
 
-	return t;								// return NEW NODE
+	return t;
 }
 
 /* GENERIC TRAVERSAL */
-// Remember, visit is a FN that takes in an Item, does something
-// to it and doesn't return anything. We're giving the BSTreeTraverse
-// function a ptr to the visit function.
+// void (*visit)(Item) = a function param that affects the node
 void BSTreeTraverse(BSTree t, void (*visit)(Item), char *style)
 {
-	if (t == NULL) return;	// base case, empty tree
+	if (t == NULL) return;			// Base case, empty treee
 
-	if (strcmp(style,"NLR") == 0) (*visit)(t->value); // deref, visit root node FIRST
-	BSTreeTraverse(t->left, visit, style); // visit LHS
-	if (strcmp(style,"LNR") == 0) (*visit)(t->value); // deref, visit root node MID
-	BSTreeTraverse(t->right, visit, style); // visit RHS
-	if (strcmp(style,"LRN") == 0) (*visit)(t->value); // deref, visit root node LAST
+	if (strcmp(style,"NLR") == 0)	// #1: PREFIX ORDER - root first
+		(*visit)(t->value);
+	BSTreeTraverse(t->left, visit, style);	// Recursive visit LHS
+
+	if (strcmp(style,"LNR") == 0)	// #2: INFIX ORDER - root middle
+		(*visit)(t->value);
+	BSTreeTraverse(t->right, visit, style);	// Recursive visit RHS
+
+	if (strcmp(style,"LRN") == 0)	// #3: POSTFIX ORDER - root last
+		(*visit)(t->value);
 }
 
 /* PRACTISE LAB TEST */
-// Given a tree with nodes and values,
-// Write a function map() that changes the values
-// inside the nodes according to (*f)(int).
+// Given a tree with nodes and values, write a function map() that
+// changes the values inside the nodes according to (*f)(int).
 void map(Tree t, int(*f)(int)) {
-	if (t != NULL) {
-		t->value = f(t->value);
-		Map(t->left,f);
-		Map(t->right,f);
+	if (t != NULL) {			// While tree !end
+		t->value = f(t->value); // Change value of node
+		Map(t->left,f);			// Recursively traverse LHS + apply changes
+		Map(t->right,f);		// Recursively traverse RHS + apply changes
 	}
 }
 

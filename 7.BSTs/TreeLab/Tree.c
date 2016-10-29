@@ -127,6 +127,10 @@ int find(Tree t, Key k)
 	return res;
 }
 
+// #######################
+// DELETE ROOT FROM A TREE
+// #######################
+
 // delete a value from a Tree
 Tree delete(Tree t, Key k)
 {
@@ -148,37 +152,33 @@ Tree delete(Tree t, Key k)
 Tree deleteRoot(Tree t)
 {
 	Link newRoot;
-	// if no subtrees, tree empty after delete
+	/* CASE #1: NO SUBTREE */
 	if (t->left == NULL && t->right == NULL) {
 		free(t);
 		return NULL;
 	}
-	// if only right subtree, make it the new root
+	/* CASE #2: ONE SUBTREE -> RHS */
 	else if (t->left == NULL && t->right != NULL) {
 		newRoot = t->right;
 		free(t);
 		return newRoot;
 	}
-	// if only left subtree, make it the new root
+	/* CASE #3: ONE SUBTREE -> LHS */
 	else if (t->left != NULL && t->right == NULL) {
 		newRoot = t->left;
 		free(t);
 		return newRoot;
-	}
-	else {  // (t->left != NULL && t->right != NULL)
-		// so has two subtrees
-		// - find inorder successor (grab value)
-		// - delete inorder successor node
-		// - move its value to root
+	/* CASE #4: TWO SUBTREES */
+	} else {
 		Link parent = t;
-		Link succ = t->right; // not null!
-		while (succ->left != NULL) {
+		Link succ = t->right; 		 // SUCC = RHS subtree
+		while (succ->left != NULL) { // Traverse to SUCC node
 			parent = succ;
 			succ = succ->left;
 		}
-		int succVal = succ->value;
-		t = delete(t,succVal);
-		t->value = succVal;
+		int succVal = succ->value;	 // Grab SUCC value
+		t = delete(t,succVal);		 // Delete SUCC node
+		t->value = succVal;			 // Set ROOT value = SUCC value
 		return t;
 	}
 }
