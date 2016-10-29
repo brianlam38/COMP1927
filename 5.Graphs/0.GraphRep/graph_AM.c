@@ -22,7 +22,7 @@ Graph newGraph(int nV) {
 	g->nE = 0;								// Init # edges
 	g->edges = e;							// Set edges = ptr e
 
-	return g
+	return g;
 }
 
 // #####################
