@@ -30,7 +30,7 @@ void shortestPath(Graph g, Vertex s) {
 			e = (s,t,w)						// S within vSet (something already visited)			
 		}									// w is mininum weight of all such edges
 		/* EDGE RELAXATION */
-		if (t !within vSet || dist[s]+w < dist[t]) {	// if going to T through S is cheaper
+		if (dist[s]+w < dist[t]) {	// if going to T through S is cheaper
 			dist[t] = dist[s]+w;							// update dist
 			pred[t] = s;									// update pred = S
 		}
