@@ -113,15 +113,15 @@ int sumi(List L)
 // PRINT LIST (RECURSIVE)
 void putList(List L)
 {
-   	if (empty(L))							// CASE #1: Empty list (base case)
+   	if (empty(L))				// #1: Empty list (base case)
     	printf("\n");
-    else if (empty(tail(L))) {				// CASE #2: 1 elt list
-    	show(head(L));							// empty(tail(L)) means 1 elt
+    else if (empty(tail(L))) {	// #2: 1 elt list
+    	show(head(L));			//     empty(tail(L)) means 1 elt
     	printf("\n");
-    } else {								// CASE #3: More than 1 elt
-    	show(head(L));							// Print current val (L->value)
-    	printf(", ");							// Print space
-    	putList(tail(L));						// Recursively access next node
+    } else {					// #3: More than 1 elt
+    	show(head(L));			//     Print current val (L->value)
+    	printf(", ");			//     Print space
+    	putList(tail(L));		//     Recursively access next node
    	}
 }
 
@@ -138,12 +138,12 @@ void putListi(List L)
 // REVERSE PRINT LIST (RECURSIVE)
 void putListRev(List L)
 {
-   if (empty(L))			// Empty list (base case)
+   if (empty(L))			// #1: Empty list (base case)
       printf("\n");
-   else {
-      putListRev(tail(L));				// Recursively access next node
-      if (!empty(tail(L))) printf(" ");	// If tail != NULL, print space
-      show(head(L));					// Print current val (L->value)
+   else {					// #2: Recursively access tail (next node)
+      putListRev(tail(L));	
+      if (!empty(tail(L))) printf(" ");// If empty tail, print space
+      show(head(L));				   // Print curr val (L->value)
    }
 }
 
