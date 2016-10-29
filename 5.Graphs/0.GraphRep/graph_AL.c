@@ -1,18 +1,37 @@
 // #############################
+// Adjacency List Representation
+// #############################
+
+typedef struct vNode *VList;
+struct vNode {
+	Vertex v;
+	vList next;
+};
+
+typedef struct graphRep GraphRep;
+
+struct graphRep {
+   int   nV;     // #vertices
+   int   nE;     // #edges
+   VList *edges; // array of lists
+};
+
+
+// #############################
 // Adjacency List Implementation
 // #############################
 
 Graph newGraph(int nV) {
-	int i;
-	int j;
+	int i, j;
 
-	VList *e = malloc(nV * sizeof(VList));	// Alloc ptr to array of L's
-	assert(e != NULL);
-	for (i = 0; i < nV; i++)
-		e[i] = newVList();					// Init array with L's
+	VList *e = malloc(nV * sizeof(VList));	// #1 Allocate "Column" array
+	assert(e != NULL);						//    (array of lists)
 
-	Graph g = malloc(sizeof(GraphRep)):		// Alloc graph struct
-	assert(g != NULL);
+	for (i = 0; i < nV; i++)				// #2 Create "Rows"
+		e[i] = newVList();					//    (linked lists)
+
+	Graph g = malloc(sizeof(GraphRep)):		// #3 Allocate GraphRep struct
+	assert(g != NULL);						//    + set values
 	g->nV = nV;
 	g->nE = 0;
 	g->edges = e;
@@ -26,11 +45,11 @@ Graph newGraph(int nV) {
 
 void insertE(Graph g, Edge e) {
 	assert(validG(g) && validE(g,e));
-	int orig = length(g->edges[e.v]);			// Store orig list len
-	g->edges[e.v] = insert(g->edges[e.v], e.w)	// Add new value to list
-	g->edges[e.w] = insert(g->edges[e.w], e.v)	// Add new value to list
+	int orig = length(g->edges[e.v]);			// #1 Store original list len
+	g->edges[e.v] = insert(g->edges[e.v], e.w)	// #2 Insert
+	g->edges[e.w] = insert(g->edges[e.w], e.v)
 
-	if (length(g->edges[e.v]) > orig)			// Check if nE changed
+	if (length(g->edges[e.v]) > orig)			// #3 Adjust #edges / nE
 		g->nE++;								
 }
 
@@ -48,16 +67,18 @@ void removeE(Graph g, Edge e) {
 // Check connected vertices
 // ########################
 
-// Is Vertex x connected with Vertex y?
+// VERSION 1: Store neighbours
 bool connected(Graph g, Vertex x, Vertex y) {
 	assert(validG(g) && validV(g,x) && validV(g,y));
-	VList L = g->edges[x];	// Store list of neighbours of x
-	return find(L,y);		// Scan to see if Y occurs in list
+
+	VList L = g->edges[x];	// Store list of neighbours of X
+	return find(L,y);		// Scan list for Y
 }
-// OR FOR LINKED LIST
+
+// VERSION 2: Traverse linked list for connected
 bool connected(Graph g, Vertex x, Vertex y) {
-	assert(validG(g) && validV(g,x)
-		   && validV(g,y));
+	assert(validG(g) && validV(g,x) && validV(g,y));
+
 	VNode * curr;
 	for (curr = g->edges[x]; curr != NULL; curr = curr->next) {
 		if (curr->v == y)
@@ -70,21 +91,24 @@ bool connected(Graph g, Vertex x, Vertex y) {
 // Check neighbour vertices
 // ########################
 
-// What are the neighbours of vertex x?
+// Creates an array of vertices that are neighbours of X
 Vertex *neighbours(Graph g, Vertex x, int *nv) {
 	assert(validG(g) && validV(g,x) && validV(g,y));
-	VList L = g->edges[x];						// init list to check
-	int nn = length(L);							// count #neighbours
-	Vertex *ns = malloc(nn * sizeof(Vertex));	// alloc array neighbours
+
+	VList L = g->edges[x];						// #1 Copy row to new list
+	int nn = length(L);							//    + count nn's
+
+	Vertex *ns = malloc(nn * sizeof(Vertex));	// #2 Allocate NS array
 	assert(ns != NULL);
 	
-	int k = 0;
-	VList * curr;
-	for (curr = L->first; curr != NULL; curr = curr->next) { // Scan through list, store value
-		ns[k++] = curr->value;								 // store value of neighbour
-	}														 // into neighbours array
-	*nv = nn;		// set *nv (ptr to integer varable) = #neighbours
-	return ns;		// return ptr to neighbours array
+	int k = 0;									// #3 Scan through list, copy
+	VList * curr;								//    v->value into NS array
+	for (curr = L->first; curr != NULL; curr = curr->next) {
+		ns[k++] = curr->value;
+	}
+
+	*nv = nn;	// change value from *nv = nn
+	return ns; 	// return ptr to NS array
 }
 
 
