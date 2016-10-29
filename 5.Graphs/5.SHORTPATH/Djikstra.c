@@ -100,6 +100,17 @@ void shortestPath(Graph g, Vertex start,
 	dispose(PQ);
 }
 
+/* COMPLEXITY ANALYSIS */
+Outer loop = O(V) iterations
+PQ updates = O(LogV)
+
+Finding edge with highest priority:
+1. Try all edges = O(VE)
+2. Classical Djikstra = O(V^2)
+3. PQueue = V*Cost(Join) + V*Cost(Leave) + ~E*Cost(Reorder)
+
+
+
 
 
 
