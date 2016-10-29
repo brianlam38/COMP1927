@@ -42,35 +42,57 @@ void shortestPath(Graph g, Vertex s) {
 	// dist[] and pred[] are now set appropriately
 }
 
-// ###############################
-// DJIKSTRA'S ALGO - PQUEUE METHOD
-// ###############################
+// ######################################
+// DJIKSTRA'S ALGO - PQUEUE (REAL) METHOD
+// ######################################
 
-void shortestPath(Graph g, Vertex start, Vertex pred[], float dist[]) {
-	PQueue pq = newPQ(dist,nV(g));			// create PQ based on dist[] -> Inside PQ data structure,
-											// store pointer to dist[]. When working out priority,
-											// it will access array to find cheapest one.
-	for (Vertex v = 0; v < nV(g); v++) {
-		pred[v] = -1;						// init pred[] values to -1
-		dist[v] = MAX_WT;					// init dist[] values to MAX_WEIGHT
-		join(pq,v);							// add V to PQ
+#define MAX_WT 			// value larger than any real weight
+#define NO_EDGE			// value in adj matrix to indicate no edge
+
+/* PQ INTERFACE */
+
+// use dist[] array to determine PQ priorities
+// lookup cost in dist[] to work on highest priority element
+PQueue newPQ(float dist[], int nV);
+// add v to priority queue
+void join(PQueue, Vertex);
+// remove v with smallest dist[] + grab value
+Vertex leave(PQueue, Vertex);
+// re-order queue based on weight change to vertex
+void reorder(PQueue, Vertex);
+// check whether queue is empty
+int empty(PQueue);
+// clean up queue data
+void disposePQ(PQueue);
+
+/* DJIKSTRA'S SHORTEST PATH */
+void shortestPath(Graph g, Vertex start,
+				  Vertex pred[], float dist[]) {
+
+	PQueue pq = newPQ(dist,nV(g));			// #1 create PQ based on dist[] -> ptr access to dist[]
+
+	for (Vertex v = 0; v < nV(g); v++) {	// #2 Init dist[] pred[] to base values for each vertex
+		pred[v] = -1;						//    Add vertex to Queue
+		dist[v] = MAX_WT;
+		join(pq,v);
 	}
-	dist[start] = 0.0;						// init dist[S] = 0
-	reorder(pq,start);						// reorder PQ -> S moves to the front (has priority)
 
-	while (!empty(pq)) {
-		Vertex S = leave(pq);				// pop S off PQueue / grab cheapest vertex
-		/* (1) ITERATE THROUGH NEIGHBOURS */
-		for (Vertex t = 0; t < nV(g); t++) {// iterate through other vertices
-			float len = g->adj[s][t];		// find a vertex T connected with vertex S (neighbours)
-			if (len == NO_EDGE) continue;	// no edge found, continue through next iteration
-			/* (2) EDGE RELAXATION */
-			if (dist[s]+len < dist[t]) {	// if cost of path < known cost of path
-				pred[t] = s;				// set pred[t] = S
-				dist[t] = dist[s]+len;		// update new shortest dist
-				/* (3) FIX PQ AS T-WEIGHT UPDATED */
+	dist[start] = 0.0;						// #3 Begin at source vertex + reorder PQ
+	reorder(pq,start);						//    (moves v to the front)
+
+	while (!empty(pq)) {					// #4 PQ operations
+		Vertex S = leave(pq);				//    Grab cheapest/front v in the queue
+		/* FIND NEIGHBOURS */
+		for (Vertex t = 0; t < nV(g); t++) {//    Iterate through other vertices
+			float len = g->adj[s][t];		//    Find connected vertices to S (neighbours) + grab weight
+			if (len == NO_EDGE) continue;	//    Length = non-existent, continue / check next T
+			/* EDGE RELAXATION */
+			if (dist[s]+len < dist[t]) {	//    If S cost so far + edge cost < known cost of path to T
+				pred[t] = s;				//    Update new shortest path (previous of T = S)
+				dist[t] = dist[s]+len;		//    Update new shortest dist (dist = dist[S] + len)
 				reorder(pq,t);
 			}
+			/* NEXT ITERATION */
 		}
 	}
 }
