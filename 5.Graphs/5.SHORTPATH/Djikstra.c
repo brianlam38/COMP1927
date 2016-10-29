@@ -46,6 +46,8 @@ void shortestPath(Graph g, Vertex s) {
 // DJIKSTRA'S ALGO - PQUEUE (REAL) METHOD
 // ######################################
 
+/* THIS IS ASSUMING AN ADJACENCY MATRIX REPRESENTATION */
+
 #define MAX_WT 			// value larger than any real weight
 #define NO_EDGE			// value in adj matrix to indicate no edge
 
@@ -95,6 +97,7 @@ void shortestPath(Graph g, Vertex start,
 			/* NEXT ITERATION */
 		}
 	}
+	dispose(PQ);
 }
 
 
