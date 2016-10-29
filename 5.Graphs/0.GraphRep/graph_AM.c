@@ -7,20 +7,21 @@
 Graph newGraph(int nV) {
 	assert(nV > 0);
 
-	int i, j;
-	int **e = malloc(nV * sizeof(int*));	// Alloc "column" 
-	assert(e != NULL);						// (ptr to array of ptrs)
-	for (i = 0; i < nV; i++) {
-		e[i] = malloc(nV * sizeof(int));	// Allocate "rows"
+	int **e = malloc(nV * sizeof(int*));	// #1 Allocate "Columns"
+	assert(e != NULL);						//    (ptr to array of ptrs)
+
+	int i, j;								// #2 Allocate "Rows" arrays
+	for (i = 0; i < nV; i++) {				//    Set values in arrays = 0;
+		e[i] = malloc(nV * sizeof(int));
 		assert(e[i] != NULL);
-		for (j = 0; j < nV; j++)			// Init array values = 0
+		for (j = 0; j < nV; j++)
 			e[i][j] = 0;
 	}
-	Graph g = malloc(sizeof(GraphRep));		// Alloc struct
-	assert (g != NULL);
-	g->nV = nV;								// Init vertices
-	g->nE = 0;								// Init # edges
-	g->edges = e;							// Set edges = ptr e
+	Graph g = malloc(sizeof(GraphRep));		// #3 Allocate GraphRep struct
+	assert (g != NULL);						//    Set up struct values
+	g->nV = nV;								//    Set up ptr to edges
+	g->nE = 0;
+	g->edges = e;
 
 	return g;
 }
@@ -88,29 +89,29 @@ bool connected(Graph g, Vertex x, Vertex y) {
 // Check neighbour vertices
 // ########################
 
-// Check if two vertices are adjacent
-// Returns an array of vertices (the ptr to start of it)
-// with size = # neighbours
+// Creates an array of vertices that are neighbours
 Vertex *neighbours(Graph g, Vertex x, int *nv) {
 	assert(validG(g) && validV(g,x) && nv != NULL);
 
-	// Go to row corresponding to x
-	// Scan along row, count # of 1's
-	int i
-	int nn = 0;
+	int nn = 0;						// #1 Set #neigbours = 0
+
+	int i; 							// #2 Count #neighbours for vertex Xs
 	for (i = 0; i < g->nV; i++) {
-		if (g->edges[x][i])			// i'th position in row x
-			nn++;					// count neighbours
+		if (g->edges[x][i])
+			nn++;
 	}
-	int *ns = malloc(nn * sizeof(Vertex));	// allocate array of neighbours
-	assert(ns != NULL);						// size = # neighbours
-	int k = 0;
-	for (i = 0; i < g->nV; i++) {			// init the array
-		if (g->edges[x][i])					// if vertex i = neighour, it will = 1
-			ns[k++] = i;					// add vertex i to index of neighbours
+
+	int *ns = malloc(nn * sizeof(Vertex));	// #3 Alloc NS array, where size = nn
+	assert(ns != NULL);
+
+	int k = 0;								// #4 Copy neighbour v's index
+	for (i = 0; i < g->nV; i++) {			//    values into NS array
+		if (g->edges[x][i])
+			ns[k++] = i;
 	}
-	*nv = nn;	// set *nv (ptr to integer variable) = #neighbours
-	return ns; 	// return ptr to neighbours array
+
+	*nv = nn;	// change value from *nv = nn
+	return ns; 	// return ptr to NS array
 }
 
 
