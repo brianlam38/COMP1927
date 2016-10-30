@@ -85,21 +85,25 @@ Tree insert(Tree t, Item it)
 // STEP 2: RotateR or RotateL until new node = MAIN ROOT
 Tree insertAtRoot(Tree t, Item it)
 {
-   if (t == NULL) return newNode(it);		// Empty tree
-   int diff = cmp(key(it), key(t->value));	// Store cmp value
-   if (diff == 0)							// NO DIFFERENCE
-      t->value = it;							// Replace old -> new item
-   else if (diff < 0) {						// LESS THAN
-      t->left = insertAtRoot(t->left, it);		// Insert into LHS Subtree
-      //printf("rotateR(%d)\n",t->value);		// Move to MAIN ROOT via.
-      t = rotateR(t);							// rotateR(t)
-   }
-   else if (diff > 0) {						// GREATER THAN
-      t->right = insertAtRoot(t->right, it);	// Insert into RHS Subtree
-      //printf("rotateL(%d)\n",t->value);		// Move to MAIN ROOT via.
-      t = rotateL(t);							// rotateL(t)
-   }
-   return t;
+   	if (t == NULL)							// #1: Empty tree
+   		return newNode(it);
+
+   	int diff = cmp(key(it), key(t->value));	// #2: Store cmp value
+
+   	if (diff == 0)							// #3: NO DIFFERENCE - no effect
+    	t->value = it;							// Replace old -> new item
+
+   	else if (diff < 0) {					// #4: LESS THAN
+    	t->left = insertAtRoot(t->left, it);	// Insert into LHS Subtree
+    	//printf("rotateR(%d)\n",t->value);		// Move to MAIN ROOT via.
+    	t = rotateR(t);							// rotateR(t)
+
+   	} else if (diff > 0) {					// #5: GREATER THAN
+    	t->right = insertAtRoot(t->right, it);	// Insert into RHS Subtree
+      	//printf("rotateL(%d)\n",t->value);		// Move to MAIN ROOT via.
+      	t = rotateL(t);							// rotateL(t)
+   	}
+   	return t;
 }
 
 Tree insertRandom(Tree t, Item it)
