@@ -25,27 +25,23 @@ BSTree BSTreeDelete(BSTree t, Key k)
 BSTree deleteRoot(BSTree t)
 {
 	Link newRoot;
-
 	// CASE #1: NO SUBTREES => simply free t
 	if (t->left == NULL && t->right == NULL) {
 		free(t);
 		return NULL;
 	}
-
 	// CASE #2a: RIGHT SUBTREE => make it the new root
 	if (t->left == NULL && t->right != NULL) {
 		newRoot = t->right;
 		free(t);
 		return newRoot;
 	}
-
 	// CASE #2b: LEFT SUBTREE => make it the new root
 	if (t->left != NULL && t->right == NULL) {
 		newRoot = t->left;
 		free(t);
 		return newRoot;
 	}
-
 	// CASE #3: TWO SUBTREES => replace root by successor
 	if (t->left != NULL && t->right != NULL) {
 	{

@@ -187,13 +187,13 @@ Tree deleteRoot(Tree t)
 // n1 = node to rotateR
 Link rotateR(Link n1)
 {
-   if (n1 == NULL) return n1;	// if node = Empty tree, no rotation
-   Link n2 = n1->left;			// n2 = ptr to LHS node
-   if (n2 == NULL) return n1;	// if node->LHS = Empty tree, no rotation
+   if (n1 == NULL) return n1;	// #1: Empty tree, no rotation
+   Link n2 = n1->left;			// #2: Set up n2 ptr to n1->LHS node
+   if (n2 == NULL) return n1;	// #3: n2 = empty, no rotation needed
    									// (No LHS node to take its place)
-   n1->left = n2->right;		// Set node LHS = LHS
+   n1->left = n2->right;		// #4: Re-arrange ptrs for rotation
    n2->right = n1;
-   return n2;
+   return n2;					// #5; Return new root node
 }
 
 /* ROTATE TREE LEFT */
