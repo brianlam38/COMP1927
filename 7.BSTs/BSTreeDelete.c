@@ -4,46 +4,40 @@
 // PART 1: TRAVERSE TO NODE
 BSTree BSTreeDelete(BSTree t, Key k)
 {
-	// CASE #1: empty tree => nothing to delete
-	if (t == NULL) return NULL;
+	if (t == NULL)							// #1: Empty tree, return NULL
+		return NULL;						//     (or non existent value)
 
-	// CASE #2: k smaller than root =>
-	//         new left subtree has k deleted
-	if (k < t->value)
+	if (k < t->value)						// #2: k < curr value, go to LHS
 		t->left = BSTreeDelete(t->left,k);
 
-	// CASE #3: k larger than root =>
-	//         new right subtree has k deleted
-	if (k > t->value)
+	if (k > t->value)						// #3: k > curr value, go to RHS
 		t->right = BSTreeDelete(t->right,k);
 
-	// case #4: k is value at root =>
-	//         new tree has root deleted
-	// KEY VALUE IS FOUND. DELETE CURRENT NODE.
-	if (k == t->value)
-		t = deleteRoot(t);
+	if (k == t->value)						// #4: node reached, call
+		t = deleteRoot(t);					//     deleteRoot(t) fn
 
 	return t;
 }
 
 // PART 2: DELETE NODE
-// We delete by copying successor value into root node + deleting successor
+// We delete by copying successor value
+// into root node + deleting successor
 BSTree deleteRoot(BSTree t)
 {
 	Link newRoot;
 
-	// CASE #1: no subtrees => tree empty after delete
-	if (t->left == NULL && t->right == NULL) {	// LHS = NULL and RHS = NULL
+	// CASE #1: NO SUBTREES => simply free t
+	if (t->left == NULL && t->right == NULL) {
 		free(t);
 		return NULL;
 	}
 
 	// CASE #2a: RIGHT SUBTREE => make it the new root
 	if (t->left == NULL && t->right != NULL) {
-		newRoot = t->right; // make child node -> new root node
-		free(t);			// remove old root node
-		return newRoot;			// NOTE: Linking back to parent is handled
-	}							//       by recursion at the higher level
+		newRoot = t->right;
+		free(t);
+		return newRoot;
+	}
 
 	// CASE #2b: LEFT SUBTREE => make it the new root
 	if (t->left != NULL && t->right == NULL) {
@@ -55,13 +49,14 @@ BSTree deleteRoot(BSTree t)
 	// CASE #3: TWO SUBTREES => replace root by successor
 	if (t->left != NULL && t->right != NULL) {
 	{
-		Link curr = t->right;		// Move to RHS Subree
+		Link curr = t->right;		// Move to RHS Subtree
 		while (curr->left != NULL) {// Find successor node
 			curr = curr->left;			// (left-most node)
 		}
 		Key succ = curr->value;		// Take succ node val
-		t = BSTreeDelete(t,succ);	// Delete succ node
-		t->value = succ;			// Copy succ node val to root val
+		t = BSTreeDelete(t,succ);	// Go back to top of tree +
+									// delete successor node
+		t->value = succ;			// Copy succ val in root
 
 		return t;
 	}
