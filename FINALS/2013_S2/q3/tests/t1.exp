@@ -1,0 +1,7 @@
+Graph:
+# vertices = 2, # edges = 1
+
+0 is connected to 1
+1 is connected to 0
+
+# connected components = 1

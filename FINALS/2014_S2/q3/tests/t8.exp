@@ -1,0 +1,12 @@
+Graph:
+# vertices = 6, # edges = 5
+
+0 is connected to 1 2 3 4 5
+1 is connected to 0
+2 is connected to 0
+3 is connected to 0
+4 is connected to 0
+5 is connected to 0
+
+Well-connected vertices
+0 has 5 connections

@@ -1,0 +1,20 @@
+Question 5 ... COMP1927 13s1 Final Exam
+
+A.
+
+Operation             State of Queue after operation
+                      [highest priority ... lowest priority]
+
+initially             -
+PQueueJoin(PQ, 'X')
+PQueueJoin(PQ, 'A')
+PQueueJoin(PQ, 'J')
+PQueueLeave(PQ)
+PQueueJoin(PQ, 'K')
+PQueueLeave(PQ)
+PQueueLeave(PQ)
+
+
+B.
+
+Replace this by your answer

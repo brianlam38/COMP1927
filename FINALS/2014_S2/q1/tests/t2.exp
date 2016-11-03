@@ -1,0 +1,9 @@
+Matrix X
+[     1     2 ]
+[     3     4 ]
+Matrix Y
+[     1     2 ]
+[     3     4 ]
+multiply(X,Y)
+[     7    10 ]
+[    15    22 ]

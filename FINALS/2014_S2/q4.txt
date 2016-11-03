@@ -1,0 +1,21 @@
+Question 4 ... COMP1927 14s2 Final Exam
+
+
+A.  (base cases)
+
+Replace this by your answer
+
+
+B.  (#calls to bsearch for x == {4,9,12})
+
+Replace this by your answer
+
+
+C.  (min/max #calls for a[10])
+
+Replace this by your answer
+
+
+D.  (min/max #calls for a[N])
+
+Replace this by your answer

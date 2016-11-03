@@ -1,0 +1,27 @@
+Question 6 ... COMP1927 14s2 Final Exam
+
+
+A.  (search path)
+
+Replace this by your answer
+
+
+B.  (level-order traversal)
+
+Replace this by your answer
+
+
+C.  (#nodes in perfectly balanced tree)
+
+Replace this by your answer
+
+
+D.  (after rotateL)
+
+Replace this by your answer
+
+
+E.  (after deleteRoot)
+
+Replace this by your answer
+

@@ -1,0 +1,25 @@
+Question 7 ... COMP1927 13s1 Final Exam
+
+
+A.
+
+Show the nodes as follows ...
+
+Node   Contents of Node
+
+A      (?)
+B      (1, 3, 5)
+C      (?)
+D      (?)
+
+add any other nodes here
+
+
+B.
+
+Replace this by your answer
+
+
+C.
+
+Replace this by your answer

@@ -1,0 +1,12 @@
+Graph:
+# vertices = 7, # edges = 6
+
+0 is connected to 1 2 3
+1 is connected to 0
+2 is connected to 0 3
+3 is connected to 0 2
+4 is connected to 5 6
+5 is connected to 4
+6 is connected to 4
+
+# connected components = 2

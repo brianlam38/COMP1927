@@ -1,0 +1,72 @@
+Question 8 ... COMP1927 13s1 Final Exam
+
+
+A.
+
+Draw the hash table as follows
+
+[i]   Content of hashTab[i]
+
+[0]   -
+[1]   -
+[2]   -
+[3]   -
+[4]   -
+[5]   -
+[6]   -
+[7]   -
+[8]   -
+[9]   -
+[10]  -
+[11]  -
+[12]  -
+
+
+
+B.
+
+Draw the hash table as follows
+
+[i]   Content of hashTab[i]
+
+[0]   -
+[1]   -
+[2]   -
+[3]   -
+[4]   -
+[5]   -
+[6]   -
+[7]   -
+[8]   -
+[9]   -
+[10]  -
+[11]  -
+[12]  -
+
+
+C.
+
+Draw the hash table as follows
+
+[i]   Content of hashTab[i]
+
+[0]   -
+[1]   -
+[2]   -
+[3]   -
+[4]   -
+[5]   -
+[6]   -
+[7]   -
+[8]   -
+[9]   -
+[10]  -
+[11]  -
+[12]  -
+
+Draw linked lists as -> x -> y -> z
+
+
+D.
+
+Replace this by your answer

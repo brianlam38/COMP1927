@@ -1,0 +1,29 @@
+Question 5 ... COMP1927 14s2 Final Exam
+
+A.  (hashing complexity)
+
+Replace this by your answer
+
+
+B.  (chaining)
+
+Replace this by your answers
+
+
+C.  (linear probing)
+
+After
+Inserting    [0]  [1]  [2]  [3]  [4]  [5]  [6]
+(initial)    --   --   --   --   --   --   --
+11           --   --   --   --   11   --   --
+Replace this by your answer
+
+
+D.  (double hashing)
+
+After
+Inserting    [0]  [1]  [2]  [3]  [4]  [5]  [6]
+(initial)    --   --   --   --   --   --   --
+11           --   --   --   --   11   --   --
+Replace this by your answer
+

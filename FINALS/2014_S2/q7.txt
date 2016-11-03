@@ -1,0 +1,26 @@
+Question 7 ... COMP1927 14s2 Final Exam
+
+
+A.  (after inserting 8 into 2-3-4 tree)
+
+Replace this with your answer
+
+
+B.  (after inserting 42 into 2-3-4 tree)
+
+Replace this with your answer
+
+
+C.  (after inserting 8 into red-black tree)
+
+Replace this with your answer
+
+
+D.  (after inserting 42 into red-black tree)
+
+Replace this with your answer
+
+
+E.  (# representations of 2-3-4 nodes)
+
+Replace this with your answer

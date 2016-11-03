@@ -1,0 +1,22 @@
+Question 9 ... COMP1927 14s2 Final Exam
+
+
+A.  (gcc -o option)
+
+Replace this by your answer
+
+
+B.  (Graph.c -> Graph.o)
+
+Replace this by your answer
+
+
+C.  (break myFun)
+
+Replace this by your answer
+
+
+D.  (Bonus: famous nerd)
+
+Replace this by your answer
+

@@ -1,0 +1,13 @@
+Graph:
+# vertices = 4, # edges = 4
+
+0 is connected to 1 3
+1 is connected to 0 2
+2 is connected to 1 3
+3 is connected to 0 2
+
+Well-connected vertices
+0 has 2 connections
+1 has 2 connections
+2 has 2 connections
+3 has 2 connections

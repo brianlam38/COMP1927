@@ -1,0 +1,8 @@
+Matrix X
+[     1     2     3 ]
+[     4     5     6 ]
+Matrix Y
+[     1     2     3 ]
+[     4     5     6 ]
+Incompatible matrices
+Couldn't multiply X and Y

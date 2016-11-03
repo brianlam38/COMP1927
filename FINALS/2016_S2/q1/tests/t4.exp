@@ -1,0 +1,23 @@
+Original Tree:
+ A,1
+   \
+  E,25
+   / \
+  /   \
+B,4  F,36
+  \
+ D,16
+  /
+C,9
+
+After Mapping:
+ A,0
+   \
+  E,24
+   / \
+  /   \
+B,3  F,35
+  \
+ D,15
+  /
+C,8

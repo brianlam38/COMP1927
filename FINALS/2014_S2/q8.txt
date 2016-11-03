@@ -1,0 +1,30 @@
+Question 8 ... COMP1927 14s2 Final Exam
+
+
+A.  (clique(s))
+
+Replace this by your answer
+
+
+B.  (vertices with largest degree)
+
+Replace this by your answer
+
+
+C.  (edges to remove for spanning tree)
+
+Replace this by your answer
+
+
+D.  (depth-first traversal)
+
+Current   Stack after visiting current
+-------   ----------------------------
+Replace this by your answer
+
+
+E.  (breadth-first traversal)
+
+Current   Queue after visiting current
+-------   ----------------------------
+Replace this by your answer
