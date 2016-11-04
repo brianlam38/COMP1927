@@ -60,6 +60,7 @@ int depth(Tree t)
 }
 
 // count #nodes in Tree
+//
 int nnodes(Tree t)
 {
 	if (t == NULL) return 0;
@@ -90,10 +91,10 @@ Tree insertAtRoot(Tree t, Item it)
 
    	int diff = cmp(key(it), key(t->value));	// #2: Store cmp value
 
-   	if (diff == 0)							// #3: NO DIFFERENCE - no effect
+   	if (diff == 0) {						// #3: NO DIFFERENCE - no effect
     	t->value = it;							// Replace old -> new item
-
-   	else if (diff < 0) {					// #4: LESS THAN
+ 
+   	} else if (diff < 0) {					// #4: LESS THAN
     	t->left = insertAtRoot(t->left, it);	// Insert into LHS Subtree
     	//printf("rotateR(%d)\n",t->value);		// Move to MAIN ROOT via.
     	t = rotateR(t);							// rotateR(t)
@@ -212,42 +213,50 @@ Link rotateL(Link n2)
    return n1;
 }
 
+// Moves i'th node to the root
 Tree partition(Tree t, int i)
 {
    if (t == NULL) return NULL;
    assert(0 <= i && i < nnodes(t));
+
    int n = nnodes(t->left);
-   if (i < n) {
-      t->left = partition(t->left, i);
+   if (i < n) {								// #1: i in LHS
+      t->left = partition(t->left, i);			// Recursively rotateR
       t = rotateR(t);
    }
-   if (i > n) {
-      t->right = partition(t->right, i-n-1);
+   if (i > n) {								// #2: i in RHS
+      t->right = partition(t->right, i-n-1);	// Recursively rotateL
       t = rotateL(t);
    }
-   return t;
+   return t;								// #3: Return root node
 }
 
+// Indexes a tree and selects item in key order
+// The function returns a ptr to an item in the tree
 Item *get_ith(Tree t, int i)
 {
-   if (t == NULL) return NULL;
-   assert(0 <= i && i < nnodes(t));
-   int n = nnodes(t->left); // #nodes to left of root
-   if (i < n) return get_ith(t->left, i);
-   if (i > n) return get_ith(t->right, i-n-1);
-   return &(t->value);
+   	if (t == NULL) return NULL;
+   	assert(0 <= i && i < nnodes(t));		// make sure i is valid
+
+   	int n = nnodes(t->left); 	   			// #nodes in LHS of root
+   	if (i < n)								// #1: i in LHS
+   		return get_ith(t->left, i);
+   	if (i > n)								// #2: i in RHS
+   		return get_ith(t->right, i-n-1);		// Re-compute index (i-n-1)
+   												// (i - #LHS - root node)
+   	return &(t->value);
 }
 
 Tree rebalance(Tree t)
 {
-    if (t == NULL) return NULL;
-    // nnodes(t) = 1 + nnodes(L) + nnodes(R)
-    if (nnodes(t) < 2) return t;
-    // put node with median key at root
-    t = partition(t, nnodes(t)/2);
-    // then rebalance each subtree
-    t->left = rebalance(t->left);
+    if (t == NULL) return NULL;	 // #1: Empty tree
+    if (nnodes(t) < 2) return t; // #2: Not enough nodes to rebalance
+
+    t = partition(t, nnodes(t)/2);	// #3: Move median to root
+
+    t->left = rebalance(t->left);	// #4: Rebalance LHS and RHS
     t->right = rebalance(t->right);
+    
     return t;
 }
 
