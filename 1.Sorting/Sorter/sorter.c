@@ -136,36 +136,37 @@ int main (int argc, char *argv[])
 
 // functions on ints
 
+// Returns TRUE if x < y
 int less(int x, int y)
 {
-	ncompares++;
 	return (x < y);
 }
 
+// Returns TRUE if x = y
 int eq(int x, int y)
 {
-	ncompares++;
 	return (x == y);
 }
 
+// Swaps two values (array)
 void swap(int a[], int i, int j)
 {
-	nswaps++;
 	int tmp = a[i];
 	a[i] = a[j];
 	a[j] = tmp;
 }
 
+// Shifts position of two values (array)
 void move(int a[], int i, int j)
 {
-	nmoves++;
 	a[i] = a[j];
 }
 
+// Copies a val from real -> temp list
+// + increments elts in real and temp list
 void copy(int a[], int *i, int b[], int *j)
 {
-	nmoves++;
-	a[*i] = b[*j];	// copies value from real to temp list
+	a[*i] = b[*j];	// copies val from real to temp list
     *i = *i + 1;
     *j = *j + 1;
 }

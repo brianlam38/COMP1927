@@ -23,3 +23,47 @@ void insertionSort(int a[], int lo, int hi) {
 		a[j] = val;
 	}
 }
+
+void bubbleSort(int a[], int n) {
+
+	// Loop through array
+		// For each iteration:
+			// if a[i] > a[i+1]
+				// swap values
+			// else
+				// continue
+	// when no swaps occur, sort is done.
+
+	int i, j;
+	int nswaps = 0;
+
+	for (i = 0; i < n; i++) {
+		nswaps = 0;
+		for (j = n; j > 1; j--) {
+			if (a[j] < a[j-1]) {
+				swap(a,j,j-1);
+				nswaps++;
+			}
+		}
+		if (nswaps == 0) {
+			break;
+		}
+	}
+}
+
+void swap(int a[], int x, int y) {
+	int temp = a[x];
+	a[x] = a[y];
+	a[y] = temp;
+}
+
+
+
+
+
+
+
+
+
+
+
