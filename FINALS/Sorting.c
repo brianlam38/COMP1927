@@ -1,12 +1,11 @@
 //Sorting Algorithms
 
-//Bubble Sort
+// BUBBLE SORT: O(n) -> O(n^2)
 void bubbleSort(int items[], int n) {
 	int i, j;
 	for (i = n - 1; i > 0 ; i--){
-			for (j = 1; j <= i; j++) {
-			
-			//comparison
+		for (j = 1; j <= i; j++) {	
+		//comparison
 			if (items[j - 1] > items[j]){
 				swap(j, j - 1,items);
 			}
@@ -14,7 +13,7 @@ void bubbleSort(int items[], int n) {
 	}
 }
 
-//Bubble Sort w/ Early Exit
+// BUBBLE SORT w/ EARLY EXIT
 void bubbleSortEE(int items[], int n) {
 	int i, j;
 	int done = 0;
@@ -65,7 +64,7 @@ void insertionSortSimple(int items[], int n) {
 	}
 }
 
-//Insertion Sory (ARRAY) with Sentinel and shift
+//Insertion Sort (ARRAY) with Sentinel and shift
 void insertionSort(int items[], int n) {
 	int i, j;
 	
@@ -99,6 +98,7 @@ void shellSort(int items[], int n) {
 				swap(j, j-h, items);
 			}
 		}
+	}
 }
 
 //Merge sort
