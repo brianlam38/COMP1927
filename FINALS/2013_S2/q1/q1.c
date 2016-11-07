@@ -40,4 +40,5 @@ int ArrayMax(int a[], int n)
 int max(int a[], int lo, int hi)
 {
 	// TODO
+	return 0;
 }
