@@ -245,7 +245,7 @@ Item *get_ith(Tree t, int i)
    		return get_ith(t->right, i-n-1);		// Re-compute index (i-n-1)
    												// (i - #LHS - root node)
    	return &(t->value);
-}
+}	
 
 Tree rebalance(Tree t)
 {
@@ -256,7 +256,7 @@ Tree rebalance(Tree t)
 
     t->left = rebalance(t->left);	// #4: Rebalance LHS and RHS
     t->right = rebalance(t->right);
-    
+
     return t;
 }
 
