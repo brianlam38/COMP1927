@@ -11,7 +11,7 @@ void mkprefix(int *, int, int, int);
 void mkuniq(int *, int);
 Tree makeTree(int, char, int);
 
-int ix = 0; // used by mkprefix()
+int ix = 0; // used by mkPrefix
 
 int main(int argc, char *argv[])
 {
@@ -21,11 +21,11 @@ int main(int argc, char *argv[])
 	// collect command-line params
 	switch (argc) {
 	case 1: N = 7; order = 'P';
-	        seed = 123; break;
+	        seed = 1234; break;
 	case 2: N = atoi(argv[1]); order = 'P';
-	        seed = 123; break;
+	        seed = 1234; break;
 	case 3: N = atoi(argv[1]); order = argv[2][0];
-	        seed = 123; break;
+	        seed = 1234; break;
 	case 4: N = atoi(argv[1]); order = argv[2][0];
 	        seed = atoi(argv[3]); break;
 	default: usage(); exit(0);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
 	mytree = makeTree(N,order,seed);
 
-	printf("#nodes = %d\n",nnodes(mytree));
+	printf("#nodes = %d\n",TreeNumNodes(mytree));
 	printf("Original Tree:\n");showTree(mytree);
 
 	char line[20];  int noShow = 0;
@@ -49,16 +49,19 @@ int main(int argc, char *argv[])
 			mytree = makeTree(N,order,seed);
 			break;
 		case 'i':
-			mytree = insert(mytree,value);
+			mytree = TreeInsert(mytree,value);
 			break;
 		case 'I':
 			mytree = insertAtRoot(mytree,value);
+			break;
+		case 'A':
+			mytree = insertAVL(mytree,value);
 			break;
 		case 'J':
 			mytree = insertRandom(mytree,value);
 			break;
 		case 'd':
-			mytree = delete(mytree,value);
+			mytree = TreeDelete(mytree,value);
 			break;
 		case 'R':
 			mytree = rotateR(mytree);
@@ -74,8 +77,11 @@ int main(int argc, char *argv[])
 		case 'p':
 			mytree = partition(mytree, value);
 			break;
+		case 'r':
+			mytree = rebalance(mytree);
+			break;
 		case 'f':
-			if (find(mytree, value))
+			if (TreeFind(mytree, value))
 				printf("Found!\n");
 			else
 				printf("Not found\n");
@@ -91,9 +97,9 @@ int main(int argc, char *argv[])
 		}
 		if (noShow) { noShow = 0; printf("\n> "); continue; }
 		printf("New Tree:");
-		printf("  #nodes=%d,  ",nnodes(mytree));
-		printf("  depth=%d\n",depth(mytree));
-		if (depth(mytree) < 8)
+		printf("  #nodes=%d,  ",TreeNumNodes(mytree));
+		printf("  depth=%d\n",TreeDepth(mytree));
+		if (TreeDepth(mytree) < 8)
 			showTree(mytree);
 		else
 			printf("New Tree is too deep to display nicely\n");
@@ -117,8 +123,9 @@ Tree makeTree(int N, char order, int seed)
 		for (i = 0; i < N; i++) values[i] = seed++;
 		break;
 	case 'D':
-		seed = N+9;
-		for (i = 0; i < N; i++) values[i] = seed--;
+		seed = 99;
+		for (i = 0; i < N; i++)
+			values[i] = seed--;
 		break;
 	case 'P':
 		ix = 0;
@@ -133,8 +140,8 @@ Tree makeTree(int N, char order, int seed)
 	}
 	for (i = 0; i < N; i++) {
 		printf("%d ",values[i]);
-		t = insert(t,values[i]);
 		//t = insertRandom(t,values[i]);
+		t = TreeInsert(t,values[i]);
 	}
 	printf("\n");
 
@@ -166,7 +173,7 @@ void mkuniq(int *v, int N)
 
 void usage()
 {
-	fprintf(stderr, "Usage: tlab N Order Seed\n");
+	fprintf(stderr, "Usage: useT N Order Seed\n");
 	fprintf(stderr, "0<=N<90, Order = A|D|P|R, Seed = ?\n");
 	exit(1);
 }
@@ -181,6 +188,7 @@ void help()
 	printf("f N = search for N in tree\n");
 	printf("g I = get the i'th element in tree\n");
 	printf("p I = partition tree around i'th element\n");
+	printf("r = rebalance tree\n");
 	printf("R = rotate tree right around root\n");
 	printf("L = rotate tree left around root\n");
 	printf("q = quit\n");

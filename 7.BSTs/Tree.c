@@ -7,9 +7,9 @@
 #include <string.h>
 #include "Tree.h"
 
-typedef struct Node *Link;
+typedef struct node *Link;
 
-typedef struct Node {
+typedef struct node {
 	Item value;
 	Link left, right;
 } Node;
@@ -40,7 +40,7 @@ void dropTree(Tree t)
 	free(t);
 }
 
-// display a Tree
+// display a Tree (sideways)
 void showTree(Tree t)
 {
 	void doShowTree(Tree);
@@ -48,118 +48,96 @@ void showTree(Tree t)
 }
 
 // compute depth of Tree
-int TreeDepth(Tree t)
+int depth(Tree t)
 {
 	if (t == NULL)
 		return 0;
 	else {
-		int ldepth = TreeDepth(t->left);
-		int rdepth = TreeDepth(t->right);
-		//return 1 + (ldepth > rdepth)?ldepth:rdepth;
-		if (ldepth > rdepth)
-			return 1+ldepth;
-		else
-			return 1+rdepth;
+		int ld = depth(t->left);
+		int rd = depth(t->right);
+		return 1 + ((ld > rd)?ld:rd);
 	}
 }
 
 // count #nodes in Tree
-int TreeNumNodes(Tree t)
+//
+int nnodes(Tree t)
 {
 	if (t == NULL) return 0;
-	return 1 + TreeNumNodes(t->left)
-	         + TreeNumNodes(t->right);
+	return 1 + nnodes(t->left) + nnodes(t->right);
 }
 
-// insert a new value into a Tree
-Tree TreeInsert(Tree t, Item it)
+/* TREE INSERTION */
+Tree insert(Tree t, Item it)
 {
-	if (t == NULL) return newNode(it);
-	int diff = cmp(it,t->value);
-	if (diff == 0)
-		t->value = it;
-	else if (diff < 0)
-		t->left = TreeInsert(t->left, it);
-	else if (diff > 0)
-		t->right = TreeInsert(t->right, it);
+	if (t == NULL) return newNode(it);		// Empty tree
+	int diff = cmp(key(it),key(t->value));	// Store cmp value
+	if (diff == 0)							// NO DIFFERENCE
+		t->value = it;							// Replace old -> new item
+	else if (diff < 0)						// LESS THAN
+		t->left = insert(t->left, it);			// Insert new item -> LHS
+	else if (diff > 0)						// GREATER THAN
+		t->right = insert(t->right, it);		// Insert new item -> RHS
 	return t;
 }
 
+/* TREE INSERTION AT ROOT NODE */
+// STEP 1: Insert new node as leaf in LHS or RHS subtree
+// STEP 2: RotateR or RotateL until new node = MAIN ROOT
 Tree insertAtRoot(Tree t, Item it)
-{ 
-   if (t == NULL) return newNode(it);
-   int diff = cmp(key(it), key(t->value));
-   if (diff == 0)
-      t->value = it;
-   else if (diff < 0) {
-      t->left = insertAtRoot(t->left, it);
-      printf("rotateR(%d)\n",t->value);
-      t = rotateR(t);
-   }
-   else if (diff > 0) {
-      t->right = insertAtRoot(t->right, it);
-      printf("rotateL(%d)\n",t->value);
-      t = rotateL(t);
-   }
-   return t;
+{
+   	if (t == NULL)							// #1: Empty tree
+   		return newNode(it);
+
+   	int diff = cmp(key(it), key(t->value));	// #2: Store cmp value
+
+   	if (diff == 0) {						// #3: NO DIFFERENCE - no effect
+    	t->value = it;							// Replace old -> new item
+ 
+   	} else if (diff < 0) {					// #4: LESS THAN
+    	t->left = insertAtRoot(t->left, it);	// Insert into LHS Subtree
+    	//printf("rotateR(%d)\n",t->value);		// Move to MAIN ROOT via.
+    	t = rotateR(t);							// rotateR(t)
+
+   	} else if (diff > 0) {					// #5: GREATER THAN
+    	t->right = insertAtRoot(t->right, it);	// Insert into RHS Subtree
+      	//printf("rotateL(%d)\n",t->value);		// Move to MAIN ROOT via.
+      	t = rotateL(t);							// rotateL(t)
+   	}
+   	return t;
 }
 
 Tree insertRandom(Tree t, Item it)
 {
-   int size(Tree);
-
    if (t == NULL) return newNode(it);
-   // 1/(N+1) chance of doing root insert
    int chance = rand() % 3;
    if (chance == 0)
       t = insertAtRoot(t, it);
    else
-      t = TreeInsert(t, it);
-   return t;
-}
-
-Tree insertAVL(Tree t, Item it)
-{
-   if (t == NULL) return newNode(it);
-   int diff = cmp(key(it), key(t->value));	// Comparison fn
-   if (diff == 0)							// 1. No diff - Replace key
-      t->value = it;
-   else if (diff < 0) {						// 2. LHS insertion
-      t->left = insertAVL(t->left, it);
-   }
-   else if (diff > 0) {						// 3. RHS insertion
-      t->right = insertAVL(t->right, it);
-   }
-#if 1
-   int dL = TreeNumNodes(t->left);			// Check depth LHS
-   int dR = TreeNumNodes(t->right);			// Check depth RHS
-   if ((dL - dR) > 2) t = rotateR(t);		// If imbalanced, rotateR
-   else if ((dR - dL) > 2) t = rotateL(t);	// If imbalanced, rotateL
-#else
-   int dL = TreeDepth(t->left);
-   int dR = TreeDepth(t->right);
-   if ((dL - dR) > 1) t = rotateR(t);
-   else if ((dR - dL) > 1) t = rotateL(t);
-#endif
+      t = insert(t, it);
    return t;
 }
 
 // check whether a value is in a Tree
-int TreeFind(Tree t, Key k)
+int find(Tree t, Key k)
 {
 	if (t == NULL) return 0;
 	int res, diff = cmp(k,t->value);
 	if (diff < 0)
-		res = TreeFind(t->left, k);
+		res = find(t->left, k);
 	else if (diff > 0)
-		res = TreeFind(t->right, k);
+		res = find(t->right, k);
 	else // (diff == 0)
 		res = 1;
 	return res;
 }
 
+// #######################
+// DELETE ROOT FROM A TREE
+// #######################
+
 // delete a value from a Tree
-Tree TreeDelete(Tree t, Key k)
+Tree delete(Tree t, Key k)
 {
 	Tree deleteRoot(Tree);
 
@@ -169,9 +147,9 @@ Tree TreeDelete(Tree t, Key k)
 	if (diff == 0)
 		t = deleteRoot(t);
 	else if (diff < 0)
-		t->left = TreeDelete(t->left, k);
+		t->left = delete(t->left, k);
 	else if (diff > 0)
-		t->right = TreeDelete(t->right, k);
+		t->right = delete(t->right, k);
 	return t;
 }
 
@@ -179,50 +157,52 @@ Tree TreeDelete(Tree t, Key k)
 Tree deleteRoot(Tree t)
 {
 	Link newRoot;
-	// if no subtrees, tree empty after delete
+	/* CASE #1: NO SUBTREE */
 	if (t->left == NULL && t->right == NULL) {
 		free(t);
 		return NULL;
 	}
-	// if only right subtree, make it the new root
+	/* CASE #2: ONE SUBTREE -> RHS */
 	else if (t->left == NULL && t->right != NULL) {
 		newRoot = t->right;
 		free(t);
 		return newRoot;
 	}
-	// if only left subtree, make it the new root
+	/* CASE #3: ONE SUBTREE -> LHS */
 	else if (t->left != NULL && t->right == NULL) {
 		newRoot = t->left;
 		free(t);
 		return newRoot;
+	/* CASE #4: TWO SUBTREES */
+	} else {
+		Link parent = t;
+		Link succ = t->right; 		 // SUCC = RHS subtree
+		while (succ->left != NULL) { // Traverse to SUCC node
+			parent = succ;
+			succ = succ->left;
+		}
+		int succVal = succ->value;	 // Grab SUCC value
+		t = delete(t,succVal);		 // Delete SUCC node
+		t->value = succVal;			 // Set ROOT value = SUCC value
+		return t;
 	}
-	// else (t->left != NULL && t->right != NULL)
-	// so has two subtrees
-	// - find inorder successor (grab value)
-	// - delete inorder successor node
-	// - move its value to root
-	//Link parent = t;
-	Link succ = t->right; // not null!
-	while (succ->left != NULL) {
-	//	parent = succ;
-		succ = succ->left;
-	}
-	int succVal = succ->value;
-	t = TreeDelete(t,succVal);
-	t->value = succVal;
-	return t;
 }
 
+/* ROTATE TREE RIGHT */
+// n1 = node to rotateR
 Link rotateR(Link n1)
 {
-   if (n1 == NULL) return n1;
-   Link n2 = n1->left;
-   if (n2 == NULL) return n1;
-   n1->left = n2->right;
+   if (n1 == NULL) return n1;	// #1: Empty tree, no rotation
+   Link n2 = n1->left;			// #2: Set up n2 ptr to n1->LHS node
+   if (n2 == NULL) return n1;	// #3: n2 = empty, no rotation needed
+   									// (No LHS node to take its place)
+   n1->left = n2->right;		// #4: Re-arrange ptrs for rotation
    n2->right = n1;
-   return n2;
+   return n2;					// #5; Return new root node
 }
 
+/* ROTATE TREE LEFT */
+// n2 = node to rotateL
 Link rotateL(Link n2)
 {
    if (n2 == NULL) return n2;
@@ -233,55 +213,54 @@ Link rotateL(Link n2)
    return n1;
 }
 
-int count(Tree t)
-{
-   if (t == NULL)
-      return 0;
-   else
-      return 1 + count(t->left) + count(t->right);
-}
-
-int size(Tree t) { return count(t); }
-
-
+// Moves i'th node to the `root
 Tree partition(Tree t, int i)
 {
    if (t == NULL) return NULL;
-   assert(0 <= i && i < size(t));
-   int n = size(t->left);
-   if (i < n) {
-      t->left = partition(t->left, i);
+   assert(0 <= i && i < nnodes(t));
+
+   int n = nnodes(t->left);
+   if (i < n) {								// #1: i in LHS
+      t->left = partition(t->left, i);			// Recursively rotateR
       t = rotateR(t);
    }
-   if (i > n) {
-      t->right = partition(t->right, i-n-1);
+   if (i > n) {								// #2: i in RHS
+      t->right = partition(t->right, i-n-1);	// Recursively rotateL
       t = rotateL(t);
    }
-   return t;
+   return t;								// #3: Return root node
 }
 
+// Indexes a tree and selects item in key order
+// The function returns a ptr to an item in the tree
 Item *get_ith(Tree t, int i)
 {
-   if (t == NULL) return NULL;
-   assert(0 <= i && i < size(t));
-   int n = size(t->left); // #nodes to left of root
-   if (i < n) return get_ith(t->left, i);
-   if (i > n) return get_ith(t->right, i-n-1);
-   return &(t->value);
-}
+   	if (t == NULL) return NULL;
+   	assert(0 <= i && i < nnodes(t));		// make sure i is valid
+
+   	int n = nnodes(t->left); 	   			// #nodes in LHS of root
+   	if (i < n)								// #1: i in LHS
+   		return get_ith(t->left, i);
+   	if (i > n)								// #2: i in RHS
+   		return get_ith(t->right, i-n-1);		// Re-compute index (i-n-1)
+   												// (i - #LHS - root node)
+   	return &(t->value);
+}	
 
 Tree rebalance(Tree t)
 {
-    if (t == NULL) return NULL;
-    int n = size(t);
-    if (n < 3) return t;
-    // put node with median key at root
-    t = partition(t, n/2);
-    // then rebalance each subtree
-    t->left = rebalance(t->left);
+    if (t == NULL) return NULL;	 // #1: Empty tree
+    if (nnodes(t) < 2) return t; // #2: Not enough nodes to rebalance
+
+    t = partition(t, nnodes(t)/2);	// #3: Move median to root
+
+    t->left = rebalance(t->left);	// #4: Rebalance LHS and RHS
     t->right = rebalance(t->right);
+
     return t;
 }
+
+
 
 
 // ASCII tree printer

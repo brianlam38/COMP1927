@@ -1,44 +1,44 @@
 // Tree.h ... interface to binary search tree ADT
 // Written by John Shepherd, March 2013
 
-#ifndef TREE_H
-#define TREE_H
+#ifndef BSTREE_H
+#define BSTREE_H
 
-typedef struct node *Tree;
+typedef struct Node *Tree;
 
-typedef int Key;
+typedef char Key;
 typedef Key Item; // item is just a key
 #define key(it) (it)
-
-#define cmp(k1,k2) ((k1) - (k2))	// if item values are characters, it would be strcmp()
-#define lt(k1,k2) (cmp(k1,k2) < 0)	// LESS THAN
-#define eq(k1,k2) (cmp(k1,k2) == 0) // EQUAL
-#define gt(k1,k2) (cmp(k1,k2) > 0)  // GREATER THAN
+#define cmp(k1,k2) ((k1) - (k2))
+#define less(k1,k2) (comp(k1,k2) < 0)
+#define eq(k1,k2) (comp(k1,k2) == 0)
 
 // create an empty Tree
 Tree newTree();
 // free memory associated with Tree
 void dropTree(Tree);
-// display a Tree
+// display a Tree (sideways)
 void showTree(Tree);
 
 // insert a new value into a Tree
-Tree insert(Tree, Item);
+Tree TreeInsert(Tree, Item);
+Tree insertAVL(Tree, Item);
 Tree insertAtRoot(Tree, Item);
 Tree insertRandom(Tree, Item);
 // delete a value from a Tree
-Tree delete(Tree, Key);
+Tree TreeDelete(Tree, Key);
 // check whether a value is in a Tree
-int find(Tree, Key);
+int TreeFind(Tree, Key);
 // compute depth of Tree
-int depth(Tree);
+int TreeDepth(Tree);
 // count #nodes in Tree
-int nnodes(Tree);
+int TreeNumNodes(Tree);
 
-// normally these are internal to ADT
 Tree rotateR(Tree);
 Tree rotateL(Tree);
+
 Item *get_ith(Tree,int);
 Tree partition(Tree,int);
+Tree rebalance(Tree);
 
 #endif
