@@ -1,0 +1,684 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex,nofollow">
+
+<title>Tutorial 13 - 15s1 COMP1927 </title>
+<script type="text/javascript" src="http://cgi.cse.unsw.edu.au/~tarat/cs1927/samples/StyleGuide_files/common.js"></script>
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://cgi.cse.unsw.edu.au/~tarat/cs1927/samples/style.css">
+
+
+
+<h1 id="head-c4ae72924d158947b2cf3b7a412be366ae799569">Tutorial Solutions Week 13</h1>
+
+
+<h2> Sample Exam Theory Solutions </h2>
+
+<h2>Question 1</h2>
+
+<p>
+Consider the following pair of functions:
+<pre>
+int cmp(int a, int b)
+{
+    return (a-b);
+}
+
+void sort(int a[], int n)
+{
+    int i, j, min;
+
+    for (i = 0; i < n-1; i++) {
+        min = i;
+        for (j = i+1; j < n; j++) {
+            if (cmp(a[j],a[min]) < 0) min = j;
+        }
+        int t = a[min]; a[min] = a[i]; a[i] = t;
+    }
+}
+</pre>
+
+<p>
+
+Based on the above answer the following questions:
+<ol>
+<li>
+    How many times will the cmp() function be invoked if the sort() function is called with an array of length 6?
+<b>
+<pre>
+# of calls to cmp() for array of length 6
+= 5 + 4 + 3 + 2 + 1 = 15
+</pre>
+</b>
+<li>
+    How many times will the cmp() function be invoked if the sort() function is called with an array of length n?
+<b>
+<pre>
+# of calls to cmp() for array of length n
+= (n-1) + (n-2) + ... 2 + 1
+= n(n-1)/2
+</pre>
+</b>
+<li>
+    What is the complexity of the sort() function? (e.g. O(n), O(log n), etc.)
+<b>
+<pre>
+Complexity of sort() = 0(n^2)
+</pre>
+</b>
+ </ol>
+
+<h2>Question 2</h2>
+
+Consider inserting the following keys into an initally empty binary search tree in the order specified: 
+
+<pre>
+15  30  35  8  25  22  3  21  10  11  
+</pre>
+
+<p>
+Determine the final tree that would be constructed (you do not need to draw this tree anywhere, except as rough working in your exam booklet). Show the order that key values would be be displayed if we traversed the tree in each of the following orders: 
+<b>
+<p>What the final tree looks like ...</p>
+<img src="http://cgi.cse.unsw.edu.au/~tarat/cs1927/samples/COMP1927%2015s1/q6-tree.png">
+<p>
+</b>
+<ol type="a">
+<li>Prefix (NLR) order
+<b>
+<pre>
+15  8  3  10  11  30  25  22  21  35
+</pre>
+</b>
+<li>Postfix (LRN) order
+<b>
+<pre>
+3  11  10  8  21  22  25  35  30  15
+</pre>
+</b>
+<li>Level Order
+<b>
+<pre>
+15  8  30  3  10  25  35  11  22  21
+</pre>
+</b>
+</ol>
+
+<h2>Question 3</h2>
+
+<p>
+A <em>priority queue</em> is a structure where each item
+has an associated value which specifies its priority for removal
+from the structure.
+Answer the following questions on priority queues:
+</p>
+<ol type="A">
+<li><p>
+Consider a priority queue where the items are character values, and the
+priorities are determined by the alphabetical ordering of the items.
+Items which have <em>lower</em> alphabetical ordering are assigned
+higher priority (e.g. <tt>'A'</tt> has higher priority than <tt>'B'</tt>).
+Suppose you are going to implement it in a way that results in O(log n) insertion and deletion.
+Show the intermediate states of an initially-empty priority queue <tt>PQ</tt>
+when the following operations are performed on the queue in the order
+shown:
+</p>
+<b>For log n insertion and deletion assume we are using a heap. Assume we are showing the underlying array implementation
+</b>
+<pre>
+PQueueJoin(PQ, 'X')
+<b>
+<pre>
+[0] - 
+[1] - 'X'
+[2]
+[3]
+etc
+</pre>
+</b>
+
+PQueueJoin(PQ, 'A')
+<b>
+<pre>
+[0] - 
+[1] - 'A'
+[2] - 'X'
+[3]
+etc
+</pre>
+</b>
+PQueueJoin(PQ, 'K')
+<b>
+<pre>
+[0] - 
+[1] - 'A'
+[2] - 'X'
+[3] - 'K'
+etc
+</pre>
+</b>
+PQueueLeave(PQ)
+<b>
+<pre>
+[0] - 
+[1] - 'K'
+[2] - 'X'
+[3] - 
+etc
+</pre>
+</b>
+PQueueJoin(PQ, 'J')
+<b>
+<pre>
+[0] - 
+[1] - 'J'
+[2] - 'X'
+[3] - 'K' 
+etc
+</pre>
+</b>
+PQueueJoin(PQ, 'Z')
+<b>
+<pre>
+[0] - 
+[1] - 'J'
+[2] - 'X'
+[3] - 'K'
+[4] - 'Z'
+etc
+</pre>
+</b>
+PQueueLeave(PQ)
+<b>
+<pre>
+[0] - 
+[1] - 'K'
+[2] - 'X'
+[3] - 'Z'
+[4] - 
+etc
+</pre>
+</b>
+PQueueLeave(PQ)
+<b>
+<pre>
+[0] - 
+[1] - 'X'
+[2] - 'Z'
+[3] - 
+etc
+</pre>
+</b>
+</pre>
+<li>
+<p>
+Priority queues (PQs) can be viewed as a generalisation of structures like Stacks and FIFO Queues. Briefly describe how you might implement Stacks and Queues as PQs. In particular, specify what kind of value could be used as the priority value and how the priority values would be ordered. 
+<b>
+<pre>
+Use insertion time as priority measure
+For Queue: lowest time/counter (least recent) has highest priority
+For Stack: highest time/counter (most recent) has highest priority
+</pre>
+</b>
+</ol>
+
+<h2>Question 4</h2>
+
+ Consider the following 2-3-4-tree, where the numbers repesent key values stored in the tree nodes and the upper-case letters are labels on the nodes for you to use in answering the question:
+<center><img src="http://cgi.cse.unsw.edu.au/~tarat/cs1927/samples/COMP1927%2015s1/234-treeSE.png"></center>
+<ol type="A">
+<li><p>
+Show the contents of each of the tree nodes (A,B,C,D)
+after the key value 15 is inserted into the tree.
+If any new nodes are created, show their contents as well,
+and identify them by E, F, G, etc.
+<b>
+<pre>
+Node   Contents of Node
+
+A      (7, 12, 17)
+B      (1, 3, 5)
+C      gone?
+D      (21, 25, 29)
+E      (10)
+F      (14, 15)
+
+Ok if one of E or F stays as C
+</pre>
+</b>
+
+</p></li>
+</ol>
+<p>
+Red-black trees were devloped as an alternative representation
+for 2-3-4-trees that could use (almost) standard binary search
+tree nodes.
+</p>
+<ol type="A" start="2">
+<li><p>
+What is the difference between red-black tree nodes and standard
+binary search tree nodes?
+</p>
+<b>
+<pre>
+Red-black tree nodes have a colour field, as well as a data field
+and sub-tree pointers
+</pre>
+</b>
+</li>
+<li><p>
+Does every 2-3-4-tree have a unique representation as a red-black
+tree?
+</p>
+<b>
+<pre>
+No ... each 3-node has two possible representations
+</pre>
+</b>
+</li>
+</ol>
+<p>
+
+<h2>Question 5</h2>
+
+<p>
+Consider a hash table of size 13 and a hash function:
+</p>
+<pre>
+int hash(int k) { return (k % 13); }
+</pre>
+<p>
+Consider inserting the following key values into an initially
+empty hash table in the order specified:
+</p>
+<pre>
+3  26  16  4  29  12  25  13  7  20
+</pre>
+<p>
+Show the final contents of the hash table for each of the
+following strategies for handling collisions:
+<ol type="A">
+<li><p>
+Chaining
+<b>
+<pre>
+[i]   Content of hashTab[i]
+
+[0]   26 -> 13
+[1]   -
+[2]   -
+[3]   3 -> 16 -> 29
+[4]   4
+[5]   -
+[6]   -
+[7]   7 -> 20
+[8]   -
+[9]   -
+[10]  -
+[11]  -
+[12]  12 -> 25
+</pre>
+</b>
+</p></li>
+<li><p>
+Linear probing
+</p>
+<b>
+<pre>
+[i]   Content of hashTab[i]
+
+[0]   26
+[1]   25
+[2]   13
+[3]   3
+[4]   16
+[5]   4
+[6]   29
+[7]   7
+[8]   20
+[9]   -
+[10]  -
+[11]  -
+[12]  12
+</pre>
+</b>
+</li>
+<li><p>
+Double hashing, with a second hash function:
+</p>
+<pre>
+int hash2(int k) { return (7 - (k % 7)); }
+</pre>
+<b>
+<pre>
+[i]   Content of hashTab[i]
+
+[0]   26
+[1]   13
+[2]   25
+[3]   3
+[4]   4
+[5]   -
+[6]   -
+[7]   7
+[8]   16
+[9]   29
+[10]  20
+[11]  -
+[12]  12
+</pre>
+</b>
+
+</li>
+</ol>
+<p>
+
+<h2>Question 6</h2>
+<p>
+Consider the following weighted, undirected graph:
+</p>
+<center><img src="http://cgi.cse.unsw.edu.au/~tarat/cs1927/samples/COMP1927%2015s1/GraphSE.png"></center>
+<p>
+Answer the following questions using this graph:
+</p>
+<ol type="A">
+<li><p>
+Show the order in which vertices would be visited if we
+carried out a breadth-first search
+</p>
+<ul>
+<li> starting from vertex <tt>a</tt>
+<li> visiting all vertices once
+<li> selecting neighbours based on descending vertex order <br>
+     (i.e. using reverse alphabetical order (<em>highest</em> to lowest))
+<li> ignoring weights
+<li> only adding edges to the queue when there vertex has not been visited
+     and is not already in the queue
+</ul>
+<b>
+
+Approach below only adds items to the queue if not visited and so marks off pre and st as it puts things in the queue. 
+<p>
+
+Assume [a] is index [0]  in the array and that arrays are initialised with -1s (that I have not written in)
+<pre>
+
+Iteration   Data     Values
+
+0           Queue    [a]
+            Current  -
+    Pre  St
+[a]  0    -     
+[b] 
+[c]
+[d]
+[e]
+[f]
+[g]
+[h]
+[i]
+[j]
+
+1           Queue    [e, d, b]
+            Current  a
+           
+   Pre  St
+[a]  0   -
+[b]  3   a
+[c]
+[d]  2   a
+[e]  1   a
+[f]
+[g]
+[h]
+[i]
+[j]            
+            
+
+2           Queue    [d, b, f]
+            Current  e
+            
+  Pre  St
+[a]  0   -
+[b]  3   a
+[c]
+[d]  2   a
+[e]  1   a
+[f]  4   e
+[g]
+[h]
+[i]
+[j]        
+
+3           Queue    [b, f, g, c]
+            Current  d
+            
+  Pre  St
+[a]  0   -
+[b]  3   a
+[c]  6   d
+[d]  2   a
+[e]  1   a
+[f]  4   e
+[g]  5   d
+[h]
+[i]
+[j]  
+
+4           Queue    [f, g, c]
+            Current  b
+            
+  Pre  St
+[a]  0   -
+[b]  3   a
+[c]  6   d
+[d]  2   a
+[e]  1   a
+[f]  4   e
+[g]  5   d
+[h]
+[i]
+[j]     
+
+5           Queue    [g, c,j]
+            Current  f
+            
+  Pre  St
+[a]  0   -
+[b]  3   a
+[c]  6   d
+[d]  2   a
+[e]  1   a
+[f]  4   e
+[g]  5   d
+[h]
+[i]
+[j]  7   f    
+
+5           Queue    [c,j,i,h]
+            Current  g
+            
+  Pre  St
+[a]  0   -
+[b]  3   a
+[c]  6   d
+[d]  2   a
+[e]  1   a
+[f]  4   e
+[g]  5   d
+[h]  9   g
+[i]  8   g
+[j]  7   f
+
+etc  c, j, i and h would be removed from the queue one by one, but at this point pre and st would not change as there is nowhere that has not already been visited or in the queue.
+
+Visiting Order:  a  e  d  b  f  g  c  j  i  h         
+</pre>
+</b>
+</li>
+<li><p>
+Show the order in which vertices would be visited if we
+carried out a breadth-first search
+</p>
+<ul>
+<li> starting from vertex <tt>a</tt>
+<li> visiting all vertices once
+<li> selecting neighbours in edge-weight order <br>
+     (i.e. using lowest-to-highest costs on the edges)
+<li> only adding edges to the queue when there vertex has not been visited
+     and is not already in the queue
+</ul>
+<b>
+<pre>
+Iteration   Data     Values
+
+0           Queue    [a]
+            Current  -
+
+    Pre  St
+[a]  0    -     
+[b] 
+[c]
+[d]
+[e]
+[f]
+[g]
+[h]
+[i]
+[j]
+
+
+1           Queue    [b, e, d]
+            Current  a
+    Pre  St
+[a]  0    -     
+[b]  1    a
+[c]
+[d]  3    a
+[e]  2    a
+[f]
+[g]
+[h]
+[i]
+[j]
+            
+
+2           Queue    [e, d, c]
+            Current  b
+            
+            
+    Pre  St
+[a]  0    -     
+[b]  1    a
+[c]  4    b
+[d]  3    a
+[e]  2    a
+[f]
+[g]
+[h]
+[i]
+[j]
+
+etc
+Visiting Order:  a  b  e  d  c  f  g  h  j  i
+</pre>
+</b>
+</li>
+</ol>
+<p>
+Show your working by giving the intermediate states of
+the queue, "pre" and "st" arrays in both cases.
+</p>
+<h2> Sample Exam Multiple Choice Questions </h2>
+<pre>
+
+(1) Why would you use a list instead of an array to implement a LIFO stack?
+[A] Pushing an item on the stack can be implemented more efficiently with lists
+[B] Removing the most recently inserted item can be implemented more efficiently with lists
+[C] Checking whether a stack is empty or not can be implemented more efficiently with lists
+<b>[D] We don't have to commit to a maximal stack size with lists.</b>
+<b><pre>D</pre></b>
+
+(2) What is the worst cast and best case complexity of Merge Sort, sorting a sequence of n elements?
+[A] Worst case: n^2, best case n * log n
+[B] Worst case: n^2, best case n 
+<b>[C] Worst case: n * log n, best case n * log n</b>
+[D] Worst case: n * log n, best case n 
+<b><pre>C</pre></b>
+
+(3) A sorting algorithm is called 'stable' if 
+[A] it provides performance guarantees
+[B] always returns a sorted sequence
+<b>[C] leaves the relative order of items with the same key values intact</b>
+[D] it has the same time complexity for ordered data and unordered data
+<b><pre>C</pre></b>
+
+(4) Which of the following algorithms is *not* a divide an conquer algorithm?
+[A] quick sort
+[B] merge sort
+<b>[C] bubble sort</b>
+[D] binary search
+<b><pre>C</pre></b>
+
+(5) Which of the following statements about balanced Red-Black trees is false?
+<b>[A] A balanced Red-Black tree has no two adjacent black nodes.</b>
+[B] A balanced Red-Black tree has no two adjacent red nodes.
+[C] Every path from the root to any leaf node in a balanced Red-Black tree contains
+    exactly the same number of black nodes.
+[D] Inserting elements in a balanced Red-Black tree containing N items takes
+   O (log n) steps.
+<b><pre>A</pre></b>
+
+(6) Retrieving a word of length N from a dictionary in a trie data structure with M words 
+     takes time* proportional to
+[A] log (M)
+[B] log (N)
+[C] log (N * M)
+<b>[D] N</b>
+
+(* assuming, of course, a reasonable implementation)
+<b><pre>D</pre></b>
+
+(7) What is the maximal number of edges in a shortest path between two
+ distinct vertices in a simple undirected graph with V vertices?
+[A] V
+[B] V * (V-1)/2
+[C] log V
+<b>[D] V - 1</b>
+<b><pre>D</pre></b>
+
+(8) Consider a complete undirected graph with 5 vertices. Which statement is false?
+
+[A] The graph is a simple graph
+[B] The graph has 10 edges
+[C] The graph has an Euler tour
+<b>[D] The graph is also a spanning tree.</b>
+<b><pre>D</pre></b>
+
+(9) Which of the following statements is *incorrect*?
+
+If a problem is NP complete
+[A] the correctness of a solution can be checked in polynomial time
+[B] it is at least as difficult to solve as finding a Hamilton tour in a graph
+[C] there is no known efficient way to solve the problem
+<b>[D] it is at least as difficult as checking the correctness of a hamilton tour</b>
+<b><pre>D</pre></b>
+
+(10) Which of the following statements about 2-3-4 trees is false?
+<b>[A] The first item inserted into a 2-3-4 tree will always remain at the root. </b>
+[B] All leaves in a 2-3-4 tree have exactly the same distance from the
+    root, no matter in which order items were inserted into the tree.
+[C] 2-3-4 trees are an example of improving  performance by amortisation.
+[D] Inserting and deleting elements in a 2-3-4 tree containing N items takes
+   O (log n) steps.
+<b><pre>A</pre></b>
+</pre>
+
+
+</body></html>
+
+

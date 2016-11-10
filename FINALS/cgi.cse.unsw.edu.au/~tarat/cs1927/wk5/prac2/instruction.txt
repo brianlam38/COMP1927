@@ -1,0 +1,2 @@
+Your task is to fix this buggy code. Use gdb or whatever method you prefer.
+Compile with gcc -o palindrome palindrome.c

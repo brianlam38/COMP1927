@@ -1,0 +1,40 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex,nofollow">
+
+<script type="text/javascript" src="http://cgi.cse.unsw.edu.au/~tarat/cs1927/StyleGuide_files/common.js"></script>
+
+
+
+<h2>Testing</h2>
+<p>What is the difference between black box and white box testing ADTs?
+
+<h2>Blackbox testing</h2>
+Imagine you have the following test file defined in a file called testStack.c and it 
+includes the Stack.h interface from Exercise 1:
+
+<pre>
+#include "Stack.h"
+
+int main(int argc, char * argv[]){
+    printf("Testing new stack\n");
+    Stack s = createStack();
+    assert(s->size == 0);
+    printf("Test passed\n");
+    return 0;
+}
+</pre>
+When compiling my test file using
+<pre>
+gcc -Wall -Werror -c testStack.c
+</pre>
+I get the following compile error
+<pre>
+testStack.c:12:5: error: dereferencing pointer to incomplete type
+</pre>
+What does this mean?
+</body></html>

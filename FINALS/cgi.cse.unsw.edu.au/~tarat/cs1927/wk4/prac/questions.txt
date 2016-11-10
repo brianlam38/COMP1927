@@ -1,0 +1,12 @@
+Question Sheet
+
+Q1.		(Actual Question from 16x1)
+		Write a function removeAtIndex that removes a particular node with a given index from
+		a doubly-linked list. Free any memory.
+		
+		compile with: gcc -Wall -Werror -o q1 q1.c
+
+Q2.		Write a function that finds a linked list 'sublink' within another linked list. The function
+		should return the first node where the sublink appears, if it doesn't find it, return NULL;
+
+		compile with:gcc -Wall -Werror -o q2 q2.c

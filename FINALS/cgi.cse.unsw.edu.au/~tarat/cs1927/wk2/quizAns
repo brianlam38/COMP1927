@@ -1,0 +1,11 @@
+ANSWER:
+a)
+Line 11-12: O(N) - outer loop executes N times
+Line 13-14: O(N)[best] or O(N^2) [worst] - best case checks if statement N times but condition never true and DONE flag never set to false so linear on input/worst case makes swaps until outer loop finishes execution so is (N-1) + (N-2) + … + 1 which is quadratic complexity
+Line 15-16: O(1) [best] or O(N^2) [worst] - similar to previous but if condition is never true, zero swaps are made so best case is constant complexity
+
+b) Sorted list: (100000 / 10^6) * 10^(-3) = 0.1ms.
+
+c) Reversed list: (100000^2 / 10^6) * 10^(-3) = 10s.
+
+d) Removing the DONE flag gets rid of the early exit feature so best case complexity is now O(N^2). c) remains the same but b) now takes 10s - best/worse case is O(N^2).

@@ -6,8 +6,8 @@ typedef struct node *Tree;
 
 struct node {
 	int order;		// 2,3,4
-	Item data[3];	// Array of items
-	Tree child[4];	// Array of childs / subtrees
+	Item data[3];	// Array of items (in order to be searched)
+	Tree child[4];	// Array of childs / subtrees (links to subtrees)
 }
 
 // Make a new 2-3-4 node (always order 2)

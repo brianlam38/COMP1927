@@ -1,0 +1,16 @@
+Questions Sheet
+
+any questions email riyasat.saber@student.unsw.edu.au
+
+1.	(Question from 16x1 quiz2)
+  	Write a function that takes in a treelink, and returns 1 if the tree is degenerate, and 0 if not.
+    A degenerate tree is a tree that has only one child per treelink.
+
+  	Write your function in BST.c
+  	Compile with: gcc -Wall -Werror -o tests tests.c BST.c
+
+2.	Write a function that takes in a treelink, and returns 1 if the tree is a binary search tree, and 0
+    if not.
+
+    Write your function in BST.c
+    Compile with: gcc -Wall -Werror -o tests tests.c BST.c
