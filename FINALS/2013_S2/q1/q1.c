@@ -44,6 +44,27 @@ int ArrayMax(int a[], int n)
 	return max(a, 0, n-1);
 }
 
+// ###############
+// DAVIDS SOLUTION (BETTER)
+// ###############
+
+// recursive function to find maximum in a[lo..hi]
+int max(int a[], int lo, int hi)
+{
+	if (lo == hi) {					// max value is found
+		return a[lo];					// return var
+	} else {
+		if (a[lo] < a[hi])			// if lo < hi
+			return max(a,lo+1,hi);		// increment lo++
+		else 						// if lo > hi
+			return max(a,lo,hi-1);		// decrement hi--
+	}
+}
+
+// ###############
+// BRIANS SOLUTION (WORSE)
+// ###############
+
 // recursive function to find maximum in a[lo..hi]
 int max(int a[], int lo, int hi)
 {
