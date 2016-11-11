@@ -47,7 +47,11 @@ int ArrayMax(int a[], int n)
 // recursive function to find maximum in a[lo..hi]
 int max(int a[], int lo, int hi)
 {
-	// TODO
+	// ANALYSIS: Program seems like it works, but it is currently using global
+	//           variables which is probably a bad idea.
+	//           Work out how to NOT use global variables +
+	//           Solution can also be done faster without spitting it up and
+	//           treating as one single list.
 
 	// find the maximum value in the lower half of the array
 	// find the maximum value in the upper half of the array
@@ -66,7 +70,7 @@ int max(int a[], int lo, int hi)
 	// Repeat steps for RHS
 
 	printf("Start LHS recursion\n");
-	if (i < mid) {			// #1 LHS part
+	if (i < mid) {							// #1 LHS part
 		if (less(a[i],a[maxL]) == TRUE) {
 			maxL = i;
 			i++;
@@ -78,7 +82,7 @@ int max(int a[], int lo, int hi)
 	}
 
 	printf("Start RHS recursion\n");
-	if (j > mid) {			// #2 RHS part
+	if (j > mid) {							// #2 RHS part
 		if (less(a[j],a[maxR]) == TRUE) {
 			maxR = j;
 			j--;
