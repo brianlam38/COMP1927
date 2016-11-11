@@ -1,0 +1,17 @@
+Original Tree:
+  2
+ / \
+1   3
+     \
+      4
+       \
+        5
+
+After Mapping:
+  1
+ / \
+0   2
+     \
+      3
+       \
+        4

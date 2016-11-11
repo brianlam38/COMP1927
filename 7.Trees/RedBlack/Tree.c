@@ -13,9 +13,10 @@ typedef enum {RED,BLACK} Colr;
 typedef enum {LEFT,RIGHT} Dirn;
 
 typedef struct node {
-   Item value;
-   Colr colour;
-   Link left, right;
+   Item value;          // actual data
+   Colr colour;         // relationship to parent
+   Link left            // LHS subtree
+   Link right;          // RHS subtree
 } Node;
 
 // make a new node containing a value
@@ -25,7 +26,7 @@ Link newNode(int v)
    Link new = malloc(sizeof(Node));
    assert(new != NULL);
    new->value = v;
-   new->colour = RED;
+   new->colour = RED;            // specify colour
    new->left = new->right = NULL;
    return new;
 }
@@ -165,8 +166,8 @@ Tree insertRB(Link t, Item it, Dirn dir)
 
 Tree insertRedBlack(Tree t, Item it)
 {
-   t = insertRB(t, it, LEFT);
-   t->colour = BLACK;
+   t = insertRB(t, it, LEFT); // start at root, insert item
+   t->colour = BLACK;         // 
    return t;
 }
 
