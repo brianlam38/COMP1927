@@ -71,66 +71,24 @@ void ListAppend(List L, int value)
 // ListReverse ... reverse a List
 void ListReverse(List L)
 {
-	// Create temp list
-	// Copy entire list over to temp list
-	// Go through temp list and insert values into original list
+	if (L->first == NULL) return;		// #1 Base Cases
+	if (L->first->next == NULL) return;
 
-	List temp = newList();
-	Link curr = L->first;
+	Link curr = L->first;				// #2 Setting up ptrs
+	Link prev = NULL;
+	Link next = curr->next;
 
-	if (curr != NULL) {
-		curr = curr->next;
-		ListReverse(L);
+	Link first = L->first;
+
+	while (curr != NULL) {				// #3 Main loop
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
 	}
-	ListAppend(temp,curr->value);
-
+	L->first = prev;					// #4 Recon first/last
+	L->last = first;
 }
-
-/*
-Link newNode()
-{
-	Link new = malloc(sizeof(Node));
-	assert(new != NULL);
-	new->value = 0;
-	new->next = NULL;
-	return new;
-}
-*/
-
-/*
-// ListReverse ... reverse a List
-void ListReverse(List L)
-{
-
-	// While curr != NULL
-	// Start from node #2, insert at head.
-	// For each node, insert at the head then continue
-	// from where we left off.
-
-	ListShow(L);
-
-	Link curr = L->first;	// grab 1st node
-	Link orig = curr;		// store original position
-	Link old = NULL;		// store position of old head
-
-	printf("Starting cases\n\n");
-	if (curr == NULL) return;		// EMPTY LIST
-	if (curr->next == NULL) return; // ONE NODE LIST
-
-	curr = curr->next;		// start from node #2
-
-	printf("Main cases\n\n");
-	while (orig != NULL) {
-		ListShow(L);
-		orig = curr->next;		// grab curr node
-		old = L->first;
-		L->first->next = old->next;
-		L->first = curr;	// insert curr at head
-		curr->next = old;	// link new head to old head
-		curr = orig;
-	}
-}
-*/
 
 
 
