@@ -5,6 +5,9 @@
 #include <assert.h>
 #include "Matrix.h"
 
+// Function declarations
+int validCell(Matrix x, Matrix y, int i, int j);
+
 typedef struct _matrix_rep {
    int nrows;
    int ncols;
@@ -108,5 +111,36 @@ Matrix multiply(Matrix x, Matrix y)
 {
    assert(x != NULL && x->val != NULL);
    assert(y != NULL && y->val != NULL);
-   return NULL; // TODO
+   if (x->ncols != y->nrows) {
+      printf("Incompatible matrices\n");
+      return NULL;
+   }
+   // create output matrix of appropriate dimensions
+   int i, j;
+   Matrix z;
+   z = newMatrix(x->nrows, y->ncols);
+   // fill output matrix
+
+   for (i = 0; i < z->nrows; i++) {
+      for (j = 0; j < z->ncols; j++) {
+         if (validCell(x,y,i,j))
+            z->val[i][j] = x->val[i][j] * y->val[i][j];
+         else
+            z->val[i][j] = 0;
+      }
+   }
+   return z;
 }
+
+// Checks if the cell exists
+int validCell(Matrix x, Matrix y, int i, int j)
+{
+   if (i > x->nrows)
+      return 0;
+   else if (j > y->ncols)
+      return 0;
+   else
+      return 1;
+}
+
+
