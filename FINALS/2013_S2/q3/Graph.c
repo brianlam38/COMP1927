@@ -128,21 +128,23 @@ int *componentOf;  // array of component IDs
 // Returns # of connected components in a graph
 int nComponents(Graph g)
 {
-   int i, comp = 0; // Comp = #components
+   int i, comp = 0; // Comp = COMPONENT #ID
 
-   componentOf = malloc(g->nV*sizeof(int));			// Allocate component array
-   for (i = 0; i < g->nV; i++) componentOf[i] = -1; // Initialise all = -1
+   componentOf = malloc(g->nV*sizeof(int));			// #1 Allocate component array
+   for (i = 0; i < g->nV; i++) componentOf[i] = -1; //    Initialise all = -1
+   
    ncounted = 0;
-
-   while (ncounted < g->nV) {				// Search through vertices in component array
-      Vertex v;								// If vertex has not been visited, performance dfsR
-      for (v = 0; v < g->nV; v++)
+   while (ncounted < g->nV) {				// #2 Search for non-visited vertices
+      Vertex v;								//    If !visited, perform dfsR
+      for (v = 0; v < g->nV; v++)			//    Increment COMP NO. / ID.
          if (componentOf[v] == -1) break;
       dfsComponents(g, v, comp);
-      comp++;								// Increment component count
+      comp++;
    }										// Recursion in dfsR will make sure that
    // componentOf[] is now set 			    // all vertices in the same subgraph will
-   return comp; 							// have the same compID
+   return comp; 							// have the same compID, as they will be assigned
+   											// the same ID. Only after searching through all
+   											// vertices in the component
 }
 void dfsComponents(Graph g, Vertex v, int c)
 {
@@ -161,5 +163,20 @@ void dfsComponents(Graph g, Vertex v, int c)
 
 // What is the difference between normal recursive DFS and CC dfs?
 
-// 
+// In the wrapper DFS function, dfsR is only called on
+// vertices which have not been visited (componentOf[v] == -1)
+// Also, increment the componentID (occurs after all components
+// of Vertex V have been recursively found), so that all vertices
+// that are within the same component have the same ID.
+
+// Else, iterate to the next elt in connectedArray.
+
+// In the main dfsR function:
+// #1 Assign componentID to the Vertex V being dfsR'd
+// #2 Increment #vertices counted
+// #3 If Vertex W is connected to V && W has not been visited, perform dfsR on W
+   // (with the same componentID)
+
+
+
 
