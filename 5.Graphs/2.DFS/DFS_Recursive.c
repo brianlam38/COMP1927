@@ -40,7 +40,7 @@ void dfs(Graph g) {
 	while (order < nV(g)) {				// When order = nV, we have visited all vertices
 		Vertex v;
 		for (v = 0; v < nV(g); v++)		// Check all vertices to see if they are visited
-			if (visited[v] == 0)		// If not, do a depth-first reversal
+			if (visited[v] == 0)		// If not, do a recursive DFS
 				break;
 		dfsR(g,v);
 	}

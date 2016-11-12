@@ -6,6 +6,10 @@
 #include <string.h>
 #include "Graph.h"
 
+// ### FUNCTION DECLARATIONS ###
+int nComponents(Graph g);
+void dfsComponents(Graph g, Vertex v, int c);
+
 // type for small +ve int values
 typedef unsigned char bool;
 
@@ -113,9 +117,49 @@ void  removeE(Graph g, Edge e)
 	g->nE--;
 }
 
-// nComponents ... number of connected components
+// ### GLOBAL VARIABLES ###
+int ncounted;	   // #vertices included so far
+int *componentOf;  // array of component IDs
+				   // indexed by vertex 0..V-1
+
+// ### SOLUTION ###
+
+// DEPTH FIRST SEARCH for connected components
+// Returns # of connected components in a graph
 int nComponents(Graph g)
 {
-	// TODO
-	return 0; // remove this line
+   int i, comp = 0; // Comp = #components
+
+   componentOf = malloc(g->nV*sizeof(int));			// Allocate component array
+   for (i = 0; i < g->nV; i++) componentOf[i] = -1; // Initialise all = -1
+   ncounted = 0;
+
+   while (ncounted < g->nV) {				// Search through vertices in component array
+      Vertex v;								// If vertex has not been visited, performance dfsR
+      for (v = 0; v < g->nV; v++)
+         if (componentOf[v] == -1) break;
+      dfsComponents(g, v, comp);
+      comp++;								// Increment component count
+   }										// Recursion in dfsR will make sure that
+   // componentOf[] is now set 			    // all vertices in the same subgraph will
+   return comp; 							// have the same compID
 }
+void dfsComponents(Graph g, Vertex v, int c)
+{
+   componentOf[v] = c;
+   ncounted++;
+   Vertex w;
+   for (w = 0; w < g->nV; w++) {
+      if (g->edges[v][w] && componentOf[w] == -1)
+         dfsComponents(g, w, c);
+   }
+}
+
+// ####################
+// ANALYSIS OF CC COUNT
+// ####################
+
+// What is the difference between normal recursive DFS and CC dfs?
+
+// 
+

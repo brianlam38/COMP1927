@@ -1,3 +1,6 @@
+// Global Variable
+int *visited;
+
 // ############################
 // DEPTH-FIRST SEARCH ITERATIVE
 // ############################
