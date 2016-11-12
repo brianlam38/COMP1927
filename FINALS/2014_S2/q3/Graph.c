@@ -6,6 +6,10 @@
 #include <string.h>
 #include "Graph.h"
 
+// FUNCTION DECLARATION
+void swapCount(int a, int b);
+void swapVer(Vertex x, Vertex y);
+
 // type for small +ve int values
 typedef unsigned char bool;
 
@@ -116,7 +120,75 @@ void  removeE(Graph g, Edge e)
 Connects *wellConnected(Graph g, int *nconns)
 {
    assert(g != NULL && nconns != NULL);
-   // TODO: replace the two lines below
-   *nconns = 0;
-   return NULL;
+
+   // #1 FN takes in a graph + *n (counts # of connected v)
+   // #2 Computes an array of struct "Connects", which holds V# and nconn# for the vertex
+
+   // A well connected vertice is one that has >= 2 connections
+   // Arranged from MOST CONNECTED --> LEAST CONNECTED (descending)
+   // With vertices that have SAME nconn, order by ascending order of vertices
+
+   // #1 Alllocate array of "Connects" structs
+   Connects *nc = malloc(g->nV * sizeof(Connects));
+   assert(nc != NULL);
+   for (int i = 0; i < g->nV; i++) {
+      nc[i].vertx = i;
+      nc[i].nconn = 0;
+   }
+   // #2 Count number of neighbours
+   int totalC = 0;
+   int v, w;
+   for (v = 0; v < g->nV; v++) {
+      int nneighbours = 0;
+      for (w = 0; w < g->nV; w++) {
+         if (g->edges[v][w])
+            nneighbours++;
+         else
+            continue;
+      }
+      if (nneighbours >= 2) {          // Determine if V is "well-connected"
+         nc[v].nconn = nneighbours;
+         totalC++;
+      }
+   }
+
+   // #3 Sort the sequence of "Connects" structs
+   int count = 0;
+   int i;
+   for (count = 0; count < g->nV; count++) {
+      for (i = 0; i < (g->nV - 1); i++) {
+         if (nc[i].nconn < nc[i+1].nconn) {           // nconn1 < nconn2
+            swapCount(nc[i].nconn,nc[i+1].nconn);        // Swap for DESCENDING
+            swapVer(nc[i].vertx,nc[i+1].vertx);
+         } else if (nc[i].nconn == nc[i+1].nconn) {   // nconn1 = nconn
+            if (nc[i].vertx > nc[i+1].vertx)             // Swap for ASCENDING
+               swapVer(nc[i].vertx,nc[i+1].vertx);
+         }
+      }
+   }
+   // #4 Set *nconns (total number of "well-connected")
+   //    + return ptr to sequence of structs
+   *nconns = totalC;
+   return nc;
 }
+
+// Swap ncount
+void swapCount(int a, int b)
+{
+   int tempC = a;
+   a = b;
+   b = tempC;
+}
+
+// Swap vertx
+void swapVer(Vertex x, Vertex y)
+{
+   Vertex tempV = x;
+   x = y;
+   y = tempV;
+}
+
+
+
+
+
