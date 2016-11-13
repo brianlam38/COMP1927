@@ -8,7 +8,7 @@
 
 typedef struct ListNode {
 	Item value;
-	struct Node *next;
+	struct ListNode *next;
 } ListNode;
 
 typedef struct ListRep {
@@ -51,6 +51,7 @@ void showList(List L)
 		showItem(curr->value);
 		if (curr->next != NULL)
 			printf(",");
+		curr = curr->next;
 	}
 	printf("]");
 }
@@ -62,7 +63,7 @@ void ListInsert(List L, Item it)
 	assert(L != NULL);
 	ListNode *new = malloc(sizeof(ListNode));
 	assert(new != NULL);
-	new->value = itemCopy(it);
+	new->value = copyItem(it);
 	new->next = NULL;
 	if (L->last != NULL)
 		L->last->next = new;

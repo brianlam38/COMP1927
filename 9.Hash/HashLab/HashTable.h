@@ -9,17 +9,17 @@
 typedef struct HashTabRep *HashTable;
 
 // create an empty HashTable
-HashTable newHashTable(int);
+HashTable newHashTable(int,char,int);
 // free memory associated with HashTable
 void dropHashTable(HashTable);
-// display HashTable stats
-void hashTableStats(HashTable);
+// display HashTable
+void showHashTable(HashTable);
 
 // insert a new value into a HashTable
-void hashTableInsert(HashTable, Item);
+void HashTableInsert(HashTable, Item);
 // delete a value from a HashTable
-void hashTableDelete(HashTable, Key);
+void HashTableDelete(HashTable, Key);
 // get Item from HashTable using Key
-Item *hashTableSearch(HashTable, Key);
+Item *HashTableSearch(HashTable, Key);
 
 #endif

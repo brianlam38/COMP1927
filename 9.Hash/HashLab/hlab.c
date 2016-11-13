@@ -9,56 +9,70 @@ void usage();
 
 int main(int argc, char *argv[])
 {
-	HashTable hashtab;
-	int N=10, hash; char coll;
-	char word[50];
-	FILE *in;
-	int nwords, nmatches;
+	HashTable mytab;
+	int  N = 11;
+	int  N2 = 3;
+	char t = 'L';
 
 	// collect command-line params
-	if (argc < 2) usage();
 	switch (argc) {
-	case 2: N = atoi(argv[1]); hash = 0;
-	        coll = 'L'; break;
-	case 3: N = atoi(argv[1]); hash = atoi(argv[2]);
-	        coll = 'L'; break;
-	case 4: N = atoi(argv[1]); hash = atoi(argv[2]);
-	        coll = argv[3][0]; break;
+	case 1: N = 11; t = 'L'; break;
+	case 2: N = atoi(argv[1]); t = 'L'; break;
+	case 3: N = atoi(argv[1]); t = argv[2][0]; break;
+	case 4: N = atoi(argv[1]); t = 'D'; N2 = atoi(argv[3]); break;
 	default: usage(); break;
 	}
-	if (N < 100) usage();
 
-	hashtab = newHashTable(N);
+	mytab = newHashTable(N,t,N2);
+	showHashTable(mytab);
 
-	nwords = 0;
-	in = fopen("words","r");
-	while (fgets(word,50,in) != NULL) {
-		word[strlen(word)-1] = '\0';
-		hashTableInsert(hashtab,word);
-		nwords++;
+	char line[20];  int noShow = 0;
+	printf("\n> ");
+	while (fgets(line,20,stdin) != NULL) {
+		Item value = &line[2];
+		char *c;
+		for (c = value; *c != '\0' & *c != '\n'; c++) ;
+		*c = '\0';
+		switch (line[0]) {
+		case 'n':
+			dropHashTable(mytab);
+			sscanf(&line[1],"%d %c %d",&N,&t,&N2);
+			mytab = newHashTable(N,t,N2);
+			break;
+		case 'i':
+			HashTableInsert(mytab,value);
+			break;
+		case 'd':
+			HashTableDelete(mytab,key(value));
+			break;
+		case 'f':
+			if (HashTableSearch(mytab,key(value)))
+				printf("Found!\n");
+			else
+				printf("Not found\n");
+			noShow = 1;
+			break;
+		case 'q':
+			return 0;
+			break;
+		default:
+			printf("i=insert, d=delete, f=find, q=quit\n");
+			noShow = 1;
+			break;
+		}
+		if (noShow)
+			noShow = 0;
+		else
+			showHashTable(mytab);
+		printf("\n> ");
 	}
-	fclose(in);
-
-	nmatches = 0;
-	in = fopen("words","r");
-	while (fgets(word,50,in) != NULL) {
-		word[strlen(word)-1] = '\0';
-		if (hashTableSearch(hashtab,word))
-			nmatches++;
-	}
-	fclose(in);
-
-	if (nmatches != nwords)
-		printf("We have a problem\n");
-	else
-		printf("OK\n");
 
 	return 0;
 }
 
 void usage()
 {
-	fprintf(stderr, "Usage: hlab N HashFunc CollType\n");
-	fprintf(stderr, "N>100, HashFunc = 0..3, CollType = C|D|L\n");
+	fprintf(stderr, "Usage: hlab N CollType ");
+	fprintf(stderr, "(where N>2, CollType = C|D|L)\n");
 	exit(1);
 }
