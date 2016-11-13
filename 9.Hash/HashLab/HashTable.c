@@ -22,8 +22,8 @@ typedef enum {
 
 typedef struct HashTabRep {
 	CollType tabType;
-	List *lists;  // either use this
-	Item *items;  // or use this
+	List *lists;  // either use this	// Array of lists -> for Separate Chaining
+	Item *items;  // or use this		// Array of items -> for normal HT
 	State *state; // ... and this
 	int   nslots; // # elements in array
 	int   nitems; // # items stored in HashTable
@@ -50,17 +50,17 @@ HashTable newHashTable(int N, char t, int N2)
 	new->nslots = N;
 	new->nitems = 0;
 	switch (t) {
-	case 'C':
-		new->tabType = SEPARATE_CHAINS;
-		new->lists = malloc(N*sizeof(List));
+	case 'C':								 // #1 SEPARATE CHAINING
+		new->tabType = SEPARATE_CHAINS;		 //    Allocate array of lists
+		new->lists = malloc(N*sizeof(List)); //    rather than array of items
 		for (i = 0; i < N; i++)
 			new->lists[i] = newList();
 		break;
-	case 'L':
+	case 'L':									
 	case 'D':
-		if (t == 'L')
+		if (t == 'L')							// Collision Resolution Strat #2
 			new->tabType = LINEAR_PROBING;
-		else
+		else 									// Collision Resolution Strat #3
 			new->tabType = DOUBLE_HASHING;
 		Item *a = malloc(N*sizeof(Item));
 		State *s = malloc(N*sizeof(State));
@@ -118,8 +118,9 @@ void showHashTable(HashTable ht)
 	}
 }
 
-
-// different insert styles
+// #######################
+// DIFFERENT INSERT STYLES
+// #######################
 
 void insertChain(HashTable ht, Item it)
 {
@@ -136,10 +137,10 @@ void insertLinear(HashTable ht, Item it)
    State *s = ht->state;
    Key k = key(it);
    int i, j, h = hash(k,N);
-   for (j = 0; j < N; j++) {
-      i = (h+j)%N;
-      if (s[i] == NO_ITEM) break;
-      if (eq(k,key(a[i]))) break;
+   for (j = 0; j < N; j++) {		// Iterate until FREE SLOT
+      i = (h+j)%N;						// Wrap around to start of array
+      if (s[i] == NO_ITEM) break;	// Free slot found, break
+      if (eq(k,key(a[i]))) break;	// Same key value, break
    }
    if (s[i] != OCCUPIED) ht->nitems++;
    a[i] = copyItem(it);
@@ -167,7 +168,9 @@ void HashTableInsert(HashTable ht, Item it)
 	}
 }
 
-// different insert styles
+// #######################
+// DIFFERENT DELETE STYLES
+// #######################
 
 void deleteChain(HashTable ht, Key k)
 {
@@ -182,13 +185,13 @@ void deleteLinear(HashTable ht, Key k)
    Item *a = ht->items;
    State *s = ht->state;
    int i, j, h = hash(k,N);
-   for (j = 0; j < N; j++) {
+   for (j = 0; j < N; j++) {		// Find item to delete
       i = (h+j)%N;
-      if (s[i] == NO_ITEM) return;
+      if (s[i] == NO_ITEM) return;	// Reach end of linear probing chain
       if (eq(k,key(a[i]))) break;
    }
-   if (s[i] == OCCUPIED) ht->nitems--;
-   s[i] = DELETED;
+   if (s[i] == OCCUPIED) ht->nitems--;	// decrement nitems
+   s[i] = DELETED;						// delete item
 }
 
 void deleteDouble(HashTable ht, Key k)
@@ -211,14 +214,18 @@ void HashTableDelete(HashTable ht, Key k)
 	}
 }
 
-// different search styles
+// #######################
+// DIFFERENT SEARCH STYLES
+// #######################
 
+// Search using SEPARATE CHAINING strat
 Item *searchChain(HashTable ht, Key k)
 {
 	int h = hash(k,ht->nslots);
 	return ListSearch(ht->lists[h],k);
 }
 
+// Search using LINEAR strat
 Item *searchLinear(HashTable ht, Key k)
 {
    int N = ht->nslots;

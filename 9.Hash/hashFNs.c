@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 }
 
 #if 0
-int hash(char *key, int N)
+int hash(char *key, int N)				// #1 SIMPLE HASH FUNCTION
 {
 	int h = 0; char *c;
 	for (c = key; *c != '\0'; c++) {
@@ -21,7 +21,7 @@ int hash(char *key, int N)
 }
 #endif
 #if 1
-int hash(char *key, int N)
+int hash(char *key, int N)				// #2
 {
 	int i = 0, h = 0; char *c;
 	for (c = key; *c != '\0'; c++) {
@@ -42,8 +42,8 @@ int hash(char *key, int N)
 }
 #endif
 #if 0
-int hash(char *key, int N)
-{
+int hash(char *key, int N)				// #3 MORE SOPHISTICATED HASH FN
+{										//    Based off prime-numbers
    int h = 0, a = 31415, b = 21783;
    char *c;
    for (c = key; *c != '\0'; c++) {
