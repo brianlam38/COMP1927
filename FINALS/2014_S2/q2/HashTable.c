@@ -70,7 +70,7 @@ void insertHashTable(HashTable ht, int val)
 // ##################
 // SUGGESTED SOLUTION
 // ##################
-
+/*
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
 {
@@ -101,11 +101,13 @@ void expand(HashTable ht)
    ht->nslots = newN;                              // #5 update HashTable data
    ht->chains = newChains;
 }
-
+*/
 // ###############
 // BRIANS SOLUTION
 // ###############
-/*
+// NOTE: This solution shows the correct response when compiled with printf test code
+//       However, upon running without test code, it shows a non-expanded HashTable??
+
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
 {
@@ -129,4 +131,4 @@ void expand(HashTable ht)
    printf("UPDATED HASH TABLE\n");
    showHashTable(ht);
 }
-*/
+
