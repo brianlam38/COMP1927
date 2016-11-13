@@ -67,8 +67,66 @@ void insertHashTable(HashTable ht, int val)
    ht->nvals++;
 }
 
+// ##################
+// SUGGESTED SOLUTION
+// ##################
+
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
 {
-   return; //TODO
+   assert(ht != NULL);
+   int i, j;
+
+   int newN = 2*ht->nslots;                        // #1 make new chains[] array, x2 size
+   List *newChains = malloc(newN*sizeof(List));
+   assert(newChains != NULL);
+
+   for (i = 0; i < newN; i++)                      // #2 allocate + init new chains
+      newChains[i] = newList();
+
+   for (i = 0; i < ht->nslots; i++) {              // #3 re-hash values into new chains[]
+      int n;
+      int *values = valuesFromList(ht->chains[i], &n);
+      for (j = 0; j < n; j++) {
+         int h = hash(values[j],newN);
+         appendList(newChains[h],values[j]);
+      }
+      free(values);
+   }
+
+   for (i = 0; i < ht->nslots; i++)                // #4 clean up old chains[]
+      dropList(ht->chains[i]);
+   free(ht->chains);
+
+   ht->nslots = newN;                              // #5 update HashTable data
+   ht->chains = newChains;
 }
+
+// ###############
+// BRIANS SOLUTION
+// ###############
+/*
+// double the number of slots/chains in a hash table
+void expand(HashTable ht)
+{
+   // #1 Takes in HashTable ht
+   // #2 Doubles number of slots
+   // #3 Re-hashes existing keys to new slots (chains)
+
+   int expand = 2 * ht->nslots;
+   HashTable new = newHashTable(expand);
+   assert(new != NULL);
+
+   for (int i = 0; i < ht->nslots; i++) {
+      int nvals = 0;
+      int *values = valuesFromList(ht->chains[i], &nvals);
+      for (int j = 0; j < nvals; j++) {
+         insertHashTable(new, values[j]);
+      }
+   }
+
+   ht = new;
+   printf("UPDATED HASH TABLE\n");
+   showHashTable(ht);
+}
+*/
