@@ -27,7 +27,7 @@ typedef struct HashTabRep {
 	State *state; // ... and this
 	int   nslots; // # elements in array
 	int   nitems; // # items stored in HashTable
-	int   nhash2; // mod for 2nd hash
+	int   nhash2; // mod for 2nd hash 	// MOD # FOR SECONDARY HASH
 } HashTabRep;
 
 
@@ -238,6 +238,21 @@ Item *searchLinear(HashTable ht, Key k)
       if (s[i] != DELETED && eq(k,key(a[i]))) return &(a[i]);
    }
    return NULL;
+}
+
+// Search function for DOUBLE HASHING
+Item *search(HashTable ht, Key k)
+{
+	int N = ht->nslots;
+	int i, j, h = hash(k,N);
+	int incr = hash(k,ht->nhash2)+1;
+
+	for (j = 0; j < N; j++) {
+		if (eq(k,key(ht->items[i]) == 0))
+			return &(ht->items[i]);
+		i = (i+incr)%N;
+	}
+	return NULL;
 }
 
 
