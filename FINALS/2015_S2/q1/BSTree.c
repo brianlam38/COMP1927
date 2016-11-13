@@ -133,10 +133,13 @@ BSTree delete(BSTree t, int v)
 	return t;
 }
 
-// apply a function to all nodes
-void map(BSTree t, int (*f)(int))
-{
-	// TODO
+// Apply a function to all nodes
+void map(BSTree t, int(*f)(int)) {
+	if (t != NULL) {			// While tree !end
+		t->value = f(t->value); // Change value of node
+		map(t->left,f);			// Recursively traverse LHS + apply changes
+		map(t->right,f);		// Recursively traverse RHS + apply changes
+	}
 }
 
 // ASCII tree printer
