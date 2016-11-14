@@ -6,15 +6,19 @@ Operation             State of Queue after operation
                       [highest priority ... lowest priority]
 
 initially             -
-PQueueJoin(PQ, 'X')
-PQueueJoin(PQ, 'A')
-PQueueJoin(PQ, 'J')
-PQueueLeave(PQ)
-PQueueJoin(PQ, 'K')
-PQueueLeave(PQ)
-PQueueLeave(PQ)
-
+PQueueJoin(PQ, 'X')       [X]
+PQueueJoin(PQ, 'A')	    [A,X]
+PQueueJoin(PQ, 'J')       [A,J,X]
+PQueueLeave(PQ)		   [J,X]
+PQueueJoin(PQ, 'K')       [J,K,X]
+PQueueLeave(PQ)           [K,X]
+PQueueLeave(PQ)           [X]
 
 B.
 
-Replace this by your answer
+Stacks are FILO
+Queues are FIFO
+
+Since PQueues are nearly exactly the same as Queues, except for the fact that the PQueue is re-ordered every iteration (so that the highest priority item is first to leave the PQueue), we only need to remove the ordering function / operation in the PQueue to make it a Queue.
+
+For Stacks, they work in a FILO order, which means that the first items going in would be the last ones coming out. To imitate this in a PQueue, you must set the highest priority item as the one which most recently joined the queue.   

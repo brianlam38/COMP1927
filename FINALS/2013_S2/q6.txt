@@ -1,17 +1,33 @@
 Question 6 ... COMP1927 13s1 Final Exam
 
+              15
+          /       \
+         /         \
+        /           \
+       8             30
+     /   \          /   \
+   3     10       25     35
+           \      /
+           11    22
+                /
+               21
+
 
 A.
 
-Replace this with your answer
+
+PREFIX ORDER: [15,8,3,10,11,15,30,25,22,21,35]
 
 
 B.
 
-Replace this with your answer
+POSTFIX ORDER: [3,8,10,11,30,25,22,21,35,15]
 
 
 C.
 
-Replace this with your answer
+LEVEL ORDER: [15,8,30,3,10,25,35,11,22,21]
+
+
+
 

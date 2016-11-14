@@ -3,70 +3,65 @@ Question 8 ... COMP1927 13s1 Final Exam
 
 A.
 
-Draw the hash table as follows
-
-[i]   Content of hashTab[i]
-
-[0]   -
-[1]   -
-[2]   -
-[3]   -
-[4]   -
-[5]   -
-[6]   -
-[7]   -
-[8]   -
-[9]   -
-[10]  -
-[11]  -
-[12]  -
+Chaining: Creates linked lists
+[ 0] -> 26 -> 13
+[ 1]
+[ 2]
+[ 3] -> 3 -> 16 -> 29
+[ 4] -> 4
+[ 5]
+[ 6]
+[ 7] -> 7 -> 20
+[ 8]
+[ 9]
+[10]
+[11]
+[12] -> 12 -> 25
 
 
 
 B.
 
-Draw the hash table as follows
+Linear Probing: Inserts value in next available slot.
 
 [i]   Content of hashTab[i]
 
-[0]   -
-[1]   -
-[2]   -
-[3]   -
-[4]   -
-[5]   -
-[6]   -
-[7]   -
-[8]   -
-[9]   -
-[10]  -
-[11]  -
-[12]  -
+[0]   - 26
+[1]   - 25
+[2]   - 3
+[3]   - 16
+[4]   - 4
+[5]   - 29
+[6]   - 13
+[7]   - 7
+[8]   - 20
+[9]   - No Item
+[10]  - No Item
+[11]  - No Item
+[12]  - 12
 
 
 C.
 
-Draw the hash table as follows
+Double Hashing: Applies a second hash function
 
 [i]   Content of hashTab[i]
 
 [0]   -
-[1]   -
-[2]   -
-[3]   -
-[4]   -
-[5]   -
-[6]   -
-[7]   -
-[8]   -
-[9]   -
+[1]   - 20
+[2]   - 26
+[3]   - 3
+[4]   - 4
+[5]   - 16
+[6]   - 29
+[7]   - 25
+[8]   - 13
+[9]   - 7
 [10]  -
 [11]  -
 [12]  -
 
-Draw linked lists as -> x -> y -> z
-
 
 D.
 
-Replace this by your answer
+Really bad for string values, as almost all words (except for whole sentence strings) can exceed 127 characters. Therefore, with words of equal or similar lengths, they will all cluster in the same section of the hash table.

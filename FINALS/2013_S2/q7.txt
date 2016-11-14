@@ -7,19 +7,19 @@ Show the nodes as follows ...
 
 Node   Contents of Node
 
-A      (?)
-B      (1, 3, 5)
-C      (?)
-D      (?)
-
-add any other nodes here
+A (12)
+B (7)
+C (17)
+D (1,3,5)
+E (10,14,15)
+F (21,25,29)
 
 
 B.
 
-Replace this by your answer
+Red-black tree nodes have a colour value to each of the nodes
 
 
 C.
 
-Replace this by your answer
+UNSURE

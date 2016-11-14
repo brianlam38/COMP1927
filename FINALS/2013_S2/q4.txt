@@ -3,19 +3,19 @@ Question 4 ... COMP1927 13s1 Final Exam
 
 A.
 
-Replace this by your answer
+5+4+3+2+1 = 15 times
 
 
 B.
 
-Replace this by your answer
+2n-1 times
 
 
 C.
 
-Replace this by your answer
+O(n)
 
 
 D.
 
-Replace this by your answer
+if (a[j] < a[min])
