@@ -47,6 +47,31 @@ Vertex *neighbours(Graph g, Vertex x, int *nv)
 	}
 }
 
+// BREADTH-FIRST-SEARCH: Adj Matrix
+int *visited;	// array [0..V-1] of visiting order
+
+void bfs(Graph g, Vertex v) {
+	int i;
+	int order = 1;
+	visited = calloc(nV(g), sizeof(int));	// allocate visited array + set to 0
+	Queue q = newQueue();					// create queue
+	QueueJoin(q,v);							// add source to queue
+	visited[v] = order++;					// mark source as visited
+	while (!QueueIsEmpty(g)) {
+		Vertex y;							// declare neighbour vertex
+		Vertex curr = QueueLeave(q);			// pop vertex off queue
+		if (visited[curr])						// check if vertex is visited
+			continue;
+		for (y = 0; y < nV(g); y++) {		// look at neighbours (ascending order)
+			if (!hasEdge(g,curr,y))				// check if connected
+				continue;
+			if (!visited[y])					// check if neighbour is visited
+				QueueJoin(q,y);					// add neighbour to queue
+				visited[curr] = order++;			// mark curr vertice as visited
+		}
+	}
+}
+
 // ###################
 // B S T r e e s
 // ###################

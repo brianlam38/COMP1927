@@ -265,27 +265,39 @@ int within(Graph g, Vertex s, int d, Vertex *vs)
       // Copy vertex value into vs[] array
    // Return # of vertices in vs[]
 
-   // Use Djikstra's algorithm?
-   // Add S to queue
-   // While #D has not reached yet
-      // Visit lowest value first --> mark as visited
-      // Visit all other vertex connected to current vertex
-      // Add them to queue
-
-   
-
-   int i, j;
-   for (i = 0; i < g->nV; i++) {
-      g->graph[s][i]
+   for (int i = 0; i < g->nV; i++) {
+      visited[i] = 0;
    }
 
+   int vCount = 0; // vs[] count
 
+   Queue q = newQueue();                        // #2 Add starting V to queue
+   QueueJoin(q,s);
+   visited[s] = 0; // Start vert: d = 0
 
+   while (!QueueIsEmpty(q)) {
+      Vertex curr = QueueLeave(q);
 
+      int dCount = visited[curr];               // #3 Check if we are within D
+      if (dCount > d)                           //    If we are at limit, break
+         break;
 
-   return 0; // replace this statement
+      if (curr != s) {                          // #4 Add curr to vs[] (if not S)
+         vs[vCount] = curr;                     //    Increment vCount
+         vCount++;
+      }
+
+      for (Vertex y = 0; y < g->nV; y++) {      // #4 Go through neighbours of curr
+         if (!g->edges[curr][y])
+            continue;
+         if (!visited[y]) {
+            visited[y] = visited[curr] + 1;
+            QueueJoin(q,y);
+         }
+      }
+   }
+   return vCount; // replace this statement
 }
-
 
 
 

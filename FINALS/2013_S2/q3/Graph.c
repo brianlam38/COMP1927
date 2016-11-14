@@ -156,7 +156,7 @@ void dfsComponents(Graph g, Vertex v, int c)
          dfsComponents(g, w, c);
    }
 }
-
+// lol
 // ####################
 // ANALYSIS OF CC COUNT
 // ####################
