@@ -145,3 +145,48 @@ void map(BSTree t, int(*f)(int))
 	}
 }
 
+// BSTree Deletion: Part 1 + Part 2
+BSTree BSTreeDelete(BSTree t, Key k)
+{
+	if (t == NULL) return;						// Empty tree
+	if (k < t->value) BSTreeDelete(t->left);	// Key in LHS
+	if (k > t->value) BSTreeDelete(t->right);	// Key in RHS
+	if (k == t->value) t = deleteRoot(t); // Key found
+
+	return t;
+}
+BSTree deleteRoot(t)
+{
+	Link newRoot;
+
+	if (t->left == NULL && t->right == NULL) {		  // No subtrees
+		free(t);
+		return NULL;
+	} else if (t->left == NULL && t->right != NULL) { // RHS subtree
+		newRoot = t->right;							  // Ptr to LHS node
+		free(t);
+		return newRoot;
+	} else if (t->left != NULL && t->right == NULL) { // LHS subtree
+		newRoot = t->left;							  // Ptr to RHS node
+		free(t);
+		return newRoot;
+	} else if (t->left != NULL && t->right != NULL) { // RHS + LHS exist
+		Link curr = t->right; 						  // Find successor node
+		while (curr != NULL) {
+			curr = curr->left;
+		}
+		Key successor = curr->value;	// Grab successor key
+		t = BSTreeDelete(t,successor);  // Remove successor node
+		t->value = successor;			// Set root key = successor key
+		return t;						// Return t
+	}
+}
+
+
+
+
+
+
+
+
+
