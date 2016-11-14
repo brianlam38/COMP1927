@@ -14,7 +14,7 @@ int dfsCycleCheck(Graph g, Vertex v, Vertex prev)
       if (!hasEdge(v,w)) continue;
       if (!visited[w])
          return dfsCycleCheck(g, w, v);
-      else if (w != prev)
+      if (w != prev)
          return 1; // found cycle
    }
    return 0; // no cycle at v

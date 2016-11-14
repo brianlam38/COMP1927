@@ -1,7 +1,3 @@
-// ###################
-//
-// ###################
-
 // #################
 // R E C U R S I O N
 // #################
@@ -47,7 +43,7 @@ Vertex *neighbours(Graph g, Vertex x, int *nv)
 	}
 }
 
-// BREADTH-FIRST-SEARCH: Adj Matrix
+// BFS: Adj Matrix Rep
 int *visited;	// array [0..V-1] of visiting order
 
 void bfs(Graph g, Vertex v) {
@@ -97,6 +93,43 @@ void dfsR(Graph g, Vertex x) {
 }											// then recursion will back-track one level
 
 // DJIKSTRA'S ALGORITHM
+oid shortestPath(Graph g, Vertex start,
+				  Vertex pred[], float dist[]) {
+
+	PQueue pq = newPQ(dist,nV(g));			// #1 create PQ based on dist[] -> ptr access to dist[]
+
+	for (Vertex v = 0; v < nV(g); v++) {	// #2 Init dist[] pred[] to base values for each vertex
+		pred[v] = -1;						//    Add vertex to Queue
+		dist[v] = MAX_WT;
+		join(pq,v);
+	}
+
+	dist[start] = 0.0;						// #3 Begin at source vertex + reorder PQ
+	reorder(pq,start);						//    (moves v to the front)
+
+	while (!empty(pq)) {					// #4 PQ operations
+		Vertex S = leave(pq);				//    Grab cheapest/front v in the queue
+		/* FIND NEIGHBOURS */
+		for (Vertex t = 0; t < nV(g); t++) {//    Iterate through other vertices
+			float len = g->adj[s][t];		//    Find connected vertices to S (neighbours) + grab weight
+			if (len == NO_EDGE) continue;	//    Length = non-existent, continue / check next T
+			/* EDGE RELAXATION */
+			if (dist[s]+len < dist[t]) {	//    If S cost so far + edge cost < known cost of path to T
+				pred[t] = s;				//    Update new shortest path (previous of T = S)
+				dist[t] = dist[s]+len;		//    Update new shortest dist (dist = dist[S] + len)
+				reorder(pq,t);
+			}
+			/* NEXT ITERATION */
+		}
+	}
+	dispose(PQ);
+}
+
+/* Possibly put notes for these aswell? */
+// 1. Minimum Spanning Trees -> A subset of edges that connects all vertices together using the
+//                              minimum possible weight.
+
+// 2. Cycle Checking -> Does a cycle exist in the graph?
 
 // ###################
 // B S T r e e s
