@@ -257,7 +257,28 @@ void findPath(Graph g, Vertex src, Vertex dest)
 // Find all vertices which are <= d edges from v
 int within(Graph g, Vertex s, int d, Vertex *vs)
 {
-   // Dist to V = #edges on shortest path between StartVertex / V
+   // A function that prints out a list of vertices which
+   // are <= D #edges away from V (not including V)
+
+   // Scan through graph, starting from V
+   // Find vertices #D away from V
+      // Copy vertex value into vs[] array
+   // Return # of vertices in vs[]
+
+   // Use Djikstra's algorithm?
+   // Add S to queue
+   // While #D has not reached yet
+      // Visit lowest value first --> mark as visited
+      // Visit all other vertex connected to current vertex
+      // Add them to queue
+
+   
+
+   int i, j;
+   for (i = 0; i < g->nV; i++) {
+      g->graph[s][i]
+   }
+
 
 
 
