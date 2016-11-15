@@ -375,7 +375,7 @@ Tree insertRB(Link t, Item it, Dirn dir)
 'H A S H   T A B L E S'
 '------------------------------------------------------------'
 ====================================================================================
-COLLISION RESOLUTION: CHAINING
+EXPANSION OF HT: CHAINING
 ====================================================================================
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
@@ -409,8 +409,42 @@ void expand(HashTable ht)
 }
 
 ====================================================================================
-COLLISION RESOLUTION: CHAINING
+INSERTION INTO HT: LINEAR PROBING - SINGLE HASHING
 ====================================================================================
+void insertLinear(HashTable ht, Item it)
+{
+   assert(ht->nitems < ht->nslots);
+   int N = ht->nslots;
+   Item *a = ht->items;	 // array of item
+   State *s = ht->state; // array of item states
+   Key k = key(it);
+   int i, j, h = hash(k,N);
+   for (j = 0; j < N; j++) {		// Iterate until FREE SLOT
+      i = (h+j)%N;						// Wrap around to start of array
+      if (s[i] == NO_ITEM) break;	// Free slot found, break
+      if (eq(k,key(a[i]))) break;	// Same key value, break
+   }
+   if (s[i] != OCCUPIED) ht->nitems++;
+   a[i] = copyItem(it);
+   s[i] = OCCUPIED;
+}
+====================================================================================
+SEARCHING HT: LINEAR PROBING - DOUBLE HASHING
+====================================================================================
+// Search function for DOUBLE HASHING
+Item *search(HashTable ht, Key k)
+{
+	int N = ht->nslots;
+	int i, j, h = hash(k,N);
+	int incr = hash(k,ht->nhash2)+1;	// Grab index from double-hash fn
+
+	for (j = 0; j < N; j++) {
+		if (eq(k,key(ht->items[i]) == 0))
+			return &(ht->items[i]);
+		i = (i+incr)%N;					// Increment from collision point
+	}									// the double-hash value
+	return NULL;
+}
 
 '------------------------------------------------------------'
 'T R I E S'

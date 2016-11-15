@@ -132,7 +132,6 @@ BSTree delete(BSTree t, int v)
 		t = deleteRoot(t);
 	return t;
 }
-
 // Apply a function to all nodes
 void map(BSTree t, int(*f)(int)) {
 	if (t != NULL) {			// While tree !end
@@ -141,6 +140,7 @@ void map(BSTree t, int(*f)(int)) {
 		map(t->right,f);		// Recursively traverse RHS + apply changes
 	}
 }
+
 
 // ASCII tree printer
 // Courtesy: ponnada
