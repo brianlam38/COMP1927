@@ -1,21 +1,32 @@
 Question 4 ... COMP1927 13s1 Final Exam
 
 
-A.
+A. (CORRECT)
 
 5+4+3+2+1 = 15 times
 
 
-B.
+B. (INCORRECT)
 
 2n-1 times
 
+ANSWER:
+On the first iteration of outer loop, n-1 comparisons
+On the second iteration of outer loop, n-2 comparisons
+On the third iteration of outer loop, n-3 comparisons
+...
+On the final iteration of the outer loop, 1 comparison
 
-C.
+Total comparisons = (n-1) + (n-2) + ... 1 = n(n-1)/2
+
+
+C. (INCORRECT)
 
 O(n)
 
+ANSWER:Complexity = O(n^2)
 
-D.
+
+D. (CORRECT)
 
 if (a[j] < a[min])

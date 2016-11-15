@@ -1,6 +1,6 @@
 Question 5 ... COMP1927 13s1 Final Exam
 
-A.
+A. (CORRECT)
 
 Operation             State of Queue after operation
                       [highest priority ... lowest priority]
@@ -14,7 +14,7 @@ PQueueJoin(PQ, 'K')       [J,K,X]
 PQueueLeave(PQ)           [K,X]
 PQueueLeave(PQ)           [X]
 
-B.
+B. (CORRECT)
 
 Stacks are FILO
 Queues are FIFO

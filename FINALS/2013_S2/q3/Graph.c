@@ -117,13 +117,13 @@ void  removeE(Graph g, Edge e)
 	g->nE--;
 }
 
+
 // ### GLOBAL VARIABLES ###
 int ncounted;	   // #vertices included so far
 int *componentOf;  // array of component IDs
 				   // indexed by vertex 0..V-1
 
 // ### SOLUTION ###
-
 // DEPTH FIRST SEARCH for connected components
 // Returns # of connected components in a graph
 int nComponents(Graph g)
@@ -156,7 +156,7 @@ void dfsComponents(Graph g, Vertex v, int c)
          dfsComponents(g, w, c);
    }
 }
-// lol
+
 // ####################
 // ANALYSIS OF CC COUNT
 // ####################
@@ -176,7 +176,5 @@ void dfsComponents(Graph g, Vertex v, int c)
 // #2 Increment #vertices counted
 // #3 If Vertex W is connected to V && W has not been visited, perform dfsR on W
    // (with the same componentID)
-
-
 
 

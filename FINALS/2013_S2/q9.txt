@@ -1,6 +1,6 @@
 A.
 
-A,B,C,D,E,C,F,G,H,J,I
+A,E,D,B,F,G,C,J,I,H
 
 B.
 

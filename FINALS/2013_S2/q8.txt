@@ -41,25 +41,25 @@ Linear Probing: Inserts value in next available slot.
 [12]  - 12
 
 
-C.
+C. (INCORRECT)
 
 Double Hashing: Applies a second hash function
 
 [i]   Content of hashTab[i]
 
-[0]   -
-[1]   - 20
-[2]   - 26
+[0]   - 26
+[1]   -
+[2]   - 25
 [3]   - 3
 [4]   - 4
-[5]   - 16
-[6]   - 29
-[7]   - 25
-[8]   - 13
-[9]   - 7
-[10]  -
+[5]   -
+[6]   - 13
+[7]   - 7
+[8]   - 16
+[9]   - 29
+[10]  - 20
 [11]  -
-[12]  -
+[12]  - 12
 
 
 D.

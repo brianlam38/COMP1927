@@ -1,8 +1,10 @@
-// #################
-// R E C U R S I O N
-// #################
+'-----------------'
+'R E C U R S I O N'
+'-----------------'
 
-// Recursion to find max val in a[lo..hi]
+====================================================================================
+Recursion to find max val in a[lo..hi]
+====================================================================================
 int max(int a[], int lo, int hi)
 {
 	if (lo == hi) {					// #1 Max value found
@@ -16,11 +18,95 @@ int max(int a[], int lo, int hi)
 }
 
 
-// ###################
-// G R A P H S
-// ###################
 
-// CONNECTED COMPONENTS:
+'-----------'
+'G R A P H S'
+'-----------'
+
+====================================================================================
+NEIGHBOURS: Returns array of vertices that are neighbours of X
+====================================================================================
+// Neighbours
+Vertex *neighbours(Graph g, Vertex x, int *nv)
+{
+	assert(validG(g) && validV(g,x) && nv != NULL);
+
+	int i;
+	int nneighbours = 0;
+	for (i = 0; i < g->nV; i++) {		   // #1 Count num neighbours
+		if (g->edges[x][i])
+			nneighbours++;
+	}
+
+	Vertex *ns = malloc(nn * sizeof(Vertex)); // #2 Alloc neighbours array
+	assert(ns != NULL);
+
+	int k = 0;	
+	for (i = 0; i < g->nV; i++) {		   // #3 Copies neighbour indexes
+		if (g->edges[x][i])				   //    into neighbours array
+			ns[k] = i;
+			k++;
+	}
+	*nv = nneighbours;	// #neighbours
+	return ns;			// return array of neighbours
+}
+
+====================================================================================
+BFS: Adjacency Matrix Rep
+====================================================================================
+// BFS + global visited array
+int *visited;	// array [0..V-1] of visiting order
+
+void bfs(Graph g, Vertex v) {
+	int i;
+	int order = 1;
+	visited = calloc(nV(g), sizeof(int));	// allocate visited array + set to 0
+	Queue q = newQueue();					// create queue
+	QueueJoin(q,v);							// add source to queue
+	visited[v] = order++;					// mark source as visited
+	while (!QueueIsEmpty(g)) {
+		Vertex y;							// declare neighbour vertex
+		Vertex curr = QueueLeave(q);			// pop vertex off queue
+		if (visited[curr])						// check if vertex is visited
+			continue;
+		for (y = 0; y < nV(g); y++) {		// look at neighbours (ascending order)
+			if (!hasEdge(g,curr,y))				// check if connected
+				continue;
+			if (!visited[y])					// check if neighbour is visited
+				QueueJoin(q,y);					// add neighbour to queue
+				visited[curr] = order++;			// mark curr vertice as visited
+		}
+	}
+}
+
+====================================================================================
+DFS Recursive: Modified with Connected Components
+====================================================================================
+void dfs(Graph g) {
+	int i;
+	visited = calloc(nV(g), sizeof(int));
+	order = 1;
+	while (order < nV(g)) {				// When order = nV, we have visited all vertices
+		Vertex v;
+		for (v = 0; v < nV(g); v++)		// Check all vertices to see if they are visited
+			if (visited[v] == 0) break;	// If not, do a recursive DFS
+		dfsR(g,v);
+	}
+}
+void dfsR(Graph g, Vertex x) {
+	visited[v] = order++;				// Mark curr v as visited / the order visited			
+	Vertex w;
+	for (w = 0; w < nV(g); w++) {		// Iterate through possible neighbours W
+		if (!hasEdge(g,v,w))				// For each W, check if there is an edge btwn
+			continue;						// vertex V and W. Continue if no edge exists
+		if (!visited[w])				// If W has not been visited, recursively visit W
+			dfsR(g,w);						// Recursion will iterate through all possible	
+	}										// neighbours Y. Once all neighours Y are visited
+}											// then recursion will back-track one level
+
+====================================================================================
+DFS - CONNECTED COMPONENTS - Find # of connected components in a graph
+====================================================================================
 int nComponents(Graph g)
 {
    int i, comp = 0; // Comp = COMPONENT #ID
@@ -52,77 +138,10 @@ void dfsComponents(Graph g, Vertex v, int c)
    }
 }
 
-// NEIGHBOURS: Returns array of vertices that are neighbours of X
-Vertex *neighbours(Graph g, Vertex x, int *nv)
-{
-	assert(validG(g) && validV(g,x) && nv != NULL);
-
-	int i;
-	int nn = 0;
-	for (i = 0; i < g->nV; i++) {		   // #1 Find num neighbours
-		if (g->edges[x][i])
-			n++;
-	}
-	int *ns = malloc(nn * sizeof(Vertex)); // #2 Alloc neighbours array
-	assert(ns != NULL);
-
-	int k;
-	for (i = 0; i < g->nV; i++) {		   // #3 Copies neighbour indexes
-		if (g->edges[x][i])				   //    into neighbours array
-			ns[k++] = i;
-	}
-}
-
-// BFS: Adj Matrix Rep
-int *visited;	// array [0..V-1] of visiting order
-
-void bfs(Graph g, Vertex v) {
-	int i;
-	int order = 1;
-	visited = calloc(nV(g), sizeof(int));	// allocate visited array + set to 0
-	Queue q = newQueue();					// create queue
-	QueueJoin(q,v);							// add source to queue
-	visited[v] = order++;					// mark source as visited
-	while (!QueueIsEmpty(g)) {
-		Vertex y;							// declare neighbour vertex
-		Vertex curr = QueueLeave(q);			// pop vertex off queue
-		if (visited[curr])						// check if vertex is visited
-			continue;
-		for (y = 0; y < nV(g); y++) {		// look at neighbours (ascending order)
-			if (!hasEdge(g,curr,y))				// check if connected
-				continue;
-			if (!visited[y])					// check if neighbour is visited
-				QueueJoin(q,y);					// add neighbour to queue
-				visited[curr] = order++;			// mark curr vertice as visited
-		}
-	}
-}
-
-// DFS Recursive: Modified for Connected Components
-void dfs(Graph g) {
-	int i;
-	visited = calloc(nV(g), sizeof(int));
-	order = 1;
-	while (order < nV(g)) {				// When order = nV, we have visited all vertices
-		Vertex v;
-		for (v = 0; v < nV(g); v++)		// Check all vertices to see if they are visited
-			if (visited[v] == 0) break;	// If not, do a recursive DFS
-		dfsR(g,v);
-	}
-}
-void dfsR(Graph g, Vertex x) {
-	visited[v] = order++;				// Mark curr v as visited / the order visited			
-	Vertex w;
-	for (w = 0; w < nV(g); w++) {		// Iterate through possible neighbours W
-		if (!hasEdge(g,v,w))				// For each W, check if there is an edge btwn
-			continue;						// vertex V and W. Continue if no edge exists
-		if (!visited[w])				// If W has not been visited, recursively visit W
-			dfsR(g,w);						// Recursion will iterate through all possible	
-	}										// neighbours Y. Once all neighours Y are visited
-}											// then recursion will back-track one level
-
-// DJIKSTRA'S ALGORITHM
-oid shortestPath(Graph g, Vertex start,
+====================================================================================
+DJIKSTRAS ALGORITHM
+====================================================================================
+void shortestPath(Graph g, Vertex start,
 				  Vertex pred[], float dist[]) {
 
 	PQueue pq = newPQ(dist,nV(g));			// #1 create PQ based on dist[] -> ptr access to dist[]
@@ -154,17 +173,25 @@ oid shortestPath(Graph g, Vertex start,
 	dispose(PQ);
 }
 
-/* Possibly put notes for these aswell? */
+
 // 1. Minimum Spanning Trees -> A subset of edges that connects all vertices together using the
 //                              minimum possible weight.
 
 // 2. Cycle Checking -> Does a cycle exist in the graph?
 
-// ###################
-// B S T r e e s
-// ###################
+// 3. Euler Path -> Path between 2 vertices V,W that goes through every edge at least ONCE
+//					V,W = Odd degree (i.e. 1,3,5 edges connecting to vertice)
+//					Remaining vertices = Even degree
 
-// HIGHER ORDER FN: Passing & applying a fn to all tree nodes (recursive)
+
+'-----------------'
+'B S T   T R E E S'
+'-----------------'
+
+====================================================================================
+Higher Order Function - Passing & applying a function ptr to all nodes RECURSIVELY
+====================================================================================
+// Recursively apply function to nodes
 void map(BSTree t, int(*f)(int))
 {
 	if (t != NULL) {			// While not empty
@@ -174,7 +201,10 @@ void map(BSTree t, int(*f)(int))
 	}
 }
 
-// BSTree Deletion: Part 1 + Part 2
+====================================================================================
+BSTree Deletion: Wrapper + DeleteRoot
+====================================================================================
+// Wrapper function
 BSTree BSTreeDelete(BSTree t, Key k)
 {
 	if (t == NULL) return;						// Empty tree
@@ -184,6 +214,7 @@ BSTree BSTreeDelete(BSTree t, Key k)
 
 	return t;
 }
+// Delete root
 BSTree deleteRoot(t)
 {
 	Link newRoot;
@@ -211,7 +242,9 @@ BSTree deleteRoot(t)
 	}
 }
 
-// AVL TREES -> Search Average/Worst O(nLogn)
+====================================================================================
+AVL TREES - Search Average/Worst = nLogn
+====================================================================================
 // Repairs imbalanced trees as soon as we notice imbalance
 // Imbalanced = |depth(LHS) - depth(RHS) > 1|
 Tree insertAVL(Tree t, Item it)
@@ -231,7 +264,9 @@ Tree insertAVL(Tree t, Item it)
     return t;
 }
 
-// GENERAL TREE REBALANCE (recursive) + PARTITION
+====================================================================================
+GENERAL TREE REBALANCE - Recursive + Partition
+====================================================================================
 // Moving node with median key (i = n/2) to the root
 Tree rebalance(Tree t)
 {
@@ -265,12 +300,68 @@ Tree partition(Tree t, int i)
    return t;
 }
 
-// SPLAY TREES: 
+====================================================================================
+
+// SPLAY TREES: Considers PARENT - CHILD - GRANDCHILD
+//              Performs double rotations, pushing GRANDCHILD -> PARENT (ROOT)
+//              E.g. P-C-G -> G-C-P
+
+// 2-3-4 TREES: Three kinds of nodes
+//              2-nodes = one value, two children (same as BST)
+//              3-nodes = two values, three children
+//              4-nodes = three values, four children
+//              PROMOTE/SPLIT whenever node is full (contains 3 values)
+
+====================================================================================
+RED-BLACK TREES
+====================================================================================
+// Insertion Wrapper Function
+void insertRedBlack(Tree t, Item it)
+{
+	t = insertRB(t->root, it, LEFT);	// start at root, insert item.
+										// paramter #3 -> Go LHS or RHS
+											// inRight = 0 -> Go LHS
+											// inRight = 1 -> Go RHS
+	t->colour = BLACK;
+}
+
+// Main insertion function (recursive)
+Tree insertRB(Link t, Item it, Dirn dir)
+{
+   Key v = key(it);
+   if (t == NULL) return newNode(it);
+   if (red(L(t)) && red(R(t))) {
+      t->colour = RED;
+      t->left->colour = BLACK;
+      t->right->colour = BLACK;
+   }
+   if (less(v, key(t->value))) {
+      t->left = insertRB(t->left, it, LEFT);
+      if (red(t) && red(L(t)) && dir==RIGHT)
+         t = rotateR(t);
+      if (red(L(t)) && red(L(L(t)))) {
+         t = rotateR(t);
+         t->colour = BLACK;
+         t->right->colour = RED;
+      }
+   }
+   else {
+      t->right = insertRB(t->right, it, RIGHT);
+      if (red(t) && red(R(t)) && dir==LEFT)
+         t = rotateL(t);
+      if (red(R(t)) && red(R(R(t)))) { 
+         t = rotateL(t);
+         t->colour = BLACK;
+         t->left->colour = RED;
+      }
+    }
+    return t;
+}
 
 
-// ####################
-// H A S H    T A B L E
-// ####################
+'---------------------'
+'H A S H   T A B L E S'
+'---------------------'
 
 
 

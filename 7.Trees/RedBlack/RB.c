@@ -29,11 +29,11 @@ typedef enum {LEFT,RIGHT} Dirn;
 // Insertion Wrapper Function
 void insertRedBlack(Tree t, Item it)
 {
-	t->root = insertRB(t->root, it, 0);	// start at root, insert item.
+	t = insertRB(t->root, it, LEFT);	// start at root, insert item.
 										// paramter #3 -> Go LHS or RHS
 											// inRight = 0 -> Go LHS
 											// inRight = 1 -> Go RHS
-	t->root->colour = BLACK;
+	t->colour = BLACK;
 }
 
 // Main insertion function (recursive)
@@ -68,7 +68,3 @@ Tree insertRB(Link t, Item it, Dirn dir)
     }
     return t;
 }
-
-
-
-
