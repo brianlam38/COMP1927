@@ -70,44 +70,44 @@ void insertHashTable(HashTable ht, int val)
 // ##################
 // SUGGESTED SOLUTION
 // ##################
-/*
+
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
 {
    assert(ht != NULL);
    int i, j;
 
-   int newN = 2*ht->nslots;                        // #1 make new chains[] array, x2 size
+   int newN = 2*ht->nslots;                        // #1 Alloc newChains array
    List *newChains = malloc(newN*sizeof(List));
    assert(newChains != NULL);
 
-   for (i = 0; i < newN; i++)                      // #2 allocate + init new chains
+   for (i = 0; i < newN; i++)                      // #2 Allocate + init new chains
       newChains[i] = newList();
 
-   for (i = 0; i < ht->nslots; i++) {              // #3 re-hash values into new chains[]
+   for (i = 0; i < ht->nslots; i++) {              // #3 Re-hash values into new chains[]
       int n;
       int *values = valuesFromList(ht->chains[i], &n);
       for (j = 0; j < n; j++) {
-         int h = hash(values[j],newN);
-         appendList(newChains[h],values[j]);
+         int h = hash(values[j],newN);       // Grab index
+         appendList(newChains[h],values[j]); // Append val to index chain
       }
       free(values);
    }
 
-   for (i = 0; i < ht->nslots; i++)                // #4 clean up old chains[]
+   for (i = 0; i < ht->nslots; i++)                // #4 Clean up old chains[]
       dropList(ht->chains[i]);
    free(ht->chains);
 
-   ht->nslots = newN;                              // #5 update HashTable data
-   ht->chains = newChains;
+   ht->nslots = newN;                              // #5 Update HashTable data
+   ht->chains = newChains;                         //    Relink to newChains
 }
-*/
+
 // ###############
 // BRIANS SOLUTION
 // ###############
 // NOTE: This solution shows the correct response when compiled with printf test code
 //       However, upon running without test code, it shows a non-expanded HashTable??
-
+/*
 // double the number of slots/chains in a hash table
 void expand(HashTable ht)
 {
@@ -131,4 +131,5 @@ void expand(HashTable ht)
    printf("UPDATED HASH TABLE\n");
    showHashTable(ht);
 }
+*/
 

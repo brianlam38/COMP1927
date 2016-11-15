@@ -374,6 +374,152 @@ Tree insertRB(Link t, Item it, Dirn dir)
 '------------------------------------------------------------'
 'H A S H   T A B L E S'
 '------------------------------------------------------------'
+====================================================================================
+COLLISION RESOLUTION: CHAINING
+====================================================================================
+// double the number of slots/chains in a hash table
+void expand(HashTable ht)
+{
+   assert(ht != NULL);
+   int i, j;
+
+   int newN = 2*ht->nslots;                        // #1 Alloc newChains array
+   List *newChains = malloc(newN*sizeof(List));
+   assert(newChains != NULL);
+
+   for (i = 0; i < newN; i++)                      // #2 Allocate + init new chains
+      newChains[i] = newList();
+
+   for (i = 0; i < ht->nslots; i++) {              // #3 Re-hash values into new chains[]
+      int n;
+      int *values = valuesFromList(ht->chains[i], &n);
+      for (j = 0; j < n; j++) {
+         int h = hash(values[j],newN);       // Grab index
+         appendList(newChains[h],values[j]); // Append val to index chain
+      }
+      free(values);
+   }
+
+   for (i = 0; i < ht->nslots; i++)                // #4 Clean up old chains[]
+      dropList(ht->chains[i]);
+   free(ht->chains);
+
+   ht->nslots = newN;                              // #5 Update HashTable data
+   ht->chains = newChains;                         //    Relink to newChains
+}
+
+====================================================================================
+COLLISION RESOLUTION: CHAINING
+====================================================================================
+
+'------------------------------------------------------------'
+'T R I E S'
+'------------------------------------------------------------'
+
+Similar to trees, except using parts of keys to form a dictionary.
+E.g. One branch:
+Root(A) - Value(P) - Value(E) - Value(S) = A P E S key/string
+
+Red Nodes = Signals END OF A STRING
+Black Nodes = Just contains a value but not end of the string.
+
+Tries are useful for RADIX SEARCH - Search based on least -> most useful part of key
+Depth = length of longest key
+Search cost = O(d)
+
+// Trie search example: for string "E A R L Y"
+If the trie only had E-A-R-L but missing Y, it would mean there is NO MATCH in the trie
+
+// Trie search example: for string "A P"
+If P was not a "finishing" node, then even reaching A-P would be there is NO MATCH in the trie
+
+SO TWO CONDITIONS FOR A SEARCH MATCH ARE:
+(1) Reached the LAST PART / character in the key
+(2) Current node is also a FINISHING node
+
+// Trie representation
+typedef struct TrieNode *Link;	// ptr to trie node
+
+typedef struct TrieNode {
+	char keyBit;	// one char from key
+	int finish;		// last char in key?
+	Item data;		// No Item if !finished
+	Link child;
+	Link sibling;
+} TrieNode;
+
+typedef struct {		// Head struct
+	Link root;
+} TrieRep;
+
+typedef TrieRep *Trie;	// ptr to trie head
+typedef char *Key;		// ptr to a trie key
+
+// Finding a key in the tree
+// Traversing a path, char-by-char from Key
+TrieNode *find(Trie t, Key k)
+{
+	char *c = k;
+	TrieNode *curr = t->root;
+	while (*c != '\0' && curr != NULL) {
+		// scan siblings
+		while (curr != NULL && curr->keybit != *c)
+			curr = curr->sibling;
+		if (curr == NULL) return NULL;
+		if (*(c+1) == '\0') return curr;
+		// move down one level (children)
+		curr = curr->child;
+		c++;				// get next character
+	}
+	return NULL;
+}
+
+Item *search(Trie t, Key k)
+{
+	TrieNode *n = find(t,k);
+	if (n == NULL) return NULL;		  // Empty trie
+	if (n->finish) return &(n->data); // Found key, return ptr to key
+
+	return NULL;	// !finishing, key doesn't exist in trie.
+}
+
+Delete: Set n->finish = 0;
+
+// Create new Trie Node
+TrieNode *newTrieNode(Key k, int i, Item i)
+{
+	TrieNode *new = malloc(sizeof(TrieNode));
+	new->keybit = k[i];		// Set keybit to corresp char in key
+	if (k[i+1] != '\0') {	// Not the last part of key
+		new->finish = 0;
+		new->data = NoItem;
+	} else {				// Last part of key
+		new->finish = 1;	// Mark as finishing keybit
+		new->data = it;		// Insert item into keybit
+	}
+	new->child = NULL;
+	new->sibling = NULL;
+}
+
+
+'------------------------------------------------------------'
+'H E A P S'
+'------------------------------------------------------------'
+
+Heaps = trees with top-to-bottom ordering.
+        E.g. values get smaller as they go down the tree.
+		(BSTs have left -> right ordering)
+
+Great for implementing Priority Queues.
+-> Largest priority will always be in the ROOT (top)
+-> Lowest priority will always be in the LEAVES (bottom)
+
+Insertion: Added initially the lowest, right-most leaf.
+		   Node drifts up the tree to appropriate level.
+
+Deletion: Always delete at ROOT (top priority)
+
+
 
 
 
