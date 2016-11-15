@@ -1,6 +1,6 @@
-'-----------------'
+'--------------------------------------------------------'
 'R E C U R S I O N'
-'-----------------'
+'--------------------------------------------------------'
 
 ====================================================================================
 Recursion to find max val in a[lo..hi]
@@ -19,9 +19,9 @@ int max(int a[], int lo, int hi)
 
 
 
-'-----------'
+'--------------------------------------------------'
 'G R A P H S'
-'-----------'
+'--------------------------------------------------'
 
 ====================================================================================
 NEIGHBOURS: Returns array of vertices that are neighbours of X
@@ -184,9 +184,9 @@ void shortestPath(Graph g, Vertex start,
 //					Remaining vertices = Even degree
 
 
-'-----------------'
+'--------------------------------------------------------'
 'B S T   T R E E S'
-'-----------------'
+'--------------------------------------------------------'
 
 ====================================================================================
 Higher Order Function - Passing & applying a function ptr to all nodes RECURSIVELY
@@ -301,16 +301,28 @@ Tree partition(Tree t, int i)
 }
 
 ====================================================================================
+SPLAY TREES: PARENT - CHILD - GRANDCHILD
+====================================================================================
 
 // SPLAY TREES: Considers PARENT - CHILD - GRANDCHILD
 //              Performs double rotations, pushing GRANDCHILD -> PARENT (ROOT)
 //              E.g. P-C-G -> G-C-P
+
+====================================================================================
+2-3-4 TREES: THREE KINDS OF NODES
+====================================================================================
 
 // 2-3-4 TREES: Three kinds of nodes
 //              2-nodes = one value, two children (same as BST)
 //              3-nodes = two values, three children
 //              4-nodes = three values, four children
 //              PROMOTE/SPLIT whenever node is full (contains 3 values)
+
+struct node {
+	int order;		// 2,3,4
+	Item data[3];	// Array of items (in order to be searched)
+	Tree child[4];	// Array of childs / subtrees (links to subtrees)
+}
 
 ====================================================================================
 RED-BLACK TREES
@@ -359,9 +371,9 @@ Tree insertRB(Link t, Item it, Dirn dir)
 }
 
 
-'---------------------'
+'------------------------------------------------------------'
 'H A S H   T A B L E S'
-'---------------------'
+'------------------------------------------------------------'
 
 
 
