@@ -20,7 +20,37 @@ int max(int a[], int lo, int hi)
 // G R A P H S
 // ###################
 
-// CONNECTED COMPONENTS: 
+// CONNECTED COMPONENTS:
+int nComponents(Graph g)
+{
+   int i, comp = 0; // Comp = COMPONENT #ID
+
+   componentOf = malloc(g->nV*sizeof(int));			// #1 Allocate component array
+   for (i = 0; i < g->nV; i++) componentOf[i] = -1; //    Initialise all = -1
+   
+   ncounted = 0;
+   while (ncounted < g->nV) {				// #2 Search for non-visited vertices
+      Vertex v;								//    If !visited, perform dfsR
+      for (v = 0; v < g->nV; v++)			//    Increment COMP NO. / ID.
+         if (componentOf[v] == -1) break;
+      dfsComponents(g, v, comp);
+      comp++;
+   }										// Recursion in dfsR will make sure that
+   // componentOf[] is now set 			    // all vertices in the same subgraph will
+   return comp; 							// have the same compID, as they will be assigned
+   											// the same ID. Only after searching through all
+   											// vertices in the component
+}
+void dfsComponents(Graph g, Vertex v, int c)
+{
+   componentOf[v] = c;
+   ncounted++;
+   Vertex w;
+   for (w = 0; w < g->nV; w++) {
+      if (g->edges[v][w] && componentOf[w] == -1)
+         dfsComponents(g, w, c);
+   }
+}
 
 // NEIGHBOURS: Returns array of vertices that are neighbours of X
 Vertex *neighbours(Graph g, Vertex x, int *nv)
@@ -76,8 +106,7 @@ void dfs(Graph g) {
 	while (order < nV(g)) {				// When order = nV, we have visited all vertices
 		Vertex v;
 		for (v = 0; v < nV(g); v++)		// Check all vertices to see if they are visited
-			if (visited[v] == 0)		// If not, do a recursive DFS
-				break;
+			if (visited[v] == 0) break;	// If not, do a recursive DFS
 		dfsR(g,v);
 	}
 }
@@ -182,7 +211,66 @@ BSTree deleteRoot(t)
 	}
 }
 
+// AVL TREES -> Search Average/Worst O(nLogn)
+// Repairs imbalanced trees as soon as we notice imbalance
+// Imbalanced = |depth(LHS) - depth(RHS) > 1|
+Tree insertAVL(Tree t, Item it)
+{
+    if (t == NULL) return newNode(it);
+    // Insert at leaves
+    int diff = cmp(key(it), key(t->value));
+    if (diff == 0) t->value = it;
+    else if (diff < 0) t->left = insertAVL(t->left, it);
+    else if (diff > 0) t->right = insertAVL(t->right, it);
+    // Test imbalance
+    int dL = TreeDepth(t->left);
+    int dR = TreeDepth(t->right);
+    if ((dL - dR) > 1) t = rotateR(t);
+    else if ((dR - dL) > 1) t = rotateL(t);
 
+    return t;
+}
+
+// GENERAL TREE REBALANCE (recursive) + PARTITION
+// Moving node with median key (i = n/2) to the root
+Tree rebalance(Tree t)
+{
+	if (t == NULL) return NULL;
+	// count nnodes in tree
+	int n = count(t);
+	if (n < 3) return t;
+	// re-arrange tree so ith (n/2) element is root
+	t = partition(t, n/2);
+	// rebalance each subtree
+	t->left = rebalance(t->left);
+	t->right = rebalance(t->right);
+	return t;
+}
+Tree partition(Tree t, int i)
+{
+   if (t == NULL) return NULL;
+   assert(0 <= i && i < size(t));
+   int n = size(t->left);
+   // i'th in LHS + rotateR
+   if (i < n) {
+      t->left = partition(t->left, i);
+      t = rotateR(t);
+   }
+   // i'th in RHS + rotateL
+   if (i > n) {
+      t->right = partition(t->right, i-n-1);
+      t = rotateL(t);
+   }
+   t->nnodes = count(t); // fix count
+   return t;
+}
+
+// SPLAY TREES: 
+
+
+// ####################
+// H A S H    T A B L E
+// ####################
 
 
 

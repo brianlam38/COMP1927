@@ -257,6 +257,7 @@ Tree partition(Tree t, int i)
       t->right = partition(t->right, i-n-1);
       t = rotateL(t);
    }
+   t->nnodes = count(t);
    return t;
 }
 
@@ -272,11 +273,11 @@ Item *get_ith(Tree t, int i)
 
 Tree rebalance(Tree t)
 {
-    if (t == NULL) return NULL;
+    if (t == NULL) return NULL;			// Empty tree
     int n = size(t);
-    if (n < 3) return t;
+    if (n < 3) return t;				// Size of tree < 3
     // put node with median key at root
-    t = partition(t, n/2);
+    t = partition(t, n/2);				// Grab median key
     // then rebalance each subtree
     t->left = rebalance(t->left);
     t->right = rebalance(t->right);

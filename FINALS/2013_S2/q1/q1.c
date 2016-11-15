@@ -128,7 +128,3 @@ int less(int a, int b) {
 	else
 		return FALSE;
 }
-
-
-
-
