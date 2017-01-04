@@ -1,0 +1,42 @@
+Q4.)
+
+(CORRECT)A. Castle Dracula
+(CORRECT)B. C? = CITY_UNKNOWN / unknown city
+(INCORRECT)C. If the hunter is on 0 health at the end of his turn or at the end of Dracula's turn.
+			  If the hunter LOSES ALL HIS LIFEPOINTS (Can possible go below 0)
+D.
+Lisbon (rest)
+Santander (road or rail)
+Madrid (road or rail)
+Cadiz (road)
+Saragossa (rail)
+Alicante (rail)
+Atlantic Ocean (sea)
+E. ???
+
+Q5.)
+A. 3 key comparisons: 2 right comparisons, 1 left comparison
+B. 2 key comparisons: 1 right, 1 left (equal comparison is void as it is implicit in the ELSE statement)
+C. 10 key comparisons: Key 33 AND Key 99
+D. 4 comparisons, anything less than 4
+E. The value in the successor node i.e. node 44.
+   THE LHS SUCCESSOR NODE i.e. 41 as there is less disruption (less key comparisons than RHS successor node)
+F.
+NEW ROOT: 20
+NEW LEFT: 42
+NEW RIGHT: 69
+
+Q6.)
+
+Q7.)
+SO RT IN GI SA WE SO ME
+1. OS TR NI IG AS EW OS EM
+2. OSTR NIIG ASEW OSEM
+3. ORST GIIN
+
+When the input is not a power of 2, the partition size may over extend 
+the end of the array, and thus a min on hi is needed
+
+Q8.)
+Average length = nkeys / nslots = 
+Q9.)

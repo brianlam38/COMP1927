@@ -59,7 +59,7 @@ int *visited;	// array [0..V-1] of visiting order
 
 void bfs(Graph g, Vertex v) {
 	int i;
-	int order = 1;
+	int order = 0;
 	visited = calloc(nV(g), sizeof(int));	// allocate visited array + set to 0
 	Queue q = newQueue();					// create queue
 	QueueJoin(q,v);							// add source to queue
@@ -78,6 +78,11 @@ void bfs(Graph g, Vertex v) {
 		}
 	}
 }
+
+// #1 Alloc and init visited array
+// #2 Create queue
+// #3 Add source vertex to queue
+// #4 Mark source vertex as vi
 
 ====================================================================================
 DFS Recursive: Modified with Connected Components
@@ -103,6 +108,14 @@ void dfsR(Graph g, Vertex x) {
 			dfsR(g,w);						// Recursion will iterate through all possible	
 	}										// neighbours Y. Once all neighours Y are visited
 }											// then recursion will back-track one level
+
+// WRAPPER FUNCTION
+// #1. Alloc and initialise visited array
+// #2. For each vertex, if not visited, perform dfsR
+
+// DFSR
+// #1. Mark current vertex as visited
+// #2. For each vertex that is NEIGHBOUR and NOT VISITED, performance dfsR
 
 ====================================================================================
 DFS - CONNECTED COMPONENTS - Find # of connected components in a graph
@@ -240,6 +253,26 @@ BSTree deleteRoot(t)
 		t->value = successor;			// Set root key = successor key
 		return t;						// Return t
 	}
+}
+
+// BSTree deletion: Wrapper
+t->value < it = go RHS
+t->value > it = go LHS
+if t->value = it, deleteRoot
+// BSTree deletion: Main
+deleteRoot(t)
+{
+	Declare newRoot
+	if LHS + RHS = NULL, free(t)
+	if LHS = NULL, newRoot = t->right, free(t)
+	if RHS = NULL, newRoot = t->left, free(t)
+	if LHS + RHS exist, move successor node to root
+		Link curr = t->right
+		while (curr != NULL)
+			curr = curr->left
+		successor = curr->value
+		delete successor
+		t->value = successor;
 }
 
 ====================================================================================

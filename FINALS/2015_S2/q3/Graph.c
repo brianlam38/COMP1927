@@ -253,7 +253,6 @@ void findPath(Graph g, Vertex src, Vertex dest)
    }
 }
 
-
 // Find all vertices which are <= d edges from v
 int within(Graph g, Vertex s, int d, Vertex *vs)
 {
@@ -298,7 +297,6 @@ int within(Graph g, Vertex s, int d, Vertex *vs)
    }
    return vCount; // replace this statement
 }
-
 
 
 
