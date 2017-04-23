@@ -157,6 +157,7 @@ void swap(int a[], int i, int j)
 }
 
 // Shifts position of two values (array)
+// Shifts rightwards
 void move(int a[], int i, int j)
 {
 	a[i] = a[j];
@@ -246,11 +247,12 @@ void insertionSort(int a[], int lo, int hi)
    	*/
 
    	for (i = lo+2; i <= hi; i++) {
-      	val = a[i];						   // PART 2
-      	for (j = i; less(val,a[j-1]); j--) // Loops down and compares the key elt
-         	move(a, j, j-1);			   // with sorted part. Insert key into
-      	a[j] = val;						   // the correct place in sorted.
-   	}									   // Set new key = next a[i]
+      	val = a[i];						   	 // PART 2
+      	for (j = i; less(val,a[j-1]); j--) { // Loops down and compares the key elt
+         	move(a, j, j-1);			     // with sorted part. Insert key into
+      	}						     		 // the correct place in sorted.
+      	a[j] = val;							 // Set new key = next a[i]
+   	}
 }
 
 /* SHELL SORT: O(nLogn) -> O(n(Logn)^2) */
