@@ -53,7 +53,7 @@ void shortestPath(Graph g, Vertex start,
 	reorder(pq,start);						//    (moves v to the front)
 
 	while (!empty(pq)) {					// #4 PQ operations
-		Vertex S = leave(pq);				//    Grab cheapest/front v in the queue
+		Vertex s = leave(pq);				//    Grab cheapest/front v in the queue
 		/* FIND NEIGHBOURS */
 		for (Vertex t = 0; t < nV(g); t++) {//    Iterate through other vertices
 			float len = g->adj[s][t];		//    Find connected vertices to S (neighbours) + grab weight
